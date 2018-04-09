@@ -11,8 +11,8 @@ import {
   Platform
 } from 'react-native';
 import Colors from '../constants/Colors';
-// import { FileSystem } from 'expo';
 import ImageTile from './common/ImageTile';
+import FileSystem from 'react-native-filesystem';
 import { isIphoneX, getFileName, getFileExtension } from './helpers';
 const { width } = Dimensions.get('window')
 
@@ -93,9 +93,10 @@ export default class ImageBrowser extends React.Component {
     let selectedPhotos = photos.filter((item, index) => {
       return(selected[index])
     });
+
     let files = [];
-    // selectedPhotos
-    //   .map(i => FileSystem.getInfoAsync(i, {md5: true}))
+    selectedPhotos
+      .map(i => this.readFile(i))
     let callbackResult = Promise
       .all(files)
       .then(imageData=> {
@@ -104,6 +105,12 @@ export default class ImageBrowser extends React.Component {
         })
       })
     this.props.callback(callbackResult)
+  }
+
+  async readFile(url) {
+    console.warn('read from file:');
+    const fileContents = await FileSystem.readFile(url);
+    console.error('read from file: ${fileContents}');
   }
 
   renderHeader = () => {

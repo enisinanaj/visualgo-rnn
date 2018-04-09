@@ -280,8 +280,8 @@ export default class CreateTask extends Component {
                 </Text>
                 <TouchableOpacity onPress={() => {this.props.handleTypeChange != undefined ? this.props.handleTypeChange('post') : {}}}>
                     <Text style={{color: Colors.black, fontSize: 14, marginRight: 30, height: 18, fontFamily: 'Roboto-Light'}}>
-                        PoRt
-                    </TRxt>
+                        Post
+                    </Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this._noOpSurvey.toggleState()} style={DisabledStyle.disabled}>
                     <Text style={{color: Colors.black, fontSize: 14, height: 18, fontFamily: 'Roboto-Light'}}>

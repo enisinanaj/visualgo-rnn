@@ -1,0 +1,44 @@
+{
+  "name": "v1rgo",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "chat-engine-gravatar": "0.0.8",
+    "chat-engine-react-native": "0.0.9",
+    "chat-engine-typing-indicator": "0.0.9",
+    "eslint": "^3.19.0",
+    "lodash": "^4.17.5",
+    "moment": "^2.22.0",
+    "native-navigation": "^0.2.1",
+    "node-emoji": "^1.8.1",
+    "npm": "^4.6.1",
+    "pubnub-react": "^1.2.0",
+    "react": "16.3.1",
+    "react-native": "0.55.2",
+    "react-native-aws3": "0.0.8",
+    "react-native-calendars": "^1.17.7",
+    "react-native-drawer": "^2.5.0",
+    "react-native-progress": "^3.4.0",
+    "react-native-radial-menu": "^1.1.0",
+    "react-native-vector-icons": "^4.6.0",
+    "react-navigation": "^1.5.11"
+  },
+  "devDependencies": {
+    "babel-jest": "22.4.3",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "22.4.3",
+    "react-test-renderer": "16.3.1"
+  },
+  "jest": {
+    "preset": "react-native"
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts"
+    ]
+  }
+}

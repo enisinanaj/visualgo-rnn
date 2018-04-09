@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "sdkVersion": "23.0.0",
+    "name": "Visual Go",
+    "icon": "./assets/images/icon.png",
+    "version": "1.9",
+    "slug": "VisualGo",
+    "ios": {
+      "bundleIdentifier": "com.areakappa.warda",
+      "usesIcloudStorage": true
+    },
+    "android": {
+      "package": "com.areakappa.visualgo"
+    },
+    "orientation": "portrait"
+  },
+  "name": "VisualGo",
+  "displayName": "Visual Go"
+}

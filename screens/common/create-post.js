@@ -216,12 +216,12 @@ export default class CreatePost extends Component{
                 </TouchableOpacity> }
                 <View style={{paddingLeft: 20}}>
                     {this.state.isViewMode ?
-                        <Text style={{fontSize: 14, color: 'black', fontFamily: 'roboto-bold', paddingTop: 0}}>Post</Text>
-                    :   <Text style={{fontSize: 14, color: 'black', fontFamily: 'roboto-bold'}}>New Post</Text>}
+                        <Text style={{fontSize: 14, color: 'black', fontFamily: 'Roboto-Bold', paddingTop: 0}}>Post</Text>
+                    :   <Text style={{fontSize: 14, color: 'black', fontFamily: 'Roboto-Bold'}}>New Post</Text>}
                 </View>
                 {this.state.canEdit ?
                     <TouchableOpacity onPress={() => this.post()} disabled={!this.isPublishable()}>
-                        <Text style={{color: this.isPublishable() ? Colors.main : Colors.gray, fontSize: 16, fontFamily: 'roboto-light'}}
+                        <Text style={{color: this.isPublishable() ? Colors.main : Colors.gray, fontSize: 16, fontFamily: 'Roboto-Light'}}
                             >{this.state.isViewMode ? 'Update' : 'Pubblica' }
                         </Text>
                     </TouchableOpacity>
@@ -252,14 +252,14 @@ export default class CreatePost extends Component{
                 borderBottomColor: Colors.borderGray, flexDirection: 'row',
                 justifyContent: 'space-between', alignItems: 'center', padding: 13}}>
                 <View style={styles.viewAndroid}>
-                    <Text style={{color: Colors.black, fontFamily: 'roboto-light', fontSize: 14, marginTop: 6}}>
+                    <Text style={{color: Colors.black, fontFamily: 'Roboto-Light', fontSize: 14, marginTop: 6}}>
                         Commenti 
                     </Text>
                     <Switch color={Colors.main} style={styles.switchAndroid} value={this.state.allowComments} 
                         onValueChange={(v) => this.setState({allowComments: v}) }/>
                 </View>
                 <TouchableOpacity onPress={() => this.setState({privacyModal: true})}>
-                    <Text style={{color: Colors.black, fontFamily: 'roboto-light', fontSize: 14, marginRight: 5}}>
+                    <Text style={{color: Colors.black, fontFamily: 'Roboto-Light', fontSize: 14, marginRight: 5}}>
                         Tutti <Octicons name={"globe"} size={16} color={Colors.main} style={{paddingTop: 10}} />
                     </Text>
                 </TouchableOpacity>
@@ -277,16 +277,16 @@ export default class CreatePost extends Component{
                 borderBottomColor: Colors.borderGray, flexDirection: 'row',
                 justifyContent: 'flex-start', alignItems: 'center', padding: 13, paddingTop: 16}}>
                 <TouchableOpacity onPress={() => {this.props.handleTypeChange != undefined ? this.props.handleTypeChange('task') : {}}}>
-                    <Text style={{color: Colors.black, fontFamily: 'roboto-light', fontSize: 14, marginRight: 30, height: 18, marginLeft: 5}}>
+                    <Text style={{color: Colors.black, fontFamily: 'Roboto-Light', fontSize: 14, marginRight: 30, height: 18, marginLeft: 5}}>
                         Task
                     </Text>
                 </TouchableOpacity>
                 
-                <Text style={{color: Colors.main, fontFamily: 'roboto-regular', fontSize: 14, marginRight: 30, height: 18}}>
+                <Text style={{color: Colors.main, fontFamily: 'Roboto-Regular', fontSize: 14, marginRight: 30, height: 18}}>
                     Post
                 </Text>
                 <TouchableOpacity onPress={() => this._noOpSurvey.toggleState()} style={DisabledStyle.disabled}>
-                    <Text style={{color: Colors.black, fontFamily: 'roboto-light', fontSize: 14, height: 18}}>
+                    <Text style={{color: Colors.black, fontFamily: 'Roboto-Light', fontSize: 14, height: 18}}>
                         Survey
                     </Text>
                     <NoOpModal featureName={"Survey "} ref={(noOpModal) => this._noOpSurvey = noOpModal} />
@@ -300,7 +300,7 @@ export default class CreatePost extends Component{
             <View style={{flex: 1, padding: 16, backgroundColor: this.state.postBackgroundColor, justifyContent: 'center'}}>
                 {this.state.canEdit ?
                 <TextInput autoFocus={true} style={{height: Platform.OS === 'ios' ? 50 : 30, fontSize: 22, textAlign: 'center', textAlignVertical: 'center', 
-                    fontFamily: 'roboto-light'}}
+                    fontFamily: 'Roboto-Light'}}
                     underlineColorAndroid={'rgba(0,0,0,0)'} 
                     placeholderTextColor={Colors.grayText} 
                     placeholder={"What's on your mind?"}
@@ -308,7 +308,7 @@ export default class CreatePost extends Component{
                     value={this.state.text}/>
                 : 
                 <Text style={{height: Platform.OS === 'ios' ? 50 : 30, fontSize: 22, marginTop: 20, textAlign: 'center', textAlignVertical: 'center', 
-                    fontFamily: 'roboto-light', alignContent: 'center'}}>
+                    fontFamily: 'Roboto-Light', alignContent: 'center'}}>
                     {this.state.text}
                 </Text>}
             </View>
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
     },
 
     rowTextStyle: {
-        fontFamily: 'roboto-light',
+        fontFamily: 'Roboto-Light',
         color: '#000000',
         fontSize: 16,
         fontWeight: '500',
@@ -736,7 +736,7 @@ const styles = StyleSheet.create({
         margin: 0,
         textAlign: 'center',
         fontSize: 14,
-        fontFamily: 'roboto-regular',
+        fontFamily: 'Roboto-Regular',
         color: '#FFFFFF',
         backgroundColor: 'transparent'
     },
@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
 
     rowTitle: {
         paddingLeft: 5,
-        fontFamily: 'roboto-regular',
+        fontFamily: 'Roboto-Regular',
         fontSize: 12,
         paddingTop: 1,
         backgroundColor: 'transparent'
@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
     },
 
     rowSubTitle: {
-        fontFamily: 'roboto-regular',
+        fontFamily: 'Roboto-Regular',
         color: '#9A9A9A',
         fontSize: 12,
         paddingLeft: 5,

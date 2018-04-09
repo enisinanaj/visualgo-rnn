@@ -3,6 +3,7 @@ package com.v1rgo;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.benwixen.rnfilesystem.RNFileSystemPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.airbnb.android.NativeNavigationPackage;
 import com.facebook.react.ReactNativeHost;
@@ -25,6 +26,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNFileSystemPackage(),
             new VectorIconsPackage(),
             new NativeNavigationPackage()
       );

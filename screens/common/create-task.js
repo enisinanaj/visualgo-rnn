@@ -196,10 +196,10 @@ export default class CreateTask extends Component {
                     <EvilIcons name={"close"} size={22} color={Colors.main}/>
                 </TouchableOpacity>
                 <View>
-                    <Text style={{fontSize: 16, color: 'black', fontFamily: 'roboto-bold'}}>New Task</Text>
+                    <Text style={{fontSize: 16, color: 'black', fontFamily: 'Roboto-Bold'}}>New Task</Text>
                 </View>
                 <TouchableOpacity onPress={() => this.post()} disabled={!this.isPublishable()}>
-                    <Text style={{fontFamily: 'roboto-light', fontSize: 16, color: this.isPublishable() ? Colors.main : Colors.gray}}>Pubblica</Text>
+                    <Text style={{fontFamily: 'Roboto-Light', fontSize: 16, color: this.isPublishable() ? Colors.main : Colors.gray}}>Pubblica</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -247,14 +247,14 @@ export default class CreateTask extends Component {
                 borderBottomColor: Colors.borderGray, flexDirection: 'row',
                 justifyContent: 'space-between', alignItems: 'center', padding: 13}}>
                 <View style={styles.viewAndroid}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'roboto-light'}}>
+                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
                         Commenti 
                     </Text>
                     <Switch color={Colors.main} style={styles.switchAndroid}
                         value={this.state.commentsEnabled} onValueChange={(v) => this.setState({commentsEnabled: v})}/>
                 </View>
                 <View style={styles.viewAndroid}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'roboto-light'}}>
+                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
                         Notification 
                     </Text>
                     <Switch color={Colors.main} style={styles.switchAndroid}
@@ -262,7 +262,7 @@ export default class CreateTask extends Component {
                 </View>
                 <TouchableOpacity onPress={() => this.setState({privacyModal: true})}>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
-                        <Text style={{color: Colors.black, fontSize: 14, marginRight: 5, fontFamily: 'roboto-light', marginTop: 6}}>
+                        <Text style={{color: Colors.black, fontSize: 14, marginRight: 5, fontFamily: 'Roboto-Light', marginTop: 6}}>
                             Tutti
                         </Text>
                         <Octicons name={"globe"} size={16} color={Colors.main} style={{paddingTop: 6}} />
@@ -275,16 +275,16 @@ export default class CreateTask extends Component {
         return (
             <View style={{backgroundColor: Colors.borderGray, flexDirection: 'row',
                 justifyContent: 'flex-start', alignItems: 'center', padding: 13, paddingTop: 15}}>
-                <Text style={{color: Colors.main, fontSize: 14, marginRight: 30, height: 18, marginLeft: 5, fontFamily: 'roboto-regular'}}>
+                <Text style={{color: Colors.main, fontSize: 14, marginRight: 30, height: 18, marginLeft: 5, fontFamily: 'Roboto-Regular'}}>
                     Task
                 </Text>
                 <TouchableOpacity onPress={() => {this.props.handleTypeChange != undefined ? this.props.handleTypeChange('post') : {}}}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginRight: 30, height: 18, fontFamily: 'roboto-light'}}>
-                        Post
-                    </Text>
+                    <Text style={{color: Colors.black, fontSize: 14, marginRight: 30, height: 18, fontFamily: 'Roboto-Light'}}>
+                        PoRt
+                    </TRxt>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this._noOpSurvey.toggleState()} style={DisabledStyle.disabled}>
-                    <Text style={{color: Colors.black, fontSize: 14, height: 18, fontFamily: 'roboto-light'}}>
+                    <Text style={{color: Colors.black, fontSize: 14, height: 18, fontFamily: 'Roboto-Light'}}>
                         Survey
                     </Text>
                     <NoOpModal featureName={"Survey "} ref={(noOpModal) => this._noOpSurvey = noOpModal} />
@@ -375,7 +375,7 @@ export default class CreateTask extends Component {
                                            position:'absolute', resizeMode: 'center', top: -19, left: 0}} 
                                 source={img} />
                             <View style={{flexDirection: 'row', justifyContent: 'center', backgroundColor: 'transparent'}}>
-                                <Text style={{color: Colors.white, fontSize: 22, fontFamily: 'roboto-bold',
+                                <Text style={{color: Colors.white, fontSize: 22, fontFamily: 'Roboto-Bold',
                                             textShadowColor: 'rgba(0, 0, 0, 0.75)',
                                             textShadowOffset: {width: 1, height: 1},
                                             textShadowRadius: 10, flex: 1, padding: 3, textAlign: 'center'}}>
@@ -425,7 +425,7 @@ export default class CreateTask extends Component {
                                             Shadow.filterShadow]}>
                                     <FontAwesome name={"circle"} size={22} color={environment.background} />
                                 </View>
-                                <Text style={[styles.rowTextStyle, {color: environment.background, paddingLeft: 0, fontFamily: 'roboto-bold',
+                                <Text style={[styles.rowTextStyle, {color: environment.background, paddingLeft: 0, fontFamily: 'Roboto-Bold',
                                               marginTop: 5}]}>
                                     {environment.environmentName}
                                 </Text>
@@ -567,13 +567,13 @@ export default class CreateTask extends Component {
                         :   
                             <Image style={{width: 18, height: 16, resizeMode: 'center', marginTop: 3}} source={require("../../assets/images/icons/unchecked.png")} />
                         }
-                        <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'roboto-light'}}>Foto</Text>
+                        <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'Roboto-Light'}}>Foto</Text>
                     </TouchableOpacity>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
                         <TouchableOpacity onPress={() => {this.setState({countPhoto: --this.state.countPhoto})}} style={{alignSelf: 'center'}} disabled={this.state.countPhoto > 0 ? false : true}>
                             <EvilIcons name={"minus"} color={((this.state.addPhotoSelected) && (this.state.countPhoto > 0)) ? Colors.main : Colors.gray} size={27} style={{marginRight: 5}} />
                         </TouchableOpacity>
-                        <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: this.state.countPhoto > 0 ? Colors.black : Colors.gray, fontFamily: 'roboto-light'}}>
+                        <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: this.state.countPhoto > 0 ? Colors.black : Colors.gray, fontFamily: 'Roboto-Light'}}>
                             {this.state.countPhoto}
                         </Text>
                         <TouchableOpacity onPress={() => {this.setState({countPhoto: ++this.state.countPhoto})}} style={{alignSelf: 'center'}} disabled={!this.state.addPhotoSelected}>
@@ -597,13 +597,13 @@ export default class CreateTask extends Component {
                         :   
                             <Image style={{width: 18, height: 16, resizeMode: 'center', marginTop: 3}} source={require("../../assets/images/icons/unchecked.png")} />
                         }
-                        <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'roboto-light'}}>Video</Text>
+                        <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'Roboto-Light'}}>Video</Text>
                     </TouchableOpacity>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
                         <TouchableOpacity onPress={() => {this.setState({countVideo: --this.state.countVideo})}} style={{alignSelf: 'center'}} disabled={this.state.countVideo > 0 ? false : true}>
                             <EvilIcons name={"minus"} color={((this.state.addVideoSelected) && (this.state.countVideo > 0)) ? Colors.main : Colors.gray} size={27} style={{marginRight: 5}} />
                         </TouchableOpacity>
-                        <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: this.state.countVideo > 0 ? Colors.black : Colors.gray, fontFamily: 'roboto-light'}}>
+                        <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: this.state.countVideo > 0 ? Colors.black : Colors.gray, fontFamily: 'Roboto-Light'}}>
                             {this.state.countVideo}
                         </Text>
                         <TouchableOpacity onPress={() => {this.setState({countVideo: ++this.state.countVideo})}} style={{alignSelf: 'center'}} disabled={!this.state.addVideoSelected}>
@@ -627,13 +627,13 @@ export default class CreateTask extends Component {
                         :   
                             <Image style={{width: 18, height: 16, resizeMode: 'center', marginTop: 3}} source={require("../../assets/images/icons/unchecked.png")} />
                         }
-                        <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'roboto-light'}}>360°</Text>
+                        <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'Roboto-Light'}}>360°</Text>
                     </TouchableOpacity>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
                         <TouchableOpacity onPress={() => {this.setState({count360: --this.state.count360})}} style={{alignSelf: 'center'}} disabled={this.state.count360 > 0 ? false : true}>
                             <EvilIcons name={"minus"} color={((this.state.add360Selected) && (this.state.count360 > 0)) ? Colors.main : Colors.gray} size={27} style={{marginRight: 5}} />
                         </TouchableOpacity>
-                        <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: this.state.count360 > 0 ? Colors.black : Colors.gray, fontFamily: 'roboto-light'}}>
+                        <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: this.state.count360 > 0 ? Colors.black : Colors.gray, fontFamily: 'Roboto-Light'}}>
                             {this.state.count360}
                         </Text>
                         <TouchableOpacity onPress={() => {this.setState({count360: ++this.state.count360})}} style={{alignSelf: 'center'}} disabled={!this.state.add360Selected}>
@@ -850,11 +850,11 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         paddingLeft: 5,
         paddingTop: 5,
-        fontFamily: 'roboto-light'
+        fontFamily: 'Roboto-Light'
     },
 
     rowTextStyle: {
-        fontFamily: 'roboto-light',
+        fontFamily: 'Roboto-Light',
         color: '#000000',
         fontSize: 16,
         fontWeight: '500',

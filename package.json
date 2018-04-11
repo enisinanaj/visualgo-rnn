@@ -1,6 +1,6 @@
 {
-  "name": "v1rgo",
-  "version": "0.0.1",
+  "name": "VisualGo",
+  "version": "2.0.1",
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
@@ -22,7 +22,6 @@
     "react-native-aws3": "0.0.8",
     "react-native-calendars": "^1.17.7",
     "react-native-drawer": "^2.5.0",
-    "react-native-filesystem": "^0.1.0",
     "react-native-progress": "^3.4.0",
     "react-native-radial-menu": "^1.1.0",
     "react-native-vector-icons": "^4.6.0",

@@ -6,8 +6,8 @@ target 'v1rgo' do
   # use_frameworks!
 
   # Pods for v1rgo
-
   #pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
+  # pod 'native-navigation', :path => '../node_modules/native-navigation'
 
   target 'v1rgoTests' do
     inherit! :search_paths

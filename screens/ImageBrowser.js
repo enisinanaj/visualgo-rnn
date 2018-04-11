@@ -108,7 +108,7 @@ export default class ImageBrowser extends React.Component {
   }
 
   async readFile(url) {
-    console.warn('read from file:');
+    //console.error('read from file:' + url);
     const fileContents = await FileSystem.readFile(url);
     console.error('read from file: ${fileContents}');
   }

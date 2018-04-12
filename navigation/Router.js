@@ -117,7 +117,7 @@ export const MainTabNav = TabNavigator({
     navigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
-        return _renderIcon(routeName, focused);
+        return _renderIcon(routeName, focused); 
       },
     }),
     tabBarOptions: {
@@ -141,7 +141,8 @@ export const MainAppNavigation = StackNavigator({
   AlbumSummary: {screen: AlbumDetail},
   CollabView: {screen: CollabView},
   CreateVisualGuideline: {screen: CreateAlbum},
-  CameraScreen: {screen: CameraScreen}
+  CameraScreen: {screen: CameraScreen},
+  Conversation: {screen: ConversationView}
 },
 {
   initialRouteName: 'StartScreen',

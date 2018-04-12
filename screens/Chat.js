@@ -96,7 +96,8 @@ export default class Chat extends Component {
     //AppSettings.appIndex.removeSearchBar();
     ApplicationConfig.getInstance().index.hideSearchBar();
     //ApplicationConfig.getInstance().index.removeSearchBar();
-    this.props.navigator.push(Router.getRoute('conversation', {convTitle: 'Andy'}));
+    //this.props.navigator.push(Router.getRoute('conversation', {convTitle: 'Andy'}));
+    ApplicationConfig.getInstance().index.props.navigation.navigate('Conversation', {convTitle: 'Andy'});
   }
   
   _renderRow(data) {

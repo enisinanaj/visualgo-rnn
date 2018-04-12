@@ -80,7 +80,7 @@ export default class Conversation extends Component {
     _goBack() {
         ApplicationConfig.getInstance().index.showSearchBar();
         //AppSettings.appIndex.showSearchBar();
-        this.props.navigator.pop();
+        this.props.navigation.goBack();
     }
 
     _closeThemes(){
@@ -158,7 +158,7 @@ export default class Conversation extends Component {
             <View style={styles.headerView}>
                 <EvilIcons name={"chevron-left"} size={30} color={Colors.main} onPress={() => this._goBack()} style={{width: 22}}/>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'center', width: width - 22}}>
-                    <Text style={styles.viewTitle}>{this.props.route.params.convTitle}</Text>
+                    <Text style={styles.viewTitle}>{this.props.navigation.state.params.convTitle}</Text>
                     <EvilIcons name={"chevron-right"} size={22} style={{width: 22, marginTop: 3}}/>
                 </View>
             </View>);
@@ -234,7 +234,6 @@ export default class Conversation extends Component {
         // if (!this.state.isReady) {
         //     return <AppLoading />;
         // }
-
         var {height, visibleHeight} = this.state;
         const messages = this.pubnub.getMessage('channel1');
         

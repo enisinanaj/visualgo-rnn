@@ -181,7 +181,11 @@ export default class CreatePost extends Component{
             })
             .then((response) => {
                 console.debug("Create post result: " + JSON.stringify(response));
-                this.props.closeModal({reload: true})
+                if (this.props.closeModal) {
+                    this.props.closeModal({reload: true})
+                } else {
+                    this.props.navigation.goBack()
+                }
             })
             .catch(e => {
                 console.error("error: " + e);

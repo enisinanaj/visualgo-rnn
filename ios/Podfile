@@ -9,6 +9,15 @@ target 'v1rgo' do
 
   #pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
 
+
+
+
+  pod 'native-navigation', :path => '../node_modules/native-navigation'
+
+  pod 'react-native-exif', :path => '../node_modules/react-native-exif'
+
+  pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+
   target 'v1rgoTests' do
     inherit! :search_paths
     # Pods for testing

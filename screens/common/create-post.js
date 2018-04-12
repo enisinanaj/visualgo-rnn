@@ -184,6 +184,7 @@ export default class CreatePost extends Component{
                 if (this.props.closeModal) {
                     this.props.closeModal({reload: true})
                 } else {
+                    this.props.navigation.state.params.onGoBack();
                     this.props.navigation.goBack()
                 }
             })

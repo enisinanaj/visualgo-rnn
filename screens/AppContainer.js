@@ -42,6 +42,7 @@ export default class AppContainer extends React.Component {
   state = {
     appIsReady: false,
     menuIsOpen: false,
+    width: new Animated.Value(width),
     mainViewHeight: new Animated.Value(height),
     innerViewHeight: new Animated.Value(height - 69),
     marginTop: new Animated.Value(0),
@@ -89,6 +90,13 @@ export default class AppContainer extends React.Component {
     if(this._drawer.props.open){
       this._drawer.close()
       this.setState({menuIsOpen: false});
+      Animated.timing(
+        this.state.width,
+        {
+          toValue: width,
+          duration: 10,
+        }
+      ).start()
     }else{
       this._drawer.open()
       this.setState({menuIsOpen: true});
@@ -141,6 +149,13 @@ export default class AppContainer extends React.Component {
         {
           toValue: height - 69,
           duration: DRAWER_ANIMATION_DURATION,
+        }
+      ),
+      Animated.timing(
+        this.state.width,
+        {
+          toValue: width,
+          duration: 10,
         }
       )
     ]).start();
@@ -206,20 +221,18 @@ export default class AppContainer extends React.Component {
             side="right">
             <View style={styles.container}>
               <Animated.View style={[{height: this.state.mainViewHeight, marginTop: this.state.marginTop}, {backgroundColor: Colors.white}]}>
-                <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden', width: width}}
+                <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden', 
+                    width: this.state.width}}
                     removeClippedSubviews={true}>
                   <SearchBar ref='searchBar' openMenu={() => this.toggleMenu()}/>
                 </Animated.View>
                 <Animated.View style={{marginTop: 0,
-                    width: width,
+                    width: this.state.width,
                     bottom: 0,
                     height: this.state.innerViewHeight,
                     shadowColor: 'transparent',
                     shadowOffset: {height: 0}}}>
                     <MainTabNav />
-                  {/* <NavigationProvider router={Router}>
-                    <StackNavigation id="root" initialRoute={Router.getRoute('rootNavigation')} />
-                  </NavigationProvider> */}
                 </Animated.View>
                 {Platform.OS === 'ios' && <StatusBar barStyle="light-content" backgroundColor={Colors.main}/>}
                 {Platform.OS === 'android' && <View style={styles.statusBarUnderlay} />}

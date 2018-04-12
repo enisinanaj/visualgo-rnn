@@ -429,10 +429,6 @@ class Landing extends Component {
     }
 
     render() {
-        /*if (!this.state.isReady) {
-            return <AppLoading />
-        }*/
-
         return (
             <View ref='view' style={styles.container}>
                 {this.state.selectType == 'posts' ?

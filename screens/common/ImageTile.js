@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import Colors from '../../constants/Colors';
+import { RNCamera } from 'react-native-camera';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
@@ -38,51 +39,63 @@ export default class ImageTile extends React.PureComponent {
     // this.setState({ hasCameraPermission: status === 'granted' });
   }
 
-  renderCameraModal() {
-    var {selectImage} = this.props;
+  renderCameraModal() {  
+    const cameraStyles = StyleSheet.create({
+        container: {
+          flex: 1,
+          flexDirection: 'column',
+          backgroundColor: 'black'
+        },
+        preview: {
+          flex: 1,
+          justifyContent: 'flex-end',
+          alignItems: 'center'
+        },
+        capture: {
+          flex: 0,
+          backgroundColor: '#fff',
+          borderRadius: 5,
+          padding: 15,
+          paddingHorizontal: 20,
+          alignSelf: 'center',
+          margin: 20
+        }
+      });
 
+    
     return (<Modal
         animationType={"fade"}
         transparent={false}
         visible={this.state.cameraModal}
         onRequestClose={() => this.setState({cameraModal: false})}>
-        <View style={{ flex: 1 }}>
-          {<Camera style={{ flex: 1 }} type={this.state.type} ref={c => this.camera = c}>
-            <TouchableOpacity onPress={() => {this.setState({cameraModal: false}); this.props.selectImage({cancelled: true});}} style={{backgroundColor: 'transparent', marginTop: 30, marginLeft: 10}}>
-                <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
-            </TouchableOpacity>
-            <View style={{flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'space-between', height: 70, width: width, position: 'absolute', bottom: 0}}>
-              <TouchableOpacity style={{marginLeft: 20, width: 60}}
-                onPress={() => {
-                  this.setState({
-                    type: this.state.type === Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back,
-                  });
-                }}>
-                <Ionicons name={"ios-reverse-camera-outline"} size={50} color={Colors.white} style={{marginTop: 5}}/>
-              </TouchableOpacity>
-              <TouchableOpacity style={{width: 62, position: 'absolute', left: width/2 - 30}}
-                onPress={() => {this.snap()}}>
-                <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center'}}>
-                  <View style={{width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#000', backgroundColor: '#fff', marginLeft: 6}}></View>
-                </View>
-              </TouchableOpacity>
-              <View>
-              </View>
+        <View style={cameraStyles.container}>
+            <RNCamera
+                ref={ref => {
+                this.camera = ref;
+                }}
+                style = {cameraStyles.preview}
+                type={RNCamera.Constants.Type.back}
+                flashMode={RNCamera.Constants.FlashMode.on}
+                permissionDialogTitle={'Permission to use camera'}
+                permissionDialogMessage={'We need your permission to use your camera phone'}
+            />
+            <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
+                <TouchableOpacity
+                    onPress={this.snap.bind(this)}
+                    style = {cameraStyles.capture}>
+                    <Text style={{fontSize: 14}}> SNAP </Text>
+                </TouchableOpacity>
             </View>
-          </Camera>}
         </View>
       </Modal>)
   }
 
   snap = async () => {
-    if (this.camera) {
-      let photo = await this.camera.takePictureAsync();
-
-      this.props.selectImage(photo);
-      this.setState({cameraModal: false});
-    }
+      if (this.camera) {
+          const options = { quality: 0.5, base64: true };
+          const data = await this.camera.takePictureAsync(options)
+          console.log(data.uri);
+      }
   };
 
   render() {

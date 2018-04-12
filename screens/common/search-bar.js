@@ -61,6 +61,7 @@ export default class SearchBar extends Component {
 
     imageBrowserCallback = (callback) => {
         callback.then((photos) => {
+          console.warn(photos)
           this.setState({
             imageBrowserOpen: false,
             photos

@@ -15,6 +15,10 @@ import ImageTile from './common/ImageTile';
 //import FileSystem from 'react-native-filesystem';
 import RNFetchBlob from 'react-native-fetch-blob';
 import { isIphoneX, getFileName, getFileExtension } from './helpers';
+
+import RNFetchBlob from 'react-native-fetch-blob'
+import md5 from  'react-native-md5'
+
 const { width } = Dimensions.get('window')
 
 export default class ImageBrowser extends React.Component {
@@ -96,30 +100,25 @@ export default class ImageBrowser extends React.Component {
     });
 
     let files = [];
-
-    selectedPhotos.forEach(el => {
-      files.push(this.readFile(el))
+    
+    selectedPhotos
+    .forEach(element => {
+      files.push(this.readFile(element))
     })
-
-    selectedPhotos.map(i => this.readFile(i, files))
-    let callbackResult = Promise
-      .all(files)
-      .then(imageData => {
-        return imageData.map((data, i) => {
-          return {file: selectedPhotos[i], ...data}
-        })
-      })
-      .catch(e => {
-        console.warn("Error reading image data!", e);
-      });
-
+    
+    let callbackResult = Promise.all(files)
     this.props.callback(callbackResult)
   }
 
-  readFile(url) {
-    //console.error('read from file:' + url);
-    //const fileContents = await FileSystem.readFile(url);
-    return RNFetchBlob.fs.readFile(url, 'base64');
+  async readFile(url) {
+    return new Promise((resolve, reject) => {
+      RNFetchBlob.fs.readFile(url, 'base64')
+      .then((data) => {
+        let b64_md5 = md5.b64_md5( data )
+        resolve({data: data, md5: b64_md5, file: url})
+      })
+      .catch(reject)
+    })
   }
 
   renderHeader = () => {

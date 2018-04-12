@@ -139,7 +139,7 @@ export default class NewsFeedItem extends Component {
 
         return (
             <View style={styles.content}>
-                <Text style={{fontFamily: 'roboto-light'}}>{data.message}</Text>
+                <Text style={{fontFamily: 'Roboto-Light'}}>{data.message}</Text>
             </View>
         )
     }

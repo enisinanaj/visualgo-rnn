@@ -331,7 +331,7 @@ class Landing extends Component {
         return (
             <View>
                 {data.isTask ? <TaskFeedItem data={data}/> : null}
-                {data.isPost ? <NewsFeedItem data={data}/> : null}
+                {data.isPost ? <NewsFeedItem data={data} onBack={()=>this.resetDatasource()}/> : null}
             </View>
         )
     }

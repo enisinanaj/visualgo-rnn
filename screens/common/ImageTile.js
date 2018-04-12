@@ -47,7 +47,7 @@ export default class ImageTile extends React.PureComponent {
         visible={this.state.cameraModal}
         onRequestClose={() => this.setState({cameraModal: false})}>
         <View style={{ flex: 1 }}>
-          {/* <Camera style={{ flex: 1 }} type={this.state.type} ref={c => this.camera = c}>
+          {<Camera style={{ flex: 1 }} type={this.state.type} ref={c => this.camera = c}>
             <TouchableOpacity onPress={() => {this.setState({cameraModal: false}); this.props.selectImage({cancelled: true});}} style={{backgroundColor: 'transparent', marginTop: 30, marginLeft: 10}}>
                 <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
             </TouchableOpacity>
@@ -71,7 +71,7 @@ export default class ImageTile extends React.PureComponent {
               <View>
               </View>
             </View>
-          </Camera> */}
+          </Camera>}
         </View>
       </Modal>)
   }

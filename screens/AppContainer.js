@@ -206,11 +206,12 @@ export default class AppContainer extends React.Component {
             side="right">
             <View style={styles.container}>
               <Animated.View style={[{height: this.state.mainViewHeight, marginTop: this.state.marginTop}, {backgroundColor: Colors.white}]}>
-                <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden'}}
+                <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden', width: width}}
                     removeClippedSubviews={true}>
                   <SearchBar ref='searchBar' openMenu={() => this.toggleMenu()}/>
                 </Animated.View>
                 <Animated.View style={{marginTop: 0,
+                    width: width,
                     bottom: 0,
                     height: this.state.innerViewHeight,
                     shadowColor: 'transparent',

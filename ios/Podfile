@@ -4,21 +4,22 @@
 target 'v1rgo' do
   # Uncomment the next line if you're using Swift or would like to use dynamic frameworks
   # use_frameworks!
+  
+  pod "Yoga", :path => "../node_modules/react-native/ReactCommon/yoga"
+  pod 'React', :path => '../node_modules/react-native', :subspecs => [
+      'BatchedBridge', # Required For React Native 0.45.0+
+      'Core',
+      'CameraRoll'
+      # Add any other subspecs you want to use in your project
+  ]
 
   # Pods for v1rgo
-  #pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
-  # pod 'native-navigation', :path => '../node_modules/native-navigation'
-
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
-
-
-
-
   pod 'native-navigation', :path => '../node_modules/native-navigation'
-
   pod 'react-native-exif', :path => '../node_modules/react-native-exif'
-
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
+  pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
   target 'v1rgoTests' do
     inherit! :search_paths

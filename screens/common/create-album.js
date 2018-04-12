@@ -15,6 +15,9 @@ import {
     Modal,
     ScrollView
 } from 'react-native';
+
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+
 //import {Camera, Permissions, ImagePicker} from 'expo';
 //import {Font, AppLoading, DocumentPicker} from 'expo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -53,7 +56,7 @@ export default class NewAlbum extends Component {
         console.log("theme: " + JSON.stringify(this.props.theme));
 
         this.state = {
-            isReady: false,
+            isReady: true,
             hasCameraPermission: null,
             type: Camera.Constants.Type.back,
             imageBrowserOpen: false,
@@ -71,7 +74,6 @@ export default class NewAlbum extends Component {
     }
 
     async componentDidMount() {
-        this.loadFonts()
         // const { status } = await Permissions.askAsync(Permissions.CAMERA);
         // this.setState({ hasCameraPermission: status === 'granted' });
     }
@@ -120,16 +122,6 @@ export default class NewAlbum extends Component {
         // }
     };
 
-    async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf'),
-        //     'roboto-regular': require('../../assets/fonts/Roboto-Regular.ttf')
-        // });
-
-        this.setState({isReady: true});
-    }
-
     imageBrowserCallback = (callback) => {
         callback.then((photos) => {
           this.setState({
@@ -155,9 +147,29 @@ export default class NewAlbum extends Component {
 
     async _getDocuments() {
         try {
-            // let files = await DocumentPicker.getDocumentAsync({});
-            // this.setState({files: files});
-            // this.setState({visualGuidelineModal: true});
+            // iPhone/Android
+            DocumentPicker.show({
+                filetype: [DocumentPickerUtil.allFiles],
+            },(error,res) => {
+                // Android
+                console.log(
+                res.uri,
+                res.type, // mime type
+                res.fileName,
+                res.fileSize
+                );
+            });
+
+            // iPad
+            // const {pageX, pageY} = event.nativeEvent;
+
+            // DocumentPicker.show({
+            //     top: pageY,
+            //     left: pageX,
+            //     filetype: ['public.image'],
+            // }, (error, url) => {
+            //     alert(url);
+            // });
         } catch (e) {
             console.error(e);
         }

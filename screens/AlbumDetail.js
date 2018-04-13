@@ -45,14 +45,6 @@ export default class AlbumDetail extends React.Component {
     }
 
     async loadFonts() {
-        /*await Font.loadAsync({
-            'roboto-thin': require('../assets/fonts/Roboto-Thin.ttf'),
-            'roboto-regular': require('../assets/fonts/Roboto-Regular.ttf'),
-            'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
-            'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf'),
-            'roboto-bold-italic': require('../assets/fonts/Roboto-BoldItalic.ttf')
-        });*/
-
         this.setState({isReady: true});
     }
 
@@ -60,6 +52,20 @@ export default class AlbumDetail extends React.Component {
         if (this.props.navigation) {
             this.props.navigation.goBack();
         }
+    }
+
+    selectFile() {
+        DocumentPicker.show({
+            filetype: [DocumentPickerUtil.allFiles()],
+        },(error,res) => {
+            // Android
+            console.log(
+            res.uri,
+            res.type, // mime type
+            res.fileName,
+            res.fileSize
+            );
+        });
     }
 
     renderAlbumBody() {
@@ -110,7 +116,7 @@ export default class AlbumDetail extends React.Component {
 
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
-                <TouchableOpacity 
+                <TouchableOpacity onPress={() => this.selectFile()}
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={[styles.rowTextStyle, {color: Colors.black}, {marginTop: 4}]}>
                         Upload Attachements
@@ -268,20 +274,7 @@ export default class AlbumDetail extends React.Component {
                     {this.renderAlbumBody()}
 
                     {this.renderQuickViewSection()}
-                    {this.renderAllFilesGroup()}
-
-                    {/* <View style={{ height: 300 }}>
-                        <WebView
-                                style={ styles.WebViewContainer }
-                                javaScriptEnabled={true}
-                                domStorageEnabled={true}
-                                source={{uri: 'https://www.youtube.com/embed/gnKzljwIMdM'}}
-                        />
-                    </View>
-                    <View>
-                        <Image style={styles.bigImageContainer} source={{uri: 'http://www.urdesignmag.com/wordpress/wp-content/uploads/2015/01/3-gilles-boissier-designed-a-moncler-boutique-dedicated-entirely-to-men.jpg'}}/>
-                    </View> */}
-                    
+                    {this.renderAllFilesGroup()}                    
                     {this.renderActions()}
                 </ScrollView>
             </View>
@@ -506,19 +499,19 @@ UserNameView:{
 
 userNameTextStyle1:{
     fontSize:16,
-    fontFamily: 'roboto-light',
+    fontFamily: 'Roboto-Light',
     color:'black',
 },
 userNameTextStyle2:{
     marginTop: 4,
     fontSize:12,
-    fontFamily: 'roboto-light',
+    fontFamily: 'Roboto-Light',
     color: '#999999'
 },
 
 textStyle:{
     fontSize:15,
-    fontWeight:'bold',
+    fontFamily:'Roboto-Bold',
     color:'black',
   },
 });

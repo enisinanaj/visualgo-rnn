@@ -85,12 +85,10 @@ export default class MainToDo extends React.Component {
     }
 
     navigateToTaskSummary() {
+        var {data} = this.props;
         //ApplicationConfig.getInstance().index.hideSearchBar();
         //this.props.navigator.push(Router.getRoute('collabView'), {navigator: this.props.navigator});
-        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {
-            theme: {name: ''},
-            environment: {}
-        });
+        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: 131});
     }
 
     renderCardTitle() {

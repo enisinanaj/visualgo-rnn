@@ -26,7 +26,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import Octicons from 'react-native-vector-icons/Octicons';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Entyp from 'react-native-vector-icons/Entypo';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 import moment from 'moment';
 import locale from 'moment/locale/it'
@@ -58,7 +58,7 @@ export default class NewAlbum extends Component {
         this.state = {
             isReady: true,
             hasCameraPermission: null,
-            type: Camera.Constants.Type.back,
+            //type: Camera.Constants.Type.back,
             imageBrowserOpen: false,
             photos: [],
             files: [],

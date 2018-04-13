@@ -102,18 +102,7 @@ export default class TaskDetail extends Component {
     componentDidMount () {
         Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
-
-        this.loadFonts();
-    }
-
-    async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-regular': require('../../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf')
-        // });
-
-        this.setState({isReady: true});
+        this.loadTask(this.props.navigation.state.params.idtask);
     }
 
     componentWillUnmount() {
@@ -139,25 +128,61 @@ export default class TaskDetail extends Component {
         }
     }
 
-    renderHeader() {
-        var {data} = this.props.navigation.state.params;
+    async loadTask(idtask) {
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettask?idtask=" + idtask)
+        .then((response) => {return response.json()})
+        .then((responseJson) => {
+            //console.error("loading task album: " + idtask);
+            var parsedResponse = JSON.parse(responseJson);
 
+            //if (parsedResponse.taskout.post.medias.length == 0) {
+                //console.error("task album has no media! size: " + parsedResponse.taskout.post.medias.length);
+            //}
+
+            console.debug("loading task album: " + responseJson);
+            this.loadAlbum(parsedResponse.idalbum);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    async loadAlbum(idalbum) {
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
+        .then((response) => {return response.json()})
+        .then((responseJson) => {
+            //console.error("loading task album: " + idalbum);
+            var parsedResponse = JSON.parse(responseJson);
+
+            if (parsedResponse.taskout.post.medias.length == 0) {
+                //console.error("task album has no media! size: " + parsedResponse.taskout.post.medias.length);
+            }
+
+            console.debug("loading task album: " + responseJson);
+            this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme, isReady: true});
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    renderHeader() {
         return (
             <View style={{flexDirection: 'row', height: 48, alignItems: 'center', paddingLeft: 0,
                     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.gray}}>
                 <View style={{flex:1}}>
                     <Image style={{flex: 1, height: 48, width: width, 
                                     position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                    source={{uri: AWS_OPTIONS.bucketAddress + data.album.post.medias[0].url}} />
+                                    source={{uri: AWS_OPTIONS.bucketAddress + this.state.album.post.medias[0].url}} />
                     <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between'}}>
                         <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                             <TouchableOpacity onPress={() => this.goBack()}>
                                 <EvilIcons name={"close"} size={22} color={Colors.main}/>
                             </TouchableOpacity>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
-                                <Text style={styles.name}>Task {data.theme.tagName}</Text>
-                                <Text style={[styles.environment, {color: data.environment.mediaUrl}]}>
-                                    {data.environment.tagName}
+                                <Text style={styles.name}>Task {this.state.theme.tagName}</Text>
+                                <Text style={[styles.environment, {color: this.state.environment.mediaUrl}]}>
+                                    {this.state.environment.tagName}
                                 </Text>
                             </View>
                         </View>
@@ -268,15 +293,20 @@ export default class TaskDetail extends Component {
     renderText() {
         const {data} = this.props.navigation.state.params;
         
-        return (
-            <View style={{padding: 16, paddingBottom: 0}}>
-                {this.renderTextAvatar()}
-                <Text style={{height: 'auto', fontFamily: 'roboto-light', fontSize: 16, textAlign: 'left', paddingBottom: 5, marginBottom: 5}}
-                    numberOfLines = {6}>
-                    {data.name}
-                </Text>
-            </View>
-        )
+        if (data != undefined) {
+            return (
+                <View style={{padding: 16, paddingBottom: 0}}>
+                    {this.renderTextAvatar()}
+                    <Text style={{height: 'auto', fontFamily: 'roboto-light', fontSize: 16, textAlign: 'left', paddingBottom: 5, marginBottom: 5}}
+                        numberOfLines = {6}>
+                        {data.name}
+                    </Text>
+                </View>
+            );
+        }
+        
+        return null;
+        
     }
 
     renderStores() {
@@ -719,6 +749,8 @@ export default class TaskDetail extends Component {
     renderUploadAttach() {
         var {data} = this.props.navigation.state.params;
 
+        return null;
+
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
@@ -744,15 +776,22 @@ export default class TaskDetail extends Component {
 
     renderTextAvatar() {
         const {data} = this.props.navigation.state.params;
-        console.log("data: " + JSON.parse(data.profile));
-        const profile = JSON.parse(data.profile);
+        var name = "";
+        var surname = "";
+        try {
+            profile = JSON.parse(data.profile);
+            name = profile.name;
+            surname = profile.surname;
+        } catch(e) {
+            return null;
+        }
         moment.locale("it");
 
         return (
             <View style={styles.textAvatarContainer}>
                 <Image source={require('../img/me.png')} style={styles.profile}/>
                 <View style={{flexDirection:'column'}}>
-                    <Text style={styles.titleAvatar}>{profile.name} {profile.surname}</Text>
+                    <Text style={styles.titleAvatar}>{name} {surname}</Text>
                     <Text style={styles.subtitleAvatar}>{moment(new Date(data.created)).format("D MMMM [alle ore] HH:mm")}</Text>
                 </View>
             </View>
@@ -768,9 +807,9 @@ export default class TaskDetail extends Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //     return <AppLoading />
-        // }
+         if (!this.state.isReady) {
+             return <View />
+         }
 
         const {data} = this.props;
         

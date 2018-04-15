@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import Colors from '../constants/Colors';
 import ImageTile from './common/ImageTile';
-//import FileSystem from 'react-native-filesystem';
+
 import RNFetchBlob from 'react-native-fetch-blob';
 import { isIphoneX, getFileName, getFileExtension } from './helpers';
 import md5 from  'react-native-md5'

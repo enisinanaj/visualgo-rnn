@@ -219,7 +219,7 @@ export default class AppContainer extends React.Component {
             onCloseStart={() => this.closeMenu()}
             captureGestures={false}
             side="right">
-            <View style={styles.container}>
+            <View style={[styles.container, {width: width}]}>
               <Animated.View style={[{height: this.state.mainViewHeight, marginTop: this.state.marginTop}, {backgroundColor: Colors.white}]}>
                 <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden', 
                     width: this.state.width}}

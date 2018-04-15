@@ -24,6 +24,7 @@
     "react-native-aws3": "0.0.8",
     "react-native-calendars": "^1.17.7",
     "react-native-camera": "^1.0.3",
+    "react-native-camera-kit": "^5.3.32",
     "react-native-document-picker": "^2.1.0",
     "react-native-drawer": "^2.5.0",
     "react-native-exif": "^0.1.8",

@@ -167,10 +167,6 @@ export default class BlueMenu extends Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //   return <AppLoading />;
-        // }
-
         return (
             <View style={styles.drawer}>
                 <Image source={require('../img/dp1.jpg')} style={styles.selectableDisplayPicture} />

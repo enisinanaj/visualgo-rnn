@@ -87,7 +87,7 @@ class Landing extends Component {
     }
 
     componentDidMount() {
-        this.loadFonts(() => {setTimeout(() => {this.measureView()}, 0)});
+        setTimeout(() => {this.measureView()}, 0);
 
         for (i in filters) {
             if (filters[i].title == 'Survey') {
@@ -109,6 +109,7 @@ class Landing extends Component {
                 }
             }
         }
+        
         ApplicationConfig.getInstance().tabNavigator = this.props.navigation;
     }
 

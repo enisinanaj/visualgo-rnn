@@ -82,5 +82,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>Accesso alla fotocamera per permettere agli utenti di completare i task</string>
 </dict>
 </plist>

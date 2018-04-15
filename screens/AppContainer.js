@@ -154,7 +154,7 @@ export default class AppContainer extends React.Component {
       Animated.timing(
         this.state.width,
         {
-          toValue: width,
+          toValue: Dimensions.get('window').width,
           duration: 10,
         }
       )
@@ -217,6 +217,7 @@ export default class AppContainer extends React.Component {
             tweenDuration={DRAWER_ANIMATION_DURATION}
             acceptTap={true}
             onCloseStart={() => this.closeMenu()}
+            onClose={() => {this.setState({width: width})}}
             captureGestures={false}
             side="right">
             <View style={[styles.container, {width: width}]}>
@@ -272,11 +273,11 @@ const styles = StyleSheet.create({
   },
   drawer: {
     height,
-    padding: 8,
+    padding: 0,
     paddingTop: 20,
     width: width,
     position: 'absolute',
     backgroundColor: Colors.chat_bg,
     right: 0
-}
+  }
 });

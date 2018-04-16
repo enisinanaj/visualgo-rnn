@@ -12,6 +12,7 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 import { NavigatorIOS, WebView} from 'react-native';
 import moment from 'moment';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 
 //import {Font, AppLoading} from 'expo';
 import Colors from '../constants/Colors';
@@ -58,13 +59,8 @@ export default class AlbumDetail extends React.Component {
         DocumentPicker.show({
             filetype: [DocumentPickerUtil.allFiles()],
         },(error,res) => {
-            // Android
-            console.log(
-            res.uri,
-            res.type, // mime type
-            res.fileName,
-            res.fileSize
-            );
+            const { uri, type: mimeType, fileName } = res;
+            this.setState({files: [res]});
         });
     }
 

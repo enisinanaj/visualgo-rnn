@@ -45,7 +45,7 @@ export default class SearchBar extends Component {
 
     componentDidMount() {
         this.loadFonts();
-        setTimeout(() => {this.measureView()}, 0);
+        //setTimeout(() => {this.measureView()}, 0);
     }
 
     async loadFonts() {

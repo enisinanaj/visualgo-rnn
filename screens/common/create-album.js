@@ -168,12 +168,42 @@ export default class NewAlbum extends Component {
                 filetype: [DocumentPickerUtil.allFiles()],
             },(error,res) => {
                 // Android
-                console.log(
-                res.uri,
-                res.type, // mime type
-                res.fileName,
-                res.fileSize
-                );
+                const { uri, type: mimeType, fileName } = res;
+
+                this.setState({files: [res], visualGuidelineModal: true});
+
+                /*const formData = new FormData();
+                formData.append('file', { uri, type: mimeType, name: fileName });
+
+                let tempBody = JSON.stringify({
+                    albumvg: {
+                        iduser: String(ApplicationConfig.getInstance().me.id),
+                        idenvironment: String(this.props.environment.id),
+                        idtheme: String(this.props.selectedTheme.id),
+                        message: String(this.props.taskDescription),
+                        backgroundmediaurl: '',
+                        mediaurl: formData.uri,
+                        id: this.props.album != undefined ? this.props.album.taskout.id : null
+                    }
+                });
+
+                return fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createalbum", {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: tempBody
+                })
+                .then((response) => response.json())
+                .then((response) => {
+                    console.debug("Create album result: " + JSON.stringify(response));
+                    this.props.closeModal({reload: true, album: response})
+                })
+                .catch(e => {
+                    console.error("error: " + e);
+                })*/
+
             });
 
             // iPad

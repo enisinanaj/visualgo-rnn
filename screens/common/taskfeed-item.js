@@ -195,7 +195,7 @@ class TaskFeedItem extends Component {
         data.environment = this.state.environment;
         data.album = this.state.album;
         //this.props.navigation.navigate('MainCalendar');
-        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {data});
+        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: data.id});
     }
 
     renderTaskModal(data) {

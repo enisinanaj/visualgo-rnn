@@ -79,12 +79,29 @@ export default class ImageTile extends React.PureComponent {
                 permissionDialogTitle={'Permission to use camera'}
                 permissionDialogMessage={'We need your permission to use your camera phone'}
             />
-            <View style={{flex: 0, flexDirection: 'row', justifyContent: 'center',}}>
-                <TouchableOpacity
-                    onPress={this.snap.bind(this)}
-                    style = {cameraStyles.capture}>
-                    <Text style={{fontSize: 14}}> SNAP </Text>
-                </TouchableOpacity>
+            <TouchableOpacity onPress={() => {this.setState({cameraModal: false}); this.props.selectImage({cancelled: true});}} 
+                style={{backgroundColor: 'transparent', top: 30, left: 10, position: 'absolute'}}>
+                <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
+            </TouchableOpacity>
+            <View style={{flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'space-between', height: 70, width: width, position: 'absolute', bottom: 0}}>
+              <TouchableOpacity style={{marginLeft: 20, width: 60}}
+                onPress={() => {
+                  this.setState({
+                    type: this.state.type === RNCamera.Constants.Type.back
+                      ? RNCamera.Constants.Type.front
+                      : RNCamera.Constants.Type.back,
+                  });
+                }}>
+                <Ionicons name={"ios-reverse-camera-outline"} size={50} color={Colors.white} style={{marginTop: 5}}/>
+              </TouchableOpacity>
+              <TouchableOpacity style={{width: 62, position: 'absolute', left: width/2 - 30}}
+                onPress={() => {this.snap()}}>
+                <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center'}}>
+                  <View style={{width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#000', backgroundColor: '#fff', marginLeft: 6}}></View>
+                </View>
+              </TouchableOpacity>
+              <View>
+              </View>
             </View>
         </View>
       </Modal>)
@@ -92,10 +109,13 @@ export default class ImageTile extends React.PureComponent {
 
   snap = async () => {
       if (this.camera) {
-          const options = { quality: 0.5, base64: true };
-          const data = await this.camera.takePictureAsync(options)
-          console.log(data.uri);
-      }
+        const options = { quality: 0.5, base64: true };
+        console.debug("options: " + options);
+        const data = await this.camera.takePictureAsync(options)
+        console.debug("data uri: " + data);
+        this.setState({cameraModal: false});
+        this.props.selectImage(data);
+      }      
   };
 
   render() {

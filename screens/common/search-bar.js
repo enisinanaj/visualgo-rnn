@@ -44,24 +44,21 @@ export default class SearchBar extends Component {
     }
 
     componentDidMount() {
-        this.loadFonts(); //() => {setTimeout(() => {this.measureView()}, 0)});
+        this.loadFonts();
+        setTimeout(() => {this.measureView()}, 0);
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto': require('../../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf')
-        // });
-
         this.setState({isReady: true});
-        //onLoaded();
     }
 
     imageBrowserCallback = (callback) => {
         callback.then((photos) => {
-          console.warn(photos[0].uri, photos[0].md5)
+          if (photos.length == 0) {
+              this.setState({imageBrowserOpen: false});
+              return;
+          }
+          
           this.setState({
             imageBrowserOpen: false,
             photos
@@ -83,10 +80,6 @@ export default class SearchBar extends Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //     return <AppLoading />
-        // }
-
         const {height} = this.state;
 
         return (

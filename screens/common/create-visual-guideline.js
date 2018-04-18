@@ -153,8 +153,8 @@ export default class CreateVisualGuideline extends Component {
         let filesToPost = [];
         this.state.files.map((f, i) => {
             let tmp = {
-                id: f.md5 + '.' + getFileExtension(f),
-                type: 'image/' + getFileExtension(f)
+                id: (f.fileName != undefined ? f.fileName : f.md5) + '.' + getFileExtension(f),
+                type: getFileExtension(f) == 'pdf' ? 'application/pdf' : 'image/' + getFileExtension(f)
             };
             
             filesToPost.push(tmp);

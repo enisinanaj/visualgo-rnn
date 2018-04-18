@@ -53,6 +53,8 @@ import DefaultRow from './default-row';
 import { isIphoneX } from '../helpers';
 import { AWS_OPTIONS } from '../helpers/appconfig';
 
+import ApplicationConfig from '../helpers/appconfig';
+
 const messages = [{from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
                 {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo', read: true, date: new Date()},
                 {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem', read: false, date: new Date()},
@@ -94,7 +96,8 @@ export default class TaskDetail extends Component {
             notificationsEnabled: false,
             isReady: false,
             showTaskComment: false,
-            messages: ds.cloneWithRows(messages),
+            newMessage: '',
+            messages: ds.cloneWithRows([]),
             newCommentOnFocus: false
         }
     }
@@ -132,12 +135,7 @@ export default class TaskDetail extends Component {
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettask?idtask=" + idtask)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            //console.error("loading task album: " + idtask);
             var parsedResponse = JSON.parse(responseJson);
-
-            //if (parsedResponse.taskout.post.medias.length == 0) {
-                //console.error("task album has no media! size: " + parsedResponse.taskout.post.medias.length);
-            //}
 
             console.debug("loading task album: " + responseJson);
             this.loadAlbum(parsedResponse.idalbum);
@@ -151,12 +149,7 @@ export default class TaskDetail extends Component {
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            //console.error("loading task album: " + idalbum);
             var parsedResponse = JSON.parse(responseJson);
-
-            if (parsedResponse.taskout.post.medias.length == 0) {
-                //console.error("task album has no media! size: " + parsedResponse.taskout.post.medias.length);
-            }
 
             console.debug("loading task album: " + responseJson);
             this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme, isReady: true});
@@ -193,6 +186,40 @@ export default class TaskDetail extends Component {
                 </View>
             </View>
         )
+    }
+
+    reloadComments() {
+        messages = [];
+
+        this.setState({messages: ds.cloneWithRows(messages)})
+    }
+
+    async postComment() {
+
+        let taskComment = {
+            commentpost: {
+              iduser: "" + ApplicationConfig.getInstance().me.id,
+              idpost: "" + this.props.navigation.state.params.idtask,
+              comment: "" + this.state.newMessage,
+              mediaurl: []
+            }
+        };
+
+        await fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/commentpost', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(taskComment)
+            })
+            .then((response) => {
+                console.warn("Create task result: " + JSON.stringify(response));
+                this.reloadComments();
+            })
+            .catch(e => {
+                console.error("error: " + e);
+            })
     }
 
     renderFilters() {
@@ -667,18 +694,17 @@ export default class TaskDetail extends Component {
                                             value={this.state.newMessage}
                                             underlineColorAndroid={'rgba(0,0,0,0)'} onFocus={() => this.setState({newCommentOnFocus: true})}
                                             onBlur={() => this.setState({newCommentOnFocus: false})}/>
-
-                                        {this.state.newCommentOnFocus?
-                                            <TouchableOpacity>
-
-                                            </TouchableOpacity>
-                                        : null}
                                         
-                                        <View style={{height: 26, width: 26, marginTop: 5, marginRight: 10}}>
+                                        <View style={{height: 26, width: 60, marginTop: 5, marginRight: 10, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                             <Image
                                                 style={{flex: 1, width: undefined, height: undefined}}
                                                 source={require('../../assets/images/icons/camera.png')}
                                                 resizeMode="contain"/>
+                                            {this.state.newCommentOnFocus || this.state.newMessage.length > 0 ?
+                                                <TouchableOpacity onPress={() => this.postComment()} style={{marginLeft: 5, marginRight: 0}}>
+                                                    <Ionicons name={"md-send"} color={Colors.main} size={24}/>
+                                                </TouchableOpacity>
+                                            : null}
                                         </View>
                                     </View>
                                 </View>

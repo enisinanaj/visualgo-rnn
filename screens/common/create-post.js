@@ -721,7 +721,6 @@ const styles = StyleSheet.create({
         fontFamily: 'Roboto-Light',
         color: '#000000',
         fontSize: 16,
-        fontWeight: '500',
         paddingLeft: 4,
         paddingTop: 5
     },

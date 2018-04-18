@@ -269,19 +269,8 @@ export default class AlbumDetail extends React.Component {
     renderPdf(url) {
         const source = {uri:url, cache:true};
         return (
-            <View style={horizontalImages.img}>
-                <Pdf
-                    source={source}
-                    onLoadComplete={(numberOfPages,filePath)=>{
-                        console.log(`number of pages: ${numberOfPages}`);
-                    }}
-                    onPageChanged={(page,numberOfPages)=>{
-                        console.log(`current page: ${page}`);
-                    }}
-                    onError={(error)=>{
-                        console.error(error);
-                    }}
-                    style={styles.pdf}/>
+            <View style={[horizontalImages.img, {backgroundColor: Colors.grayText, justifyContent: 'center', alignItems: 'center'}]}>
+                <Text style={[styles.rowTextStyle, {color: '#FFFFFF', height: 'auto'}]}>PDF</Text>
             </View>
         );
     }

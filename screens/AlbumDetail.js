@@ -138,14 +138,18 @@ export default class AlbumDetail extends React.Component {
         );
     }
 
+    navigateToCollabView(data) {
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data});
+    }
+
     renderMedias() {
         const {data} = this.state;
         
         if(data.taskout.post.medias != undefined && data.taskout.post.medias.length > 0) {
             return data.taskout.post.medias.map((i, index) => {
-                return (<View key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]}> 
-                        <Image source={{uri: AWS_OPTIONS.bucketAddress + i.url}} style={horizontalImages.img} resizeMode={"cover"}/>
-                    </View>);
+                return (<TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}> 
+                            <Image source={{uri: AWS_OPTIONS.bucketAddress + i.url}} style={horizontalImages.img} resizeMode={"cover"}/>
+                        </TouchableOpacity>);
             });
         }
 

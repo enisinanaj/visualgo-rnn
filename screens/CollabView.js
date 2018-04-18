@@ -36,7 +36,7 @@ import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
 import AppSettings, { getProfile } from './helpers/index';
-import ApplicationConfig from './helpers/appconfig';
+import { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
 
@@ -78,10 +78,13 @@ export default class CollabView extends Component {
     constructor(props) {
         super(props);
 
+        var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
+
         this.state = {
             isReady: false,
             showTaskComment: false,
             commentsEnabled: false,
+            viewData: viewData,
             messages: ds.cloneWithRows(messages)
         };
     }
@@ -148,7 +151,11 @@ export default class CollabView extends Component {
     }
 
     renderCommentBar() {
-        var {height, visibleHeight} = this.state;
+        var {height, visibleHeight, viewData} = this.state;
+
+        if ((viewData != undefined) && (viewData != {})) {
+            return(null);
+        }
 
         if (this.state.showTaskComment) {
             return (
@@ -256,6 +263,8 @@ export default class CollabView extends Component {
         //     return <AppLoading />;
         // }
 
+        const {viewData} = this.state;
+
         return (
             <View style={[{flex: 1}, styles.container]}>
                 <StatusBar barStyle={'light-content'} animated={true}/>
@@ -265,9 +274,14 @@ export default class CollabView extends Component {
                 {this.renderHeader()}
                 <View style={{flex: 1, paddingBottom: 90}}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
-                        <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
-                        <Image source={{uri: 'http://retaildesignblog.net/wp-content/uploads/2012/11/VILA-Clothes-shop-by-Riis-Retail-Copenhagen.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
+                        {((viewData != undefined) && (viewData != {})) ?
+                            <Image source={{uri: AWS_OPTIONS.bucketAddress + this.state.viewData.url}} style={{height: null, width: width}} resizeMode={'cover'}/> :
+                            <View>
+                                <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
+                                <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
+                                <Image source={{uri: 'http://retaildesignblog.net/wp-content/uploads/2012/11/VILA-Clothes-shop-by-Riis-Retail-Copenhagen.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
+                            </View>
+                        }
                     </ScrollView>
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />
@@ -275,23 +289,24 @@ export default class CollabView extends Component {
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 64, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Image source={require('../assets/images/icons/share-icon.png')}  style={{width: 14, height: 18, backgroundColor: 'transparent', marginLeft: 10}}/>
                     </View>
-                    <View style={{position: 'absolute', right: 30, bottom: 60}}>
-                        <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
-                            <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
-                                <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
-                            </View>
-                            <View style={[styles.pinMenu, Shadow.filterShadow]}>
-                                <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
-                            </View>
-                            <View style={[styles.pinMenu, Shadow.filterShadow]}>
-                                <Feather name={"download"} size={23} color={Colors.main} style={{width: 23, height: 23, backgroundColor: 'transparent', marginTop: 15}}/>
-                            </View>
-                            <View style={[styles.pinMenu, Shadow.filterShadow]}
-                                onSelect={(it) => console.log("up")}>
-                                <Feather name={"thumbs-up"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
-                            </View>
-                        </RadialMenu>
-                    </View>
+                    {((viewData != undefined) && (viewData != {})) ? null :
+                        <View style={{position: 'absolute', right: 30, bottom: 60}}>
+                            <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
+                                <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
+                                    <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+                                </View>
+                                <View style={[styles.pinMenu, Shadow.filterShadow]}>
+                                    <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
+                                </View>
+                                <View style={[styles.pinMenu, Shadow.filterShadow]}>
+                                    <Feather name={"download"} size={23} color={Colors.main} style={{width: 23, height: 23, backgroundColor: 'transparent', marginTop: 15}}/>
+                                </View>
+                                <View style={[styles.pinMenu, Shadow.filterShadow]}
+                                    onSelect={(it) => console.log("up")}>
+                                    <Feather name={"thumbs-up"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
+                                </View>
+                            </RadialMenu>
+                        </View> }
                 </View>
                 {this.renderCommentBar()}
             </View>

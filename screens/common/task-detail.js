@@ -191,7 +191,7 @@ export default class TaskDetail extends Component {
     reloadComments() {
         messages = [];
 
-        this.setState({messages: ds.cloneWithRows(messages)})
+        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''})
     }
 
     async postComment() {

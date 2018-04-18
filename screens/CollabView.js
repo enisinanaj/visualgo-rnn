@@ -85,7 +85,7 @@ export default class CollabView extends Component {
             showTaskComment: false,
             commentsEnabled: false,
             viewData: viewData,
-            messages: ds.cloneWithRows(messages)
+            messages: ds.cloneWithRows([])
         };
     }
 
@@ -97,19 +97,46 @@ export default class CollabView extends Component {
     }
     
     async loadFonts() {
-        /*await Font.loadAsync({
-            'roboto-thin': require('../assets/fonts/Roboto-Thin.ttf'),
-            'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
-            'roboto': require('../assets/fonts/Roboto-Regular.ttf'),
-            'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf')
-        });*/
-
         this.setState({isReady: true});
     }
 
     componentWillUnmount() {
         Keyboard.removeListener('keyboardWillShow');
         Keyboard.removeListener('keyboardWillHide');
+    }
+
+    reloadComments() {
+        messages = [];
+
+        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''})
+    }
+
+    async postComment() {
+
+        let taskComment = {
+            commentpost: {
+              iduser: "" + ApplicationConfig.getInstance().me.id,
+              idpost: "" + this.props.navigation.state.params.idtask,
+              comment: "" + this.state.newMessage,
+              mediaurl: []
+            }
+        };
+
+        await fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/commentpost', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(taskComment)
+            })
+            .then((response) => {
+                console.warn("Create task result: " + JSON.stringify(response));
+                this.reloadComments();
+            })
+            .catch(e => {
+                console.error("error: " + e);
+            })
     }
 
     keyboardWillShow (e) {
@@ -197,11 +224,20 @@ export default class CollabView extends Component {
                                             placeholder={'Scrivi un commento...'}
                                             value={this.state.newMessage}
                                             underlineColorAndroid={'rgba(0,0,0,0)'} />
-                                        <View style={{height: 26, width: 26, marginTop: 5, marginRight: 10}}>
-                                            <Image
-                                                style={{flex: 1, width: undefined, height: undefined}}
-                                                source={require('../assets/images/icons/camera.png')}
-                                                resizeMode="contain"/>
+                                        
+                                        <View style={{height: 26, width: 60, marginTop: 5, marginRight: 10, flexDirection: 'row', justifyContent: 'flex-end'}}>
+                                            <View style={{height: 26, width: 26, marginTop: 5, marginRight: 10}}>
+                                                <Image
+                                                    style={{flex: 1, width: undefined, height: undefined}}
+                                                    source={require('../assets/images/icons/camera.png')}
+                                                    resizeMode="contain"/>
+                                            </View>
+
+                                            {this.state.newCommentOnFocus || this.state.newMessage.length > 0 ?
+                                                <TouchableOpacity onPress={() => this.postComment()} style={{marginLeft: 5, marginRight: 0}}>
+                                                    <Ionicons name={"md-send"} color={Colors.main} size={24}/>
+                                                </TouchableOpacity>
+                                            : null}
                                         </View>
                                     </View>
                                 </View>
@@ -259,10 +295,6 @@ export default class CollabView extends Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //     return <AppLoading />;
-        // }
-
         const {viewData} = this.state;
 
         return (
@@ -286,9 +318,9 @@ export default class CollabView extends Component {
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />
                     </View>
-                    <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 64, justifyContent: 'center'}, Shadow.filterShadow]}>
+                    {/* <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 64, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Image source={require('../assets/images/icons/share-icon.png')}  style={{width: 14, height: 18, backgroundColor: 'transparent', marginLeft: 10}}/>
-                    </View>
+                    </View> */}
                     {((viewData != undefined) && (viewData != {})) ? null :
                         <View style={{position: 'absolute', right: 30, bottom: 60}}>
                             <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>

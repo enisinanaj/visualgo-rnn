@@ -17,6 +17,7 @@ import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker
 //import {Font, AppLoading} from 'expo';
 import Colors from '../constants/Colors';
 import DefaultRow from './common/default-row';
+import BottomMenu from './common/BottomMenu';
 import { isIphoneX } from './helpers';
 import ImageVisualGuideline from './common/image-visual-guideline';
 import { AWS_OPTIONS } from './helpers/appconfig';
@@ -25,6 +26,8 @@ import Shadow from '../constants/Shadow';
 var {width, height} = Dimensions.get("window");
 
 export default class AlbumDetail extends React.Component {
+
+    bottomMenuContainer = {};
 
     constructor(props) {
         super(props);
@@ -53,6 +56,10 @@ export default class AlbumDetail extends React.Component {
         if (this.props.navigation) {
             this.props.navigation.goBack();
         }
+    }
+
+    openUploadMenu() {
+        this.bottomMenuContainer.open();
     }
 
     selectFile() {
@@ -112,7 +119,7 @@ export default class AlbumDetail extends React.Component {
 
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
-                <TouchableOpacity onPress={() => this.selectFile()}
+                <TouchableOpacity onPress={() => this.openUploadMenu()}
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <Text style={[styles.rowTextStyle, {color: Colors.black}, {marginTop: 4}]}>
                         Upload Attachements
@@ -269,6 +276,7 @@ export default class AlbumDetail extends React.Component {
                                 : <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>}
                 
                 {this.renderHeader()}
+                <BottomMenu ></BottomMenu>
 
                 <ScrollView style={{backgroundColor: Colors.white, paddingBottom: 80}} >
                     {this.renderAlbumBody()}

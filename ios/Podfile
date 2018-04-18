@@ -21,6 +21,8 @@ target 'v1rgo' do
   pod 'react-native-fetch-blob', :path => '../node_modules/react-native-fetch-blob'
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
+  pod 'react-native-pdf', :path => '../node_modules/react-native-pdf'
+
   target 'v1rgoTests' do
     inherit! :search_paths
     # Pods for testing

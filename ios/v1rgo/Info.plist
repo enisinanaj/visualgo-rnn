@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
 		<key>NSExceptionDomains</key>
 		<dict>
 			<key>localhost</key>
@@ -38,7 +40,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Accesso alla fotocamera per permettere agli utenti di completare i task</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Accesso alla galleria fotografica per il completamento dei task</string>
 	<key>UIAppFonts</key>

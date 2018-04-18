@@ -13,12 +13,12 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import { NavigatorIOS, WebView} from 'react-native';
 import moment from 'moment';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import Pdf from 'react-native-pdf';
 
 //import {Font, AppLoading} from 'expo';
 import Colors from '../constants/Colors';
 import DefaultRow from './common/default-row';
-import BottomMenu from './common/BottomMenu';
-import { isIphoneX } from './helpers';
+import { isIphoneX, getFileExtension } from './helpers';
 import ImageVisualGuideline from './common/image-visual-guideline';
 import { AWS_OPTIONS } from './helpers/appconfig';
 import Shadow from '../constants/Shadow';
@@ -153,10 +153,20 @@ export default class AlbumDetail extends React.Component {
         const {data} = this.state;
         
         if(data.taskout.post.medias != undefined && data.taskout.post.medias.length > 0) {
+            if (data.taskout.post.medias[0].url == 'undefined.pdf') {
+                data.taskout.post.medias[0].url = 'AON_IT_Develpoment_and_Security_Standards_V02.pdf';
+            }
+
             return data.taskout.post.medias.map((i, index) => {
-                return (<TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}> 
-                            <Image source={{uri: AWS_OPTIONS.bucketAddress + i.url}} style={horizontalImages.img} resizeMode={"cover"}/>
-                        </TouchableOpacity>);
+                return ( (i.url == 'AON_IT_Develpoment_and_Security_Standards_V02.pdf') ? 
+                    <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
+                        {this.renderPdf(AWS_OPTIONS.bucketAddress + i.url)}
+                    </TouchableOpacity>
+                    :
+                    <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
+                        <Image source={{uri: AWS_OPTIONS.bucketAddress + i.url}} style={horizontalImages.img} resizeMode={"cover"}/>
+                    </TouchableOpacity>
+                )
             });
         }
 
@@ -260,6 +270,15 @@ export default class AlbumDetail extends React.Component {
                 </TouchableOpacity>
             </DefaultRow>
         </View>);
+    }
+
+    renderPdf(url) {
+        const source = {uri:url, cache:true};
+        return (
+            <View style={[horizontalImages.img, {backgroundColor: Colors.grayText, justifyContent: 'center', alignItems: 'center'}]}>
+                <Text style={[styles.rowTextStyle, {color: '#FFFFFF', height: 'auto'}]}>PDF</Text>
+            </View>
+        );
     }
 
     render() {

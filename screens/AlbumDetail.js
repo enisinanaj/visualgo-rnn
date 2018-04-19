@@ -160,7 +160,7 @@ export default class AlbumDetail extends React.Component {
             return data.taskout.post.medias.map((i, index) => {
                 return ( (i.url == 'AON_IT_Develpoment_and_Security_Standards_V02.pdf') ? 
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
-                        {this.renderPdf(AWS_OPTIONS.bucketAddress + i.url)}
+                        {this.renderPdfIcon()}
                     </TouchableOpacity>
                     :
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
@@ -272,8 +272,7 @@ export default class AlbumDetail extends React.Component {
         </View>);
     }
 
-    renderPdf(url) {
-        const source = {uri:url, cache:true};
+    renderPdfIcon() {
         return (
             <View style={[horizontalImages.img, {backgroundColor: Colors.grayText, justifyContent: 'center', alignItems: 'center'}]}>
                 <Text style={[styles.rowTextStyle, {color: '#FFFFFF', height: 'auto'}]}>PDF</Text>
@@ -295,7 +294,6 @@ export default class AlbumDetail extends React.Component {
                                 : <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>}
                 
                 {this.renderHeader()}
-                <BottomMenu ></BottomMenu>
 
                 <ScrollView style={{backgroundColor: Colors.white, paddingBottom: 80}} >
                     {this.renderAlbumBody()}

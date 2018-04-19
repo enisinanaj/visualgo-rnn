@@ -149,12 +149,10 @@ const styles = StyleSheet.create({
   },
   doneEnabled: {
     color: Colors.main,
-    fontWeight: '800',
     fontSize: 18
   },
   doneDisabled: {
     color: Colors.greyText,
-    fontWeight: '200',
     fontSize: 18
   },
   bottomBar: {

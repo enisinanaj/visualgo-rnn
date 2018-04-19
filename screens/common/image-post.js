@@ -145,7 +145,7 @@ export default class ImagePost extends Component {
                                 <Image style={[styles.img, {marginLeft: 2, marginRight: 2}]} source={{uri: images[3].url}}/>
                                 <Image style={[styles.img, {marginLeft: 2}]} source={{uri: images[4].url}} />
                                 <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.7)', justifyContent: 'center', alignItems: 'center'}}>
-                                    <Text style={{fontSize: 18, color: 'white', fontWeight: '700'}}>
+                                    <Text style={{fontSize: 18, color: 'white'}}>
                                         + {imageCount - 5}
                                     </Text>
                                 </View>

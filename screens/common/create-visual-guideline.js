@@ -777,7 +777,6 @@ const styles = StyleSheet.create({
     selectedTheme: {
         color: Colors.main,
         fontSize: 26,
-        fontWeight: '500',
         paddingLeft: 5,
         paddingTop: 5,
         fontFamily: 'roboto-light'

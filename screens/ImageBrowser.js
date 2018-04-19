@@ -134,7 +134,7 @@ export default class ImageBrowser extends React.Component {
             title="Cancel"
             onPress={() => this.props.callback(Promise.resolve([]))}
           />
-          <Text style={{fontSize: 20, fontWeight: '800'}}>{headerText}</Text>
+          <Text style={{fontSize: 20}}>{headerText}</Text>
           <Button
             title="Done"
             onPress={() => this.prepareCallback()}
@@ -165,7 +165,7 @@ export default class ImageBrowser extends React.Component {
         keyExtractor={(_,index) => index}
         onEndReached={()=> {this.getPhotos()}}
         onEndReachedThreshold={0.5}
-        ListEmptyComponent={<Text style={{marginLeft: 15, marginTop: 15, fontSize: 20, fontWeight: '800'}}>Loading...</Text>}
+        ListEmptyComponent={<Text style={{marginLeft: 15, marginTop: 15, fontSize: 20}}>Loading...</Text>}
         initialNumToRender={24}
         getItemLayout={this.getItemLayout}
       />

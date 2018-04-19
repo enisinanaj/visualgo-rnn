@@ -385,7 +385,6 @@ const styles = StyleSheet.create({
     },
     viewTitle: {
         fontSize: 16,
-        fontWeight: '800',
         marginTop: 2
     },
     displayPicture: {

@@ -3,6 +3,9 @@ package com.v1rgo;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.actionsheet.ActionSheetPackage;
+import com.reactnativedocumentpicker.ReactNativeDocumentPicker;
+import com.wix.RNCameraKit.RNCameraKitPackage;
 import org.wonday.pdf.RCTPdfView;
 import org.reactnative.camera.RNCameraPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -30,6 +33,9 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new ActionSheetPackage(),
+            new ReactNativeDocumentPicker(),
+            new RNCameraKitPackage(),
             new RCTPdfView(),
             new RNCameraPackage(),
             new VectorIconsPackage(),

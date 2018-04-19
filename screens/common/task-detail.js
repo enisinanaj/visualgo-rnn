@@ -405,7 +405,7 @@ export default class TaskDetail extends Component {
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
                 <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}} onPress={() => this.setState({calendarModal: true})}>
                     {this.state.start != undefined && this.state.due != undefined ?
-                        <Text style={{color: 'gray', fontSize: 16, fontWeight: '200', paddingLeft: 2, paddingTop: 5, color: Colors.main}}>
+                        <Text style={{color: 'gray', fontSize: 16, paddingLeft: 2, paddingTop: 5, color: Colors.main}}>
                             {moment(this.state.start).locale("it").format("DD/MM/YYYY")} - {moment(this.state.due).locale("it").format("DD/MM/YYYY")}
                         </Text>
                     :
@@ -560,7 +560,7 @@ export default class TaskDetail extends Component {
                                 <Text style={[styles.rowTextStyle, {marginTop: 4}]}>{o.name}</Text>
                                 {(allTags.length == 0 || clustersLength == 0) && false ? <Text style={{color: 'red', marginLeft: 5}}>*</Text> : null }
                                 {o.innerName != undefined && o.innerName != '' ? 
-                                    <Text style={{color: Colors.main, fontSize: 16, fontWeight: '500', paddingLeft: 5, paddingTop: 5}}>{o.innerName}</Text>
+                                    <Text style={{color: Colors.main, fontSize: 16, paddingLeft: 5, paddingTop: 5}}>{o.innerName}</Text>
                                 : null}
                             </View>
                         </View>
@@ -955,7 +955,6 @@ const styles = StyleSheet.create({
     selectedTheme: {
         color: Colors.main,
         fontSize: 26,
-        fontWeight: '500',
         paddingLeft: 5,
         paddingTop: 5,
         fontFamily: 'roboto-light'
@@ -980,7 +979,6 @@ const styles = StyleSheet.create({
         fontFamily: 'roboto-light',
         color: '#000000',
         fontSize: 16,
-        fontWeight: '500',
         paddingLeft: 4
     },
 

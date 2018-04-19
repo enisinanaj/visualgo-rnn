@@ -14,6 +14,7 @@ import { NavigatorIOS, WebView} from 'react-native';
 import moment from 'moment';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import Pdf from 'react-native-pdf';
+import ActionSheet from '@yfuks/react-native-action-sheet';
 
 //import {Font, AppLoading} from 'expo';
 import Colors from '../constants/Colors';
@@ -22,16 +23,24 @@ import { isIphoneX, getFileExtension } from './helpers';
 import ImageVisualGuideline from './common/image-visual-guideline';
 import { AWS_OPTIONS } from './helpers/appconfig';
 import Shadow from '../constants/Shadow';
+import BottomMenu from './common/BottomMenu';
 
 var {width, height} = Dimensions.get("window");
 
 export default class AlbumDetail extends React.Component {
 
-    bottomMenuContainer = {};
+    bottomMenuContainer;
+    pictureButtons;
 
     constructor(props) {
         super(props);
         moment.locale("it");
+
+        this.pictureButtons = [
+            'Photo & Video Library',
+            'Use Camera',
+            'Cancel'
+        ];
 
         var {data} = this.props.navigation != undefined ? this.props.navigation.state.params : {};
 
@@ -62,7 +71,30 @@ export default class AlbumDetail extends React.Component {
         this.bottomMenuContainer.open();
     }
 
+    selectPicture() {
+        try {
+            this.bottomMenuContainer.close();
+        } catch(e) {
+
+        }
+
+        ActionSheet.showActionSheetWithOptions({
+            options: this.pictureButtons,
+            cancelButtonIndex: 2,
+            tintColor: Colors.main
+          },
+          (buttonIndex) => {
+            console.log('button clicked :', buttonIndex);
+          });
+    }
+
     selectFile() {
+        try {
+            this.bottomMenuContainer.close();
+        } catch(e) {
+
+        }
+
         DocumentPicker.show({
             filetype: [DocumentPickerUtil.allFiles()],
         },(error,res) => {
@@ -282,10 +314,6 @@ export default class AlbumDetail extends React.Component {
     }
 
     render() {
-        /*if (!this.state.isReady) {
-            return <AppLoading />;
-        }*/
-
         const {environment, theme, profile, taskout} = this.state.data;
         return ( 
             <View style={{height: this.state.visibleHeight}}>
@@ -295,7 +323,6 @@ export default class AlbumDetail extends React.Component {
                                 : <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>}
                 
                 {this.renderHeader()}
-                <BottomMenu ></BottomMenu>
 
                 <ScrollView style={{backgroundColor: Colors.white, paddingBottom: 80}} >
                     {this.renderAlbumBody()}
@@ -304,6 +331,8 @@ export default class AlbumDetail extends React.Component {
                     {this.renderAllFilesGroup()}                    
                     {this.renderActions()}
                 </ScrollView>
+                <BottomMenu referer={(b) => {this.bottomMenuContainer = b}}
+                    browse={() => this.selectFile()} picture={() => this.selectPicture()}/>
             </View>
         );
     }
@@ -363,7 +392,6 @@ headerContainer:{
         fontFamily: 'Roboto-Light',
         color: '#000000',
         fontSize: 16,
-        fontWeight: '500',
         paddingLeft: 5,
         paddingTop: 0
     },
@@ -458,13 +486,11 @@ addButtonStyle:{
         fontSize:15,
         marginRight:10,
         color:'blue',
-        fontWeight: 'bold'
     },
     
     
 TaskTag:{
         fontSize:15,
-        fontWeight:'bold',
         color:'pink',
       },
     

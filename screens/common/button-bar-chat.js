@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 14,
         backgroundColor: 'transparent',
-        fontWeight: '300',
         marginLeft: 8,
         color: Colors.main
     }

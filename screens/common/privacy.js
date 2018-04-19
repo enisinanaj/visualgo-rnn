@@ -45,10 +45,10 @@ export default class PostPrivacy extends Component {
           borderBottomColor: Colors.gray, flexDirection: 'row',
           justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
           <TouchableOpacity onPress={this.props.closeModal}>
-            <Text style={{color: Colors.main, fontWeight: '700', fontSize: 18}}>Cancel</Text>
+            <Text style={{color: Colors.main, fontSize: 18}}>Cancel</Text>
           </TouchableOpacity>
-          <Text style={{fontSize: 16, color: 'black', fontWeight: '600'}}>Select privacy</Text>
-          <Text style={{color: Colors.main, fontWeight: '700', fontSize: 18}}>Done</Text>
+          <Text style={{fontSize: 16, color: 'black'}}>Select privacy</Text>
+          <Text style={{color: Colors.main, fontSize: 18}}>Done</Text>
       </View>
     );
   }
@@ -144,7 +144,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   rowTitle: {
-    fontWeight: '400',
     fontSize: 18
   },
   rowSubTitle: {

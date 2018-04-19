@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
         borderRadius: 25
     },
     unreadMessage: {
-        fontWeight: '800'
     },
     modalContainer: {
       flex: 1,
@@ -182,7 +181,6 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
     },
     rowTitle: {
-      fontWeight: '400',
       fontSize: 18
     },
     rowSubTitle: {

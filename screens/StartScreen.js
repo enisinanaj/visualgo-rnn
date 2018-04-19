@@ -191,19 +191,16 @@ const styles = StyleSheet.create({
 
   textFieldContent: {
     fontSize: 52,
-    fontWeight: '100'
   },
 
   viewTitle: {
     fontSize: 20,
-    fontWeight: '800',
     color: Colors.main,
     justifyContent: 'center',
   },
 
   OrText:{
     fontSize: 16,
-    fontWeight: '800',
     color: Colors.main,
     marginLeft: 40,
     marginTop: 20,
@@ -211,7 +208,6 @@ const styles = StyleSheet.create({
 
   grayText:{
     fontSize: 14,
-    fontWeight: '100',
     color: Colors.grayText,
     marginLeft: 40,
     marginTop: 20,
@@ -220,7 +216,6 @@ const styles = StyleSheet.create({
 
   ShowPasswordText:{
     fontSize: 16,
-    fontWeight: '800',
     color: Colors.main,
     marginLeft: 40,
     marginTop: 0,
@@ -229,7 +224,6 @@ const styles = StyleSheet.create({
 
   ForgottenText:{
     fontSize: 16,
-    fontWeight: '800',
     color: Colors.yellow,
     marginLeft: 40,
     marginTop: 25,

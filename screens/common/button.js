@@ -88,7 +88,6 @@ const styles = StyleSheet.create({
     text: {
         backgroundColor: 'transparent',
         fontSize: 14,
-        fontWeight: '700',
         marginLeft: 8,
     },
 

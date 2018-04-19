@@ -285,7 +285,6 @@ const styles = StyleSheet.create({
     },
     filterBarHeader: {
         fontSize: 14,
-        fontWeight: '800',
         paddingLeft: 20,
         fontFamily: 'roboto-bold'
     },

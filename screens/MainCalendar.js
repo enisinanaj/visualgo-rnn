@@ -53,7 +53,7 @@ export default class CalendarView extends Component {
               borderBottomColor: Colors.gray, flexDirection: 'row',
               justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
               <TouchableOpacity onPress={() => {this.props.closeModal([])}}>
-                <Text style={{color: Colors.main, fontWeight: '200', fontSize: 18}}>Cancel</Text>
+                <Text style={{color: Colors.main, fontSize: 18}}>Cancel</Text>
               </TouchableOpacity>
           </View>
         );

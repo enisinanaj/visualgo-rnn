@@ -8,6 +8,7 @@
     "build:ios": "react-native bundle --entry-file='index.js' --bundle-output='./ios/main.jsbundle' --dev=false --platform='ios' --assets-dest='./ios'"
   },
   "dependencies": {
+    "@yfuks/react-native-action-sheet": "0.0.4",
     "chat-engine-gravatar": "0.0.8",
     "chat-engine-react-native": "0.0.9",
     "chat-engine-typing-indicator": "0.0.9",

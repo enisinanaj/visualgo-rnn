@@ -66,9 +66,9 @@ export default class NewGroup extends Component {
                 borderBottomColor: Colors.gray, flexDirection: 'row',
                 justifyContent: 'flex-start', alignItems: 'flex-start', padding: 16}}>
                 <TouchableOpacity onPress={this.props.closeModal}>
-                    <Text style={{fontSize: 16, color: 'black', fontWeight: '600', color: Colors.main, width: 60}}>Cancel</Text>
+                    <Text style={{fontSize: 16, color: 'black', color: Colors.main, width: 60}}>Cancel</Text>
                 </TouchableOpacity>
-                <Text style={{fontSize: 16, color: 'black', fontWeight: '600', marginLeft: 75}}>New Group</Text>
+                <Text style={{fontSize: 16, color: 'black', marginLeft: 75}}>New Group</Text>
                 
             </View>
 
@@ -198,7 +198,7 @@ export default class NewGroup extends Component {
                 <View style={[styles.selectedTags, this._selectedManagerNotEmpty() ? {height: 60, padding: 10} : {}]}>
                     {this._renderSelectedTags()}
                     <TouchableOpacity  onPress={() => this.props.closeModal(this.state.selectedTags)}>
-                        {people.filter((el) => el.selected).length > 0 ? <Text style={{color: Colors.white, fontWeight: '700', fontSize: 18, paddingRight: 10, marginTop: 8}}>Create Group</Text> : null }
+                        {people.filter((el) => el.selected).length > 0 ? <Text style={{color: Colors.white, fontSize: 18, paddingRight: 10, marginTop: 8}}>Create Group</Text> : null }
                     </TouchableOpacity>
                 </View>
             </View>
@@ -210,8 +210,7 @@ const styles = StyleSheet.create({
     textFieldContent: {
         flex: 1,
         width: 260,
-        fontSize: 20,
-        fontWeight: '100'
+        fontSize: 20
         
       },
       textField: {
@@ -259,7 +258,6 @@ const styles = StyleSheet.create({
     },
     viewTitle: {
         fontSize: 16,
-        fontWeight: '800',
         marginTop: 2
     },
     displayPicture: {
@@ -327,7 +325,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
       },
       rowTitle: {
-        fontWeight: '400',
         fontSize: 18
       },
       rowSubTitle: {

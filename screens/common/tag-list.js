@@ -386,7 +386,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   rowTitle: {
-    fontWeight: '400',
     fontSize: 18
   },
   rowSubTitle: {

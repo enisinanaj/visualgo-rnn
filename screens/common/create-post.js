@@ -571,7 +571,7 @@ export default class CreatePost extends Component{
                     <TouchableOpacity onPress={o.onPress} style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                         <Text style={styles.rowTextStyle}>{o.name}</Text>
                         {o.innerName != undefined && o.innerName != '' ? 
-                            <Text style={{color: Colors.main, fontSize: 16, fontWeight: '500', paddingLeft: 5, paddingTop: 5}}>{o.innerName}</Text>
+                            <Text style={{color: Colors.main, fontSize: 16, paddingLeft: 5, paddingTop: 5}}>{o.innerName}</Text>
                         : null}
                         <EvilIcons name={"chevron-right"} color={Colors.main} size={32} style={{marginRight: 10}} />
                     </TouchableOpacity>

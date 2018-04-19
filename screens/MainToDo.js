@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, FlatList, Platform, fontWeight, 
+import { StyleSheet, FlatList, Platform, 
     Image, backgroundColor, Text, fontFamily, fontSize, View, 
     Button, TouchableHighlight, TextInput, TouchableOpacity, 
     Alert, ScrollView, Dimensions, Modal} from 'react-native';

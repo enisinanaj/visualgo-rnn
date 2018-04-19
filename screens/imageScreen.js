@@ -85,10 +85,10 @@ export default class ImageScreen extends Component {
               justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
               <View style={{width: 30}}></View>
               {this.state.canEdit ?
-                <Text style={{fontSize: 16, color: 'black', fontWeight: '600', alignContent: 'center', alignSelf: 'center'}}>Edit</Text>
+                <Text style={{fontSize: 16, color: 'black', alignContent: 'center', alignSelf: 'center'}}>Edit</Text>
               : null}
               <TouchableOpacity onPress={() => this.props.onClose(this.state.images)}>
-                <Text style={{color: Colors.main, fontWeight: '700', fontSize: 18}}>Done</Text>
+                <Text style={{color: Colors.main, fontSize: 18}}>Done</Text>
               </TouchableOpacity>
           </View>
         );

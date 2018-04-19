@@ -29,13 +29,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 
 //import { withNavigation } from '@expo/ex-navigation';
 import RadialMenu from 'react-native-radial-menu';
+import Pdf from 'react-native-pdf';
 
 import Colors from '../constants/Colors';
 import CommentBar from '../constants/commentBar';
 import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
-import AppSettings, { getProfile } from './helpers/index';
+import AppSettings, { getProfile, getFileExtension } from './helpers/index';
 import { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
@@ -85,7 +86,9 @@ export default class CollabView extends Component {
             showTaskComment: false,
             commentsEnabled: false,
             viewData: viewData,
-            messages: ds.cloneWithRows([])
+            messages: ds.cloneWithRows([]),
+            paddingBottomScrollV: 90,
+            bottomDots: 100
         };
     }
 
@@ -94,6 +97,7 @@ export default class CollabView extends Component {
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadFonts();
         this._mounted = true;
+        {((this.state.viewData != undefined) && (this.state.viewData != {})) ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
     }
     
     async loadFonts() {
@@ -175,6 +179,26 @@ export default class CollabView extends Component {
                     </View>
                 </TouchableOpacity>
             </View>);
+    }
+
+    renderPdf(url) {
+        const source = {uri:url, cache:false};
+        return (
+            <View style={[styles.containerPdf, {height: height, width: width}]}>
+                <Pdf
+                    source={source}
+                    onLoadComplete={(numberOfPages,filePath)=>{
+                        console.log(`number of pages: ${numberOfPages}`);
+                    }}
+                    onPageChanged={(page,numberOfPages)=>{
+                        console.log(`current page: ${page}`);
+                    }}
+                    onError={(error)=>{
+                        console.error(error);
+                    }}
+                    style={styles.pdf}/>
+            </View>
+        );
     }
 
     renderCommentBar() {
@@ -296,7 +320,7 @@ export default class CollabView extends Component {
 
     render() {
         const {viewData} = this.state;
-
+        
         return (
             <View style={[{flex: 1}, styles.container]}>
                 <StatusBar barStyle={'light-content'} animated={true}/>
@@ -304,18 +328,19 @@ export default class CollabView extends Component {
                     <View style={{height: 20, backgroundColor: Colors.main, width: width}}></View> 
                 : null}
                 {this.renderHeader()}
-                <View style={{flex: 1, paddingBottom: 90}}>
+                <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
                         {((viewData != undefined) && (viewData != {})) ?
-                            <Image source={{uri: AWS_OPTIONS.bucketAddress + this.state.viewData.url}} style={{height: null, width: width}} resizeMode={'cover'}/> :
+                        (getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.bucketAddress + viewData.data.url) :
+                            <Image source={{uri: AWS_OPTIONS.bucketAddress + viewData.data.url}} style={{height: null, width: width}} resizeMode={'cover'}/> :
                             <View>
-                                <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
-                                <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
-                                <Image source={{uri: 'http://retaildesignblog.net/wp-content/uploads/2012/11/VILA-Clothes-shop-by-Riis-Retail-Copenhagen.jpg'}} style={{height: null, width: width}} resizeMode={'cover'}/>
+                                <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
+                                <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
+                                <Image source={{uri: 'http://retaildesignblog.net/wp-content/uploads/2012/11/VILA-Clothes-shop-by-Riis-Retail-Copenhagen.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
                             </View>
                         }
                     </ScrollView>
-                    <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
+                    <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />
                     </View>
                     {/* <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 64, justifyContent: 'center'}, Shadow.filterShadow]}>
@@ -350,6 +375,16 @@ export default class CollabView extends Component {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
+    },
+
+    containerPdf: {
+        flex: 1,
+        //justifyContent: 'flex-start',
+        //alignItems: 'center',
+        marginTop: 0,
+    },
+    pdf: {
+        flex:1
     },
 
     mainPinMenuButton: {

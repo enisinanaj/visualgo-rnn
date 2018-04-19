@@ -192,7 +192,7 @@ export default class AlbumDetail extends React.Component {
             return data.taskout.post.medias.map((i, index) => {
                 return ( (i.url == 'AON_IT_Develpoment_and_Security_Standards_V02.pdf') ? 
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
-                        {this.renderPdf(AWS_OPTIONS.bucketAddress + i.url)}
+                        {this.renderPdfIcon()}
                     </TouchableOpacity>
                     :
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
@@ -304,8 +304,7 @@ export default class AlbumDetail extends React.Component {
         </View>);
     }
 
-    renderPdf(url) {
-        const source = {uri:url, cache:true};
+    renderPdfIcon() {
         return (
             <View style={[horizontalImages.img, {backgroundColor: Colors.grayText, justifyContent: 'center', alignItems: 'center'}]}>
                 <Text style={[styles.rowTextStyle, {color: '#FFFFFF', height: 'auto'}]}>PDF</Text>

@@ -19,8 +19,6 @@ import {
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import { RNCamera } from 'react-native-camera';
 
-//import {Camera, Permissions, ImagePicker} from 'expo';
-//import {Font, AppLoading, DocumentPicker} from 'expo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -31,12 +29,14 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 import moment from 'moment';
 import locale from 'moment/locale/it'
+import ActionSheet from '@yfuks/react-native-action-sheet';
 
 import DefaultRow from './default-row';
 import NoOpModal from './NoOpModal';
 
 import ImageBrowser from '../ImageBrowser';
 import CreateVisualGuideline from '../common/create-visual-guideline';
+import BottomMenu from '../common/BottomMenu';
 
 import Colors from '../../constants/Colors';
 import DisabledStyle from '../../constants/DisabledStyle';
@@ -48,18 +48,22 @@ const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 
 export default class NewAlbum extends Component {
 
+    pictureButtons;
+
     constructor(props) {
         super(props);
 
         this.closeThis = this.props.closeModal;
 
-        console.log("env: " + JSON.stringify(this.props.environment));
-        console.log("theme: " + JSON.stringify(this.props.theme));
+        this.pictureButtons = [
+            'Photo & Video Library',
+            'Use Camera',
+            'Cancel'
+        ];
 
         this.state = {
             isReady: true,
             hasCameraPermission: null,
-            //type: Camera.Constants.Type.back,
             imageBrowserOpen: false,
             photos: [],
             files: [],
@@ -67,16 +71,6 @@ export default class NewAlbum extends Component {
             cameraModal: false,
             hasCameraPermission: null
         }
-    }
-
-    async componentWillMount() {
-        // const { status } = await Permissions.askAsync(Permissions.CAMERA);
-        // this.setState({ hasCameraPermission: status === 'granted' });
-    }
-
-    async componentDidMount() {
-        // const { status } = await Permissions.askAsync(Permissions.CAMERA);
-        // this.setState({ hasCameraPermission: status === 'granted' });
     }
     
     renderCameraModal() {  
@@ -117,8 +111,8 @@ export default class NewAlbum extends Component {
                     permissionDialogTitle={'Permission to use camera'}
                     permissionDialogMessage={'We need your permission to use your camera phone'}
                 />
-                <TouchableOpacity onPress={() => {this.setState({cameraModal: false}); this.props.selectImage({cancelled: true});}} 
-                style={{backgroundColor: 'transparent', top: 30, left: 10, position: 'absolute'}}>
+                <TouchableOpacity onPress={() => {this.setState({cameraModal: false});}} 
+                    style={{backgroundColor: 'transparent', top: 30, left: 10, position: 'absolute'}}>
                     <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
                 </TouchableOpacity>
                 <View style={{flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'space-between', height: 70, width: width, position: 'absolute', bottom: 0}}>
@@ -160,6 +154,12 @@ export default class NewAlbum extends Component {
 
     imageBrowserCallback = (callback) => {
         callback.then((photos) => {
+
+            if (photos.length == 0) {
+                this.setState({imageBrowserOpen: false});
+                return;
+            }
+
           this.setState({
             imageBrowserOpen: false,
             photos
@@ -183,60 +183,24 @@ export default class NewAlbum extends Component {
 
     async _getDocuments() {
         try {
+            this.bottomMenuContainer.close();
+        } catch(e) {
+
+        }
+
+        try {
             // iPhone/Android
             DocumentPicker.show({
                 filetype: [DocumentPickerUtil.allFiles()],
             },(error,res) => {
                 // Android
                 const { uri, type: mimeType, fileName } = res;
+                console.log("file: " + res);
 
                 this.setState({files: [res], visualGuidelineModal: true});
-
-                /*const formData = new FormData();
-                formData.append('file', { uri, type: mimeType, name: fileName });
-
-                let tempBody = JSON.stringify({
-                    albumvg: {
-                        iduser: String(ApplicationConfig.getInstance().me.id),
-                        idenvironment: String(this.props.environment.id),
-                        idtheme: String(this.props.selectedTheme.id),
-                        message: String(this.props.taskDescription),
-                        backgroundmediaurl: '',
-                        mediaurl: formData.uri,
-                        id: this.props.album != undefined ? this.props.album.taskout.id : null
-                    }
-                });
-
-                return fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createalbum", {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: tempBody
-                })
-                .then((response) => response.json())
-                .then((response) => {
-                    console.debug("Create album result: " + JSON.stringify(response));
-                    this.props.closeModal({reload: true, album: response})
-                })
-                .catch(e => {
-                    console.error("error: " + e);
-                })*/
-
             });
-
-            // iPad
-            // const {pageX, pageY} = event.nativeEvent;
-
-            // DocumentPicker.show({
-            //     top: pageY,
-            //     left: pageX,
-            //     filetype: ['public.image'],
-            // }, (error, url) => {
-            //     alert(url);
-            // });
         } catch (e) {
+            this.bottomMenuContainer.open();
             console.error(e);
         }
     }
@@ -312,17 +276,28 @@ export default class NewAlbum extends Component {
         )
     }
 
-    // async openCamera() {
-    //     let options = {
-    //       allowsEditing: true,
-    //       quality: 1,
-    //       base64: true
-    //     };
-    
-    //     let image = await ImagePicker.launchCameraAsync(options);
-    //     this.setState({pictureTaken: image, files: [image]});
-    //     this.setState({visualGuidelineModal: true});
-    // };
+    selectPicture() {
+        try {
+            this.bottomMenuContainer.close();
+        } catch(e) {
+
+        }
+
+        ActionSheet.showActionSheetWithOptions({
+            options: this.pictureButtons,
+            cancelButtonIndex: 2,
+            tintColor: Colors.main
+          },
+          (buttonIndex) => {
+              if (buttonIndex == 1) {
+                this.setState({cameraModal: true})
+              } else if (buttonIndex == 0) {
+                this.setState({imageBrowserOpen: true})
+              } else if (buttonIndex == 2) {
+                this.bottomMenuContainer.open();
+              }
+          });
+    }
 
     render() {
         // if (!this.state.isReady) {
@@ -345,32 +320,8 @@ export default class NewAlbum extends Component {
                         {this.props.theme.themeName} - <Text style={{color: this.props.environment.background}}>{this.props.environment.environmentName}</Text>"
                     </Text>
                 </View>
-                <View style={[styles.optionsMenu, Shadow.cardShadow]}>
-                    <DefaultRow style={{backgroundColor: 'transparent', padding: 12}}>
-                        <TouchableOpacity onPress={() => {this.setState({imageBrowserOpen: true})}} style={{flex: 1}}>
-                            <Text style={styles.menuElement}>Photos and Videos</Text>
-                        </TouchableOpacity>
-                    </DefaultRow>
-                    <DefaultRow style={{backgroundColor: 'transparent', padding: 12}}>
-                        <TouchableOpacity onPress={() => this.setState({cameraModal: true})}  style={{flex: 1}}>
-                            <Text style={styles.menuElement}>Take Picture</Text>
-                        </TouchableOpacity>
-                    </DefaultRow>
-                    <DefaultRow style={{backgroundColor: 'transparent', padding: 12}}>
-                        <TouchableOpacity style={{flexDirection: 'row', flex: 1, height: 20, justifyContent: 'space-between'}} 
-                            onPress={() => this._getDocuments()}>
-                            <Text style={styles.menuElement}>Browse</Text>
-                            <Entypo name={"dots-three-horizontal"} size={22} color={Colors.main} style={{marginBottom: 5}}/>
-                        </TouchableOpacity>
-                    </DefaultRow>
-                </View>
-                <View style={[styles.optionsMenu, Shadow.cardShadow]}>
-                    <DefaultRow style={{backgroundColor: 'transparent', padding: 12}}>
-                        <TouchableOpacity onPress={() => this.closeThis({})} style={{flex: 1}}>
-                            <Text style={[styles.menuElement, {textAlign: 'center', color: Colors.main}]}>Cancel</Text>
-                        </TouchableOpacity>
-                    </DefaultRow>
-                </View>
+                <BottomMenu referer={(b) => {this.bottomMenuContainer = b; this.bottomMenuContainer.open()}}
+                    browse={() => this._getDocuments()} picture={() => this.selectPicture()}/>
                 {this._renderImagePickerModal()}
                 {this.allGuidelineData()}
                 {this.renderCameraModal()}

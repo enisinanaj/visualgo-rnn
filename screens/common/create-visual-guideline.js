@@ -16,7 +16,6 @@ import {
     ScrollView
 } from 'react-native';
 
-// import {Font, AppLoading} from 'expo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -29,6 +28,10 @@ import moment from 'moment';
 import locale from 'moment/locale/it';
 import {RNS3} from 'react-native-aws3';
 import * as Progress from 'react-native-progress';
+import ActionSheet from '@yfuks/react-native-action-sheet';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import { RNCamera } from 'react-native-camera';
+import ImageBrowser from '../ImageBrowser';
 
 import Colors from '../../constants/Colors';
 import ThemeList from './theme-list';
@@ -41,6 +44,7 @@ import TaskDescription from './task-description';
 import Shadow from '../../constants/Shadow';
 import { isIphoneX, getFileName, getFileExtension } from '../helpers';
 import {AWS_OPTIONS} from '../helpers/appconfig';
+import BottomMenu from '../common/BottomMenu';
 
 const {width, height} = Dimensions.get('window');
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -51,6 +55,8 @@ const backgroundColorsArray = ['#6923b6', '#7c71de',
 
                                
 export default class CreateVisualGuideline extends Component {
+    pictureButtons;
+
     constructor(props) {
         super(props);
 
@@ -60,15 +66,18 @@ export default class CreateVisualGuideline extends Component {
         let isNestedView = this.props.nestedView || false;
         let onBackClosure = this.props.onBackClosure || undefined;
 
+        this.pictureButtons = [
+            'Photo & Video Library',
+            'Use Camera',
+            'Cancel'
+        ];
+
         var description = '';
         try {
             description = this.props.album.taskout.post.message || '';
         } catch (e) {
             // suffocate
         }
-
-
-        console.log("album: " + JSON.stringify(this.props.album));
 
         let files = this.props.files || [];
 
@@ -101,7 +110,7 @@ export default class CreateVisualGuideline extends Component {
             taskDescription: description || '',
             commentsEnabled: false,
             notificationsEnabled: false,
-            isReady: false,
+            isReady: true,
             selectedTheme: selectedTheme,
             environment: environment,
             sharedClicked: false,
@@ -110,7 +119,9 @@ export default class CreateVisualGuideline extends Component {
             files: files,
             onBackClosure: onBackClosure,
             fileprogress: [],
-            album: album
+            album: album,
+            cameraModal: false,
+            imageBrowserOpen: false
         }
     }
 
@@ -118,18 +129,7 @@ export default class CreateVisualGuideline extends Component {
         Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
 
-        this.loadFonts();
         this.uploadFiles();
-    }
-
-    async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-regular': require('../../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf')
-        // });
-
-        this.setState({isReady: true});
     }
 
     componentWillUnmount() {
@@ -172,8 +172,6 @@ export default class CreateVisualGuideline extends Component {
             }
         });
 
-        console.log('Body: ' + tempBody);
-
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createalbum', {
             method: 'POST',
             headers: {
@@ -184,7 +182,6 @@ export default class CreateVisualGuideline extends Component {
         })
         .then((response) => response.json())
         .then((response) => {
-            console.debug("Create album result: " + JSON.stringify(response));
             this.props.closeModal({reload: true, album: response})
         })
         .catch(e => {
@@ -194,6 +191,11 @@ export default class CreateVisualGuideline extends Component {
 
     async uploadFiles() {
         await this.state.files.map((file, i) => {
+
+            if (this.state.files[i].done) {
+                return true;
+            }
+
             const fileObj = {
                 uri: file.uri != null ? file.uri : file.file,
                 name: file.md5 ? file.md5 + '.' + getFileExtension(file) : getFileName(file),
@@ -208,12 +210,123 @@ export default class CreateVisualGuideline extends Component {
             })
             .then(response => {
                 if (response.status !== 201)
-                throw new Error("Failed to upload image to S3");
+                    throw new Error("Failed to upload image to S3");
+                
+                this.state.files[i].done = true;
             })
             .catch(function(error) {
                 console.log(error);
             });
         })
+    }
+
+    renderCameraModal() {  
+        const cameraStyles = StyleSheet.create({
+            container: {
+              flex: 1,
+              flexDirection: 'column',
+              backgroundColor: 'black'
+            },
+            preview: {
+              flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'center'
+            },
+            capture: {
+              flex: 0,
+              backgroundColor: '#fff',
+              borderRadius: 5,
+              padding: 15,
+              paddingHorizontal: 20,
+              alignSelf: 'center',
+              margin: 20
+            }
+          });
+
+        
+        return (<Modal
+            animationType={"fade"}
+            transparent={false}
+            visible={this.state.cameraModal}
+            onRequestClose={() => this.setState({cameraModal: false})}>
+            <View style={cameraStyles.container}>
+                <RNCamera
+                    ref={ref => {this.camera = ref;}}
+                    style = {cameraStyles.preview}
+                    type={RNCamera.Constants.Type.back}
+                    flashMode={RNCamera.Constants.FlashMode.on}
+                    permissionDialogTitle={'Permission to use camera'}
+                    permissionDialogMessage={'We need your permission to use your camera phone'}
+                />
+                <TouchableOpacity onPress={() => {this.setState({cameraModal: false});}} 
+                    style={{backgroundColor: 'transparent', top: 30, left: 10, position: 'absolute'}}>
+                    <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
+                </TouchableOpacity>
+                <View style={{flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'space-between', height: 70, width: width, position: 'absolute', bottom: 0}}>
+                    <TouchableOpacity style={{marginLeft: 20, width: 60}}
+                        onPress={() => {
+                        this.setState({
+                            type: this.state.type === RNCamera.Constants.Type.back
+                            ? RNCamera.Constants.Type.front
+                            : RNCamera.Constants.Type.back,
+                        });
+                        }}>
+                        <Ionicons name={"ios-reverse-camera-outline"} size={50} color={Colors.white} style={{marginTop: 5}}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{width: 62, position: 'absolute', left: width/2 - 30}}
+                        onPress={() => {this.snap()}}>
+                        <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center'}}>
+                        <View style={{width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#000', backgroundColor: '#fff', marginLeft: 6}}></View>
+                        </View>
+                    </TouchableOpacity>
+                    <View>
+                    </View>
+                </View>
+            </View>
+          </Modal>)
+    }
+
+    snap = async () => {
+        if (this.camera) {
+            const options = { quality: 0.5, base64: true };
+            const data = await this.camera.takePictureAsync(options)
+            this.setState({
+                cameraModal: false,
+                files: [...this.state.files, data],
+            });
+
+            this.uploadFiles();
+        }
+    };
+
+    imageBrowserCallback = (callback) => {
+        callback.then((photos) => {
+
+            if (photos.length == 0) {
+                this.setState({imageBrowserOpen: false});
+                return;
+            }
+
+          this.setState({
+            imageBrowserOpen: false,
+            files: [...this.state.files, ...photos]
+          });
+
+          this.uploadFiles();
+        }).catch((e) => console.log(e))
+    }
+
+    _renderImagePickerModal() {
+        return (
+            <Modal
+                animationType={"slide"}
+                transparent={false}
+                visible={this.state.imageBrowserOpen}
+                onRequestClose={() => this.setState({imageBrowserOpen: false})}>
+                
+                <ImageBrowser max={4} callback={this.imageBrowserCallback}/>
+            </Modal>
+        );
     }
 
     renderHeader() {
@@ -226,7 +339,7 @@ export default class CreateVisualGuideline extends Component {
                 justifyContent: 'space-between', alignItems: 'center', padding: 16, height: 48}}>
                 <TouchableOpacity onPress={this.props.closeModal}>
                     {this.state.onBackClosure ? 
-                        <EvilIcons name={"chevron-left"} size={28} color={Colors.main} style={{marginLeft: - 10, marginTop: 4}}/>    
+                        <EvilIcons name={"chevron-left"} size={28} color={Colors.main} style={{marginLeft: - 10, marginTop: 0}}/>    
                     :   <EvilIcons name={"close"} size={22} color={Colors.main}/>}
                 </TouchableOpacity>
                 <View>
@@ -456,14 +569,6 @@ export default class CreateVisualGuideline extends Component {
         );
     }
 
-    // _getDocuments() {
-    //     try {
-    //         Expo.DocumentPicker.getDocumentAsync({});
-    //     } catch (e) {
-            
-    //     }
-    // }
-
     renderUploadAttach() {
 
         var {environment, selectedTheme} = this.state;
@@ -472,7 +577,7 @@ export default class CreateVisualGuideline extends Component {
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderBottomColor: Colors.borderGray, borderBottomWidth: StyleSheet.hairlineWidth}}>
-                <TouchableOpacity onPress={() => {}} 
+                <TouchableOpacity onPress={() => {this.bottomMenuContainer.open()}} 
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}} 
                     disabled={isDisabled}>
                     <Text style={[styles.rowTextStyle, isDisabled ? {color: Colors.grayText} : {color: Colors.black}, {marginTop: 4}]}>
@@ -646,7 +751,6 @@ export default class CreateVisualGuideline extends Component {
     }
 
     renderFileRows() {
-        //<Progress.CircleSnail size={22} animated={true} progress={this.state.fileprogress[i]} color={Colors.main} thickness={2} hidesWhenStopped={true} />
         return this.state.files.map((file, i) => {
             return <DefaultRow key={i} style={{height: 55, padding: 16, paddingLeft: 11}}>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
@@ -654,7 +758,7 @@ export default class CreateVisualGuideline extends Component {
                         {getFileExtension(file) == 'PNG' || getFileExtension(file) == 'JPG' ? 
                             <Image source={{uri: file.uri != null ? file.uri : file.file}} style={{height: 40, width: 40, borderRadius: 3, marginLeft: 5}} resizeMode={'cover'} />
                             : null}
-                        <Text style={[styles.rowTextStyle, {flex: 1, paddingTop: 10, marginLeft: 5, marginRight: 50}]} numberOfLines={1} ellipsizeMode={"middle"}>{getFileName(file)}</Text>
+                        <Text style={[styles.rowTextStyle, {flex: 1, paddingTop: 5, marginLeft: 5, marginRight: 50}]} numberOfLines={1} ellipsizeMode={"middle"}>{getFileName(file)}</Text>
                     </View>
                     {this.state.fileprogress[i] < 1 ?
                         <Progress.Circle size={22} animated={true} progress={this.state.fileprogress[i]} color={Colors.main} thickness={2} style={{position: 'absolute', right: 10, marginTop: 10}}/>
@@ -676,11 +780,48 @@ export default class CreateVisualGuideline extends Component {
         </View>
     }
 
-    render() {
-        // if (!this.state.isReady) {
-        //     return <AppLoading />
-        // }
+    async _getDocuments() {
+        try {
+            this.bottomMenuContainer.close();
+        } catch(e) {
 
+        }
+
+        try {
+            // iPhone/Android
+            DocumentPicker.show({
+                filetype: [DocumentPickerUtil.allFiles()],
+            },(error,res) => {
+                // Android
+                const { uri, type: mimeType, fileName } = res;
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    selectPicture() {
+        try {
+            this.bottomMenuContainer.close();
+        } catch(e) {
+
+        }
+
+        ActionSheet.showActionSheetWithOptions({
+            options: this.pictureButtons,
+            cancelButtonIndex: 2,
+            tintColor: Colors.main
+          },
+          (buttonIndex) => {
+              if (buttonIndex == 1) {
+                this.setState({cameraModal: true})
+              } else if (buttonIndex == 0) {
+                this.setState({imageBrowserOpen: true})
+              }
+          });
+    }
+
+    render() {
         return (
             <View style={{height: this.state.visibleHeight}}>
                 <StatusBar barStyle={'light-content'} animated={true}/>
@@ -706,6 +847,10 @@ export default class CreateVisualGuideline extends Component {
                 {this.renderPrivacyModal()}
                 {this.renderTagListTaskModal()}
                 {this.renderGuidelineDescriptionModal()}
+                {this._renderImagePickerModal()}
+                {this.renderCameraModal()}
+                <BottomMenu referer={(b) => {this.bottomMenuContainer = b}}
+                    browse={() => this._getDocuments()} picture={() => this.selectPicture()}/>
             </View>
         )
     }

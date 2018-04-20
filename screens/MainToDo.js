@@ -32,6 +32,8 @@ const filters = [{type: 'search', searchPlaceHolder: 'Store, Cluster, Task, Post
     {title: 'Task', selected: true, active: true},
     {title: 'Done', active: true, selected: false}];
 
+const notifications = [];
+
 export default class MainToDo extends React.Component {
 
     constructor(props) {
@@ -60,18 +62,74 @@ export default class MainToDo extends React.Component {
                 filters[i].onPress = () => this._noOpPosts.toggleState();
             }
         }
+
+        this.loadNotifications();
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto': require('../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf'),
-        //     'roboto-bolditalic': require('../assets/fonts/Roboto-BoldItalic.ttf')
-        // });
-
         this.setState({isReady: true});
+    }
+
+    async loadNotifications() {
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getnotifications?iduser=" + ApplicationConfig.getInstance().me.id)
+        .then((response) => {return response.json()})
+        .then((responseJson) => {
+            return JSON.parse(responseJson);
+        })
+        .then(r => {
+            var promises = [];
+
+            r.forEach(post => {
+                promises.push(new Promise((resolve, reject) => {
+                    this.loadTaskByPostId(post.idpost)
+                    .then(task => {post.task = task; return post;})
+                    .then(r => resolve(post))
+                }))
+            })
+
+            if (promises.length) {
+                return Promise.all(promises)
+                    .then(el => {
+                        notifications = notifications.concat(el);
+                        console.warn("Notifications: " + JSON.stringify(notifications));
+                        this.setState({notifications: notifications});
+                    })
+                    .catch(() => {});
+            }
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    async loadTaskByPostId(idPost) {
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskbypost?idpost=" + idPost)
+        .then((response) => {return response.json()})
+        .then((responseJson) => {
+            if (responseJson == "") {
+                return;
+            }
+
+            return JSON.parse(responseJson);
+        })
+        .then(r => {
+            return this.loadAlbumForTask(r.idalbum).then(album => {r.album = album; return r})
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    async loadAlbumForTask(idalbum) {
+        return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
+        .then((response) => {return response.json()})
+        .then((responseJson) => {
+            console.log("ALBUM FOUND: " + responseJson);
+            return JSON.parse(responseJson);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
     }
 
     openContextualMenu(index) {
@@ -79,15 +137,11 @@ export default class MainToDo extends React.Component {
     }
 
     navigateToCollabView() {
-        //ApplicationConfig.getInstance().index.hideSearchBar();
-        //this.props.navigator.push(Router.getRoute('collabView'), {navigator: this.props.navigator});
         ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView");
     }
 
     navigateToTaskSummary() {
         var {data} = this.props;
-        //ApplicationConfig.getInstance().index.hideSearchBar();
-        //this.props.navigator.push(Router.getRoute('collabView'), {navigator: this.props.navigator});
         ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: 131});
     }
 
@@ -129,8 +183,6 @@ export default class MainToDo extends React.Component {
 
     renderElements() {
         var arr = [0,1,2,3,4,5,6,7,8,9];
-
-        //https://static.highsnobiety.com/wp-content/uploads/2017/08/28095937/fake-yeezy-store-china-01-320x213.jpg
 
         return arr.map((obj, i) => {
             return <View key={i}>

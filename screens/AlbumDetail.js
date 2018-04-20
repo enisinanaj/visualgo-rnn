@@ -84,7 +84,13 @@ export default class AlbumDetail extends React.Component {
             tintColor: Colors.main
           },
           (buttonIndex) => {
-            console.log('button clicked :', buttonIndex);
+              if (buttonIndex == 1) {
+                this.setState({cameraModal: true})
+              } else if (buttonIndex == 0) {
+                this.setState({imageBrowserOpen: true})
+              } else if (buttonIndex == 2) {
+                this.bottomMenuContainer.open();
+              }
           });
     }
 
@@ -157,7 +163,7 @@ export default class AlbumDetail extends React.Component {
                         Upload Attachements
                     </Text>
                     <View style={{flexDirection: 'row', width: 40, marginRight: 0, justifyContent: 'flex-end', marginRight: 10}}>
-                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, marginTop: 3}}>(6) </Text>
+                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, marginTop: 3}}>({this.state.files.length}) </Text>
                         <Ionicons  style={styles.forwardIcon} name={"ios-attach"} size={25} color={Colors.main}/>
                         <EvilIcons name={"chevron-right"} color={Colors.main} size={32} />
                     </View>

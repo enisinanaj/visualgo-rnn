@@ -50,19 +50,21 @@ import Shadow from '../../constants/Shadow';
 import {TaskAvatar} from '../../constants/StyleSheetCommons';
 import nodeEmoji from 'node-emoji';
 import DefaultRow from './default-row';
-import { isIphoneX } from '../helpers';
+import { isIphoneX, getProfile } from '../helpers';
 import { AWS_OPTIONS } from '../helpers/appconfig';
-
 import ApplicationConfig from '../helpers/appconfig';
 
-const messages = [{from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-                {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo', read: true, date: new Date()},
-                {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem', read: false, date: new Date()},
-                {from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-                {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem Dolo', read: true, date: new Date()},
-                {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()}];
+const messages = []; 
+// [{from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
+//                 {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo', read: true, date: new Date()},
+//                 {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem', read: false, date: new Date()},
+//                 {from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
+//                 {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem Dolo', read: true, date: new Date()},
+//                 {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()}];
 
 export default class TaskDetail extends Component {
+    task;
+    
     constructor(props) {
         super(props);
 
@@ -106,6 +108,7 @@ export default class TaskDetail extends Component {
         Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadTask(this.props.navigation.state.params.idtask);
+        this.loadComments(this.props.navigation.state.params.idtask);
     }
 
     componentWillUnmount() {
@@ -136,8 +139,7 @@ export default class TaskDetail extends Component {
         .then((response) => {return response.json()})
         .then((responseJson) => {
             var parsedResponse = JSON.parse(responseJson);
-
-            console.debug("loading task album: " + responseJson);
+            this.task = parsedResponse;
             this.loadAlbum(parsedResponse.idalbum);
         })
         .catch((error) => {
@@ -150,13 +152,50 @@ export default class TaskDetail extends Component {
         .then((response) => {return response.json()})
         .then((responseJson) => {
             var parsedResponse = JSON.parse(responseJson);
-
-            console.debug("loading task album: " + responseJson);
             this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme, isReady: true});
         })
         .catch((error) => {
             console.error(error);
         });
+    }
+
+    async loadComments(idtask) {
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskcomments?pagesize=1000&pageindex=0&idtask=" + idtask)
+            .then((response) => {return response.json()})
+            .then((responseJson) => {
+                var result = JSON.parse(responseJson);
+                result = result.filter(it => it.idcommentPost != null);
+                var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
+
+                return Promise.resolve(sorted);
+            })
+            .then((posts) => {
+                promises = [];
+
+                posts.forEach(it => {
+                    promises.push(new Promise((resolve, reject) => {
+                        getProfile(it.idauthor, (responseJson) => {
+                            it.profile = responseJson;
+                            resolve(it);
+                        });
+                    }))
+                })
+
+                if (promises.length) {
+                    Promise.all(promises)
+                        .then(response => {
+                            messages = messages.concat(response)
+                            this.setState({messages: ds.cloneWithRows(messages)})
+                        })
+                        .finally(test => {
+                            this.setState({loading: false});
+                        })
+                        .catch(error => console.log(error))
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     renderHeader() {
@@ -190,7 +229,7 @@ export default class TaskDetail extends Component {
 
     reloadComments() {
         messages = [];
-
+        this.loadComments(this.props.navigation.state.params.idtask);
         this.setState({messages: ds.cloneWithRows(messages), newMessage: ''})
     }
 
@@ -199,7 +238,7 @@ export default class TaskDetail extends Component {
         let taskComment = {
             commentpost: {
               iduser: "" + ApplicationConfig.getInstance().me.id,
-              idpost: "" + this.props.navigation.state.params.idtask,
+              idpost: "" + this.task.post.id,
               comment: "" + this.state.newMessage,
               mediaurl: []
             }
@@ -214,8 +253,7 @@ export default class TaskDetail extends Component {
                 body: JSON.stringify(taskComment)
             })
             .then((response) => {
-                console.warn("Create task result: " + JSON.stringify(response));
-                this.reloadComments();
+                this.reloadComments(this.props.navigation.state.params.idtask);
             })
             .catch(e => {
                 console.error("error: " + e);
@@ -640,12 +678,14 @@ export default class TaskDetail extends Component {
     }
 
     renderMessageRow(data) {
+        const profile = JSON.parse(data.profile);
+
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <Image source={data.from.image} style={styles.selectableDisplayPicture} />
+                    <Image source={profile.mediaurl} style={styles.selectableDisplayPicture} />
                     <View style={styles.textInRow}>
-                        <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.from.name}
+                        <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{profile.name} {profile.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>
                         </Text>
                     </View>

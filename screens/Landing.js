@@ -114,13 +114,6 @@ class Landing extends Component {
     }
 
     async loadFonts(onLoaded) {
-        /*await Font.loadAsync({
-            'roboto-thin': require('../assets/fonts/Roboto-Thin.ttf'),
-            'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
-            'roboto': require('../assets/fonts/Roboto-Regular.ttf'),
-            'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf')
-        });*/
-
         this.setState({isReady: true});
         onLoaded();
     }
@@ -171,7 +164,7 @@ class Landing extends Component {
                 })
                 .then((responseJson) => {
                     let promises = []
-                    console.log('Number of posts: ' + responseJson.length)
+                    
                     responseJson.forEach(element => {
                         if (element.idcommentPost == null) {
                             this.setState({offset: this.state.offset + 1});

@@ -163,7 +163,7 @@ export default class AlbumDetail extends React.Component {
                         Upload Attachements
                     </Text>
                     <View style={{flexDirection: 'row', width: 40, marginRight: 0, justifyContent: 'flex-end', marginRight: 10}}>
-                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, marginTop: 3}}>({this.state.files.length}) </Text>
+                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, marginTop: 3}}>({taskout.post.medias == undefined ? 0 : taskout.post.medias.length}) </Text>
                         <Ionicons  style={styles.forwardIcon} name={"ios-attach"} size={25} color={Colors.main}/>
                         <EvilIcons name={"chevron-right"} color={Colors.main} size={32} />
                     </View>

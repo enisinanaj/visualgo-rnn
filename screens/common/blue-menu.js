@@ -70,10 +70,10 @@ export default class BlueMenu extends Component {
     }
 
     navigate(p) {
-        if (this.tabNavigation != undefined) {
+        /*if (this.tabNavigation != undefined) {
             this.tabNavigation.navigate(p);
             ApplicationConfig.getInstance().index._drawer.close();
-        }
+        }*/
     }
 
     async loadNavigator() {

@@ -7,9 +7,10 @@ import { StyleSheet, FlatList, Platform,
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-// import {Font, AppLoading} from 'expo';
+import moment from 'moment';
+import locale from 'moment/locale/it'
 
-import {MenuIcons} from './helpers/index';
+import {MenuIcons, getProfile} from './helpers/index';
 
 import FilterBar from './common/filter-bar';
 import NoOpModal from './common/NoOpModal';
@@ -22,7 +23,7 @@ import Shadow from '../constants/Shadow';
 import {TaskAvatar} from '../constants/StyleSheetCommons';
 
 import AppSettings from './helpers/index';
-import ApplicationConfig from './helpers/appconfig';
+import ApplicationConfig, { AWS_OPTIONS } from './helpers/appconfig';
 import CreateTask from './common/create-task';
 
 const {width, height} = Dimensions.get('window');
@@ -39,9 +40,12 @@ export default class MainToDo extends React.Component {
     constructor(props) {
         super(props);
 
+        moment.locale("it")
+
         this.state = {
             newTaskModal: false,
             isReady: false,
+            notifications: [],
             contextualMenuActions: [{title: 'Approva 1 file', image: MenuIcons.THUMB_UP, onPress: () => {}}, 
                                     {title: 'Rigetta 1 file', image: MenuIcons.THUMB_DOWN, onPress: () => {}}, 
                                     {title: 'Alert', image: MenuIcons.ALERT, onPress: () => {}},
@@ -82,16 +86,18 @@ export default class MainToDo extends React.Component {
             r.forEach(post => {
                 promises.push(new Promise((resolve, reject) => {
                     this.loadTaskByPostId(post.idpost)
-                    .then(task => {post.task = task; return post;})
+                    .then(task => {
+                        post.task = task;
+                        return post;
+                    })
                     .then(r => resolve(post))
-                }))
+                }));
             })
 
             if (promises.length) {
                 return Promise.all(promises)
                     .then(el => {
                         notifications = notifications.concat(el);
-                        console.warn("Notifications: " + JSON.stringify(notifications));
                         this.setState({notifications: notifications});
                     })
                     .catch(() => {});
@@ -103,7 +109,7 @@ export default class MainToDo extends React.Component {
     }
 
     async loadTaskByPostId(idPost) {
-        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskbypost?idpost=" + idPost)
+        return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskbypost?idpost=" + idPost)
         .then((response) => {return response.json()})
         .then((responseJson) => {
             if (responseJson == "") {
@@ -112,9 +118,19 @@ export default class MainToDo extends React.Component {
 
             return JSON.parse(responseJson);
         })
-        .then(r => {
-            return this.loadAlbumForTask(r.idalbum).then(album => {r.album = album; return r})
+        .then(task => {
+            return this.loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
         })
+        // .then((t) => {
+        //     var promises = [];
+            
+        //     return new Promise((resolve, reject) => {
+        //         getProfile(t.idauthor, (responseJson) => {
+        //             t.profile = responseJson;
+        //             resolve(t);
+        //         })
+        //     })
+        // })
         .catch((error) => {
             console.error(error);
         });
@@ -124,7 +140,6 @@ export default class MainToDo extends React.Component {
         return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            console.log("ALBUM FOUND: " + responseJson);
             return JSON.parse(responseJson);
         })
         .catch((error) => {
@@ -140,28 +155,27 @@ export default class MainToDo extends React.Component {
         ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView");
     }
 
-    navigateToTaskSummary() {
-        var {data} = this.props;
-        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: 131});
+    navigateToTaskSummary(id) {
+        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: id});
     }
 
-    renderCardTitle() {
+    renderCardTitle(obj) {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} />
+                    <Image style={TaskAvatar.taskThumbnail} source={{uri: AWS_OPTIONS.bucketAddress + obj.task.album.theme.mediaUrl}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('./img/dp2.jpg')}/>
                 </View>
-                <TouchableOpacity style={TaskAvatar.nameContainer} onPress={() => this.navigateToTaskSummary()}>
+                <TouchableOpacity style={TaskAvatar.nameContainer} onPress={() => this.navigateToTaskSummary(obj.task.id)}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
-                        <Text style={TaskAvatar.name}>Task #Theme</Text>
-                        <Text style={[TaskAvatar.environment, {color: '#3FD1EB'}]}>
-                            @Ambiente
+                        <Text style={TaskAvatar.name}>{obj.task.post.message} {obj.task.album.theme.tagName}</Text>
+                        <Text style={[TaskAvatar.environment, {color: obj.task.album.environment.mediaUrl}]}>
+                            {obj.task.album.environment.tagName}
                         </Text>
                     </View>
-                    <Text style={TaskAvatar.time}>User made the action - Date Hour</Text>
+                    <Text style={TaskAvatar.time}>{moment(new Date(obj.task.created)).format("D MMMM [alle ore] HH:mm")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => this.openContextualMenu(1)} style={{position: 'absolute', right: 0, top: -10}}>
                     <Ionicons name="ios-more-outline" color={Colors.main} size={30} />
@@ -182,17 +196,15 @@ export default class MainToDo extends React.Component {
     }
 
     renderElements() {
-        var arr = [0,1,2,3,4,5,6,7,8,9];
-
-        return arr.map((obj, i) => {
+        return this.state.notifications.map((obj, i) => {
             return <View key={i}>
                 <View style={[styles.SingleTaskContainer, Shadow.cardShadow]}>
-                    {this.renderCardTitle()}
+                    {this.renderCardTitle(obj)}
                 </View>
                 <View>
                     <ScrollView style={styles.TaskMediaContainer} showsHorizontalScrollIndicator={false}
                         horizontal={true}>
-                        <TouchableOpacity onPress={() => this.navigateToCollabView()} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                        {/* <TouchableOpacity onPress={() => this.navigateToCollabView()} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Image source={{uri: 'http://www.programmatic-rtb.com/wp-content/uploads/2017/10/store.png'}}
                                 style={{height:65,
                                     width:65,
@@ -200,25 +212,7 @@ export default class MainToDo extends React.Component {
                             <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
                                 <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
                             </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.navigateToCollabView()} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                            <Image source={{uri: 'http://www.programmatic-rtb.com/wp-content/uploads/2017/10/store.png'}}
-                                style={{height:65,
-                                    width:65,
-                                    borderRadius:10}} />
-                            <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
-                                <View style={[{backgroundColor: Colors.main}, styles.innerStatusIcon]}></View>
-                            </View>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => this.navigateToCollabView()} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                            <Image source={{uri: 'http://www.programmatic-rtb.com/wp-content/uploads/2017/10/store.png'}}
-                                style={{height:65,
-                                    width:65,
-                                    borderRadius:10}} />
-                            <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
-                                <View style={[{backgroundColor: 'red'}, styles.innerStatusIcon]}></View>
-                            </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
                         </View>
@@ -235,7 +229,6 @@ export default class MainToDo extends React.Component {
     }
 
     openNewTaskModal() {
-        //newTaskModal
         this.setState({newTaskModal: true});
     }
 
@@ -255,10 +248,6 @@ export default class MainToDo extends React.Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //     return <AppLoading />;
-        // }
-
         return (
             <ScrollView style={styles.mainContainer}>
                 <View style={styles.filterBarContainer}>

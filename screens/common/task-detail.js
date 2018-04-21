@@ -160,6 +160,7 @@ export default class TaskDetail extends Component {
     }
 
     async loadComments(idtask) {
+        messages = [];
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskcomments?pagesize=1000&pageindex=0&idtask=" + idtask)
             .then((response) => {return response.json()})
             .then((responseJson) => {

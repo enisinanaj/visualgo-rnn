@@ -792,8 +792,12 @@ export default class CreateVisualGuideline extends Component {
             DocumentPicker.show({
                 filetype: [DocumentPickerUtil.allFiles()],
             },(error,res) => {
-                // Android
                 const { uri, type: mimeType, fileName } = res;
+                this.setState({
+                    files: [...this.state.files, res]
+                });
+        
+                this.uploadFiles();
             });
         } catch (e) {
             console.error(e);

@@ -9,6 +9,7 @@ import {
   StatusBar,
   Image,
   TouchableOpacity,
+  Platform,
   ListView } from 'react-native';
 
 import DefaultRow from '../common/default-row';

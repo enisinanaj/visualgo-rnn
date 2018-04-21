@@ -339,8 +339,8 @@ const styles = StyleSheet.create({
 
     buttonContentStyle: {
         padding: 0,
-        paddingTop: 9,
         margin: 0,
+        height: 16,
         textAlign: 'center',
         fontSize: 14,
         fontFamily: 'roboto-light'
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 22,
         padding: 17,
-        paddingTop: 5,
+        paddingTop: 15,
         height: 44,
         marginLeft: 8,
         minWidth: 75,

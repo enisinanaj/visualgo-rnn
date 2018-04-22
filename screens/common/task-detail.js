@@ -68,6 +68,8 @@ export default class TaskDetail extends Component {
     constructor(props) {
         super(props);
 
+        moment.locale("it");
+
         this.state = {
             visibleHeight: height,
             k_visible: false,
@@ -100,7 +102,9 @@ export default class TaskDetail extends Component {
             showTaskComment: false,
             newMessage: '',
             messages: ds.cloneWithRows([]),
-            newCommentOnFocus: false
+            newCommentOnFocus: false,
+            taskout: {},
+            profile: {}
         }
     }
 
@@ -139,7 +143,14 @@ export default class TaskDetail extends Component {
         .then((response) => {return response.json()})
         .then((responseJson) => {
             var parsedResponse = JSON.parse(responseJson);
+            return parsedResponse;
+        })
+        .then(parsedResponse => {
+            getProfile(parsedResponse.post.idauthor, (responseJson) => {
+                this.setState({profile: JSON.parse(responseJson)});
+            });
             this.task = parsedResponse;
+            this.setState({taskout: parsedResponse});
             this.loadAlbum(parsedResponse.idalbum);
         })
         .catch((error) => {
@@ -279,21 +290,29 @@ export default class TaskDetail extends Component {
             <View style={{backgroundColor: '#FFF', borderBottomWidth:StyleSheet.hairlineWidth,
                 borderBottomColor: Colors.borderGray, flexDirection: 'row',
                 justifyContent: 'space-between', alignItems: 'center', padding: 13}}>
-                <View style={styles.viewAndroid}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
-                        Comments 
+                { ApplicationConfig.getInstance().isHVM() ?
+                    <View style={styles.viewAndroid}>
+                        <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
+                            Comments 
+                        </Text>
+                        <Switch color={Colors.main} style={styles.switchAndroid}
+                            value={this.state.commentsEnabled} onValueChange={(v) => this.setState({commentsEnabled: v})}/>
+                    </View>
+                : <View style={styles.viewAndroid}>
+                    <Text style={{color: Colors.black, fontSize: 16, marginTop: 6, marginLeft: 7, fontFamily: 'Roboto-Light'}}>
+                        Comments Allowed 
                     </Text>
-                    <Switch color={Colors.main} style={styles.switchAndroid}
-                        value={this.state.commentsEnabled} onValueChange={(v) => this.setState({commentsEnabled: v})}/>
-                </View>
-                <View style={styles.viewAndroid}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
-                        Notification 
-                    </Text>
-                    <Switch color={Colors.main} style={styles.switchAndroid}
-                        value={this.state.notificationsEnabled} onValueChange={(v) => this.setState({notificationsEnabled: v})}/>
-                </View>
-                <TouchableOpacity onPress={() => this.setState({privacyModal: true})}>
+                </View>}
+                { ApplicationConfig.getInstance().isHVM() ?
+                    <View style={styles.viewAndroid}>
+                        <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
+                            Notification 
+                        </Text>
+                        <Switch color={Colors.main} style={styles.switchAndroid}
+                            value={this.state.notificationsEnabled} onValueChange={(v) => this.setState({notificationsEnabled: v})}/>
+                    </View>
+                : null }
+                <TouchableOpacity onPress={() => ApplicationConfig.getInstance().isHVM() ? this.setState({privacyModal: true}): {}}>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
                         <Text style={{color: Colors.black, fontSize: 14, marginRight: 5, fontFamily: 'Roboto-Light', marginTop: 6}}>
                             All
@@ -438,11 +457,16 @@ export default class TaskDetail extends Component {
         );
     }
 
+    openCalendar() {
+        if (ApplicationConfig.getInstance().isHVM())
+            this.setState({calendarModal: true})
+    }
+
     renderStartDueDate() {
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
-                <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}} onPress={() => this.setState({calendarModal: true})}>
+                <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}} onPress={() => this.openCalendar()}>
                     {this.state.start != undefined && this.state.due != undefined ?
                         <Text style={{color: 'gray', fontSize: 16, paddingLeft: 2, paddingTop: 5, color: Colors.main}}>
                             {moment(this.state.start).locale("it").format("DD/MM/YYYY")} - {moment(this.state.due).locale("it").format("DD/MM/YYYY")}
@@ -451,13 +475,38 @@ export default class TaskDetail extends Component {
                     <View style={{flexDirection: 'row', marginTop: 4}}>
                         <Text style={styles.rowTextStyle}>Start/Due Date</Text>
                     </View>}
-                    <EvilIcons name={"chevron-right"} color={Colors.main} size={32} style={{marginRight: 10}} />
+                    { ApplicationConfig.getInstance().isHVM() ?
+                        <EvilIcons name={"chevron-right"} color={Colors.main} size={32} style={{marginRight: 10}} />
+                    : 
+                    <Text style={{color: 'gray', fontSize: 16, paddingLeft: 2, paddingTop: 5, color: Colors.main, marginRight: 15}}>
+                        {moment(new Date()).locale("it").format("DD/MM")} - {moment(new Date()).locale("it").format("DD/MM")}
+                    </Text>}
                 </TouchableOpacity>
             </View>
         )
     }
 
+    renderRequiredPhotosNumber() {
+        return (
+            <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
+                borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'Roboto-Light'}}>Foto richiste:</Text>
+                </View>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
+                    <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: Colors.main, fontFamily: 'Roboto-Light'}}>
+                        4
+                    </Text>
+                </View>
+            </View>
+        )
+    }
+
     renderPhoto() {
+        if (ApplicationConfig.getInstance().isSM()) {
+            return this.renderRequiredPhotosNumber();
+        }
+
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
@@ -487,7 +536,27 @@ export default class TaskDetail extends Component {
         )
     }
 
+    renderRequiredVideoNumber() {
+        return (
+            <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
+                borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
+                    <Text style={{color: '#000000', fontSize: 16, paddingLeft: 5, alignSelf: 'center', fontFamily: 'Roboto-Light'}}>Video richiesti:</Text>
+                </View>
+                <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
+                    <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: Colors.main, fontFamily: 'Roboto-Light'}}>
+                        1
+                    </Text>
+                </View>
+            </View>
+        )
+    }
+
     renderVideo() {
+        if (ApplicationConfig.getInstance().isSM()) {
+            return this.renderRequiredVideoNumber();
+        }
+
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
@@ -517,7 +586,17 @@ export default class TaskDetail extends Component {
         )
     }
 
+    renderRequired360Number() {
+        return (
+            null
+        )
+    }
+
     render360() {
+        if (ApplicationConfig.getInstance().isSM()) {
+            return this.renderRequired360Number();
+        }
+
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
                 borderTopColor: Colors.borderGray, borderTopWidth: StyleSheet.hairlineWidth}}>
@@ -806,6 +885,7 @@ export default class TaskDetail extends Component {
     }
 
     _getDocuments() {
+        // TODO: gotoalbum
         try {
             Expo.DocumentPicker.getDocumentAsync({});
         } catch (e) {
@@ -814,9 +894,6 @@ export default class TaskDetail extends Component {
     }
 
     renderUploadAttach() {
-        var {data} = this.props.navigation.state.params;
-
-        return null;
 
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,
@@ -825,11 +902,11 @@ export default class TaskDetail extends Component {
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16, marginTop: 10}}>
                         <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                            <Image style={styles.taskThumbnail} source={{uri: data.album.post.medias[0].url}} />
+                            <Image style={styles.taskThumbnail} source={{uri: AWS_OPTIONS.bucketAddress + this.state.album.post.medias[0].url}} />
                         </View>
-                        <Text style={styles.name}>{data.theme.tagName}</Text>
-                        <Text style={[styles.environment, {color: data.environment.mediaUrl}]}>
-                            {data.environment.tagName}
+                        <Text style={styles.name}>{this.state.theme.tagName}</Text>
+                        <Text style={[styles.environment, {color: this.state.environment.mediaUrl}]}>
+                            {this.state.environment.tagName}
                         </Text>
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'flex-end'}}>
@@ -839,6 +916,26 @@ export default class TaskDetail extends Component {
                 </TouchableOpacity>
             </View>
         )
+    }
+
+    renderTaskBody() {
+        const {environment, theme, taskout, profile} = this.state;
+
+        return (<View>
+            <View style={styles.userName}>
+                <Image style={styles.profilepic} source={{uri: 'https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg-1024x683.jpg'}}/>
+                <View style={styles.UserNameView}>
+                    <Text style={styles.userNameTextStyle1}>{profile.name} {profile.surname}</Text>
+                    <Text style={styles.userNameTextStyle2}>{moment(new Date(taskout.created)).format("D MMMM [alle ore] HH:mm")}</Text>
+                </View>
+            </View>
+
+            <View style={styles.bigTextbox}>
+                <Text style={styles.bigTextFontStyle}>
+                    {taskout.post.message}
+                </Text>
+            </View>
+        </View>);
     }
 
     renderTextAvatar() {
@@ -873,6 +970,10 @@ export default class TaskDetail extends Component {
         this.setState({clustersVisible: false, storeVisible: false, managerVisible: true, headTitle: 'Managers', tagListTastModal: true});
     }
 
+    canEditTask() {
+        return ApplicationConfig.getInstance().isHVM() && this.state.profile.id == this.state.taskout.post.idauthor
+    }
+
     render() {
          if (!this.state.isReady) {
              return <View />
@@ -880,7 +981,7 @@ export default class TaskDetail extends Component {
 
         const {data} = this.props;
         
-        if (false) { //if filters.
+        if (false) {
             return (
                 <View style={{height: this.state.visibleHeight}}>
                     <StatusBar barStyle={'default'} animated={true}/>
@@ -901,9 +1002,9 @@ export default class TaskDetail extends Component {
                     
                     {this.renderHeader()}
                     <ScrollView>
-                        {this.renderFilters()}
-                        
+                        {ApplicationConfig.getInstance().isHVM() ? this.renderFilters() : null}
                         {this.renderCommentSwitchRow()}
+                        {this.renderTaskBody()}
                         <View style={{bottom: Platform.OS === 'ios' ? 0 : 20}}>
                             {this.renderText()}
                         </View>
@@ -912,10 +1013,10 @@ export default class TaskDetail extends Component {
                         {this.renderPhoto()}
                         {this.renderVideo()}
                         {this.render360()}
-                        {this.renderAssignTo()}
-                        {this.renderTaskAdmins()}
-                        {this.renderArchiveMenu()}
-                        {this.renderDeleteMenu()}
+                        {ApplicationConfig.getInstance().isHVM() ? this.renderAssignTo() : null}
+                        {ApplicationConfig.getInstance().isHVM() ? this.renderTaskAdmins() : null}
+                        {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
+                        {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
                     </ScrollView>
                     {this.renderTaskComment()}
                     {this.renderThemeModal()}
@@ -1271,5 +1372,51 @@ const styles = StyleSheet.create({
         marginTop: 9,
         marginRight: 0,
         backgroundColor: 'transparent'
-    }
+    },
+
+    bigTextbox:{
+        padding:20,
+        paddingTop: 10,
+        borderColor: Colors.black,
+        borderBottomColor: Colors.borderGray,
+        borderBottomWidth: StyleSheet.hairlineWidth
+    },
+    
+    bigTextFontStyle: {
+        fontFamily: 'Roboto-Light',
+        fontSize: 16
+    },
+
+    userName:{
+        flex: 1, 
+        flexDirection: 'row',
+        marginTop:5,
+        marginLeft:20,
+        padding:5,
+    },
+    
+    UserNameView:{
+        padding:5,
+        marginTop: 8,
+        marginLeft: 10
+    },
+    
+    userNameTextStyle1:{
+        fontSize:16,
+        fontFamily: 'Roboto-Light',
+        color:'black',
+    },
+    userNameTextStyle2:{
+        marginTop: 4,
+        fontSize:12,
+        fontFamily: 'Roboto-Light',
+        color: '#999999'
+    },
+
+    profilepic:{
+        width:38,
+        height:38,
+        borderRadius:19,
+        marginTop:10,
+    },
 });

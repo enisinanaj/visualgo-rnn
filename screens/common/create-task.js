@@ -143,7 +143,12 @@ export default class CreateTask extends Component {
                 duedate: this.state.due ? this.state.due : "0",
                 message: this.state.taskDescription,
                 store: [],
-                user: userIDs       
+                user: userIDs,
+                foto: this.state.countPhoto,
+                video: this.state.countVideo,
+                foto360: this.state.count360,
+                commentsenabled: this.state.commentsEnabled,
+                notificationsenabled: this.state.notificationsEnabled
             }
         });
 

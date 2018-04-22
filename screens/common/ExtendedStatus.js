@@ -54,12 +54,6 @@ export default class ExtendedStatus extends Component {
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-light': '../../assets/fonts/Roboto-Light.ttf',
-        //     'roboto-regular': '../../assets/fonts/Roboto-Regular.ttf',
-        //     'roboto-bold': '../../assets/fonts/Roboto-Bold.ttf'
-        // });
-
         this.setState({isReady: true});
     }
 
@@ -123,7 +117,7 @@ export default class ExtendedStatus extends Component {
                 <TouchableOpacity onPress={() => this.setState({imageBrowserOpen: true})} 
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                    <Text style={{height: 30, fontSize: 16, marginTop: 10, textAlignVertical: 'center', fontFamily: 'roboto-light'}}>
+                    <Text style={{height: 30, fontSize: 16, marginTop: 10, textAlignVertical: 'center', fontFamily: 'Roboto-Light'}}>
                         {this.state.photos.length == 1 ?  'Change #Theme Image' : 'Choose #Theme Image'}
                     </Text>
                     {this.state.photos.length != 1 ? <Text style={{color:'red', marginLeft: 3, marginTop: 7}}>*</Text> : null}
@@ -160,7 +154,7 @@ export default class ExtendedStatus extends Component {
                     <View style={{backgroundColor: '#FFF', borderBottomWidth: StyleSheet.hairlineWidth,
                             borderBottomColor: Colors.borderGray, flexDirection: 'row', height: 50,
                             justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
-                        <Text style={{height: 30, fontSize: 16, marginTop: 10, textAlignVertical: 'center', fontFamily: 'roboto-light'}}>
+                        <Text style={{height: 30, fontSize: 16, marginTop: 10, textAlignVertical: 'center', fontFamily: 'Roboto-Light'}}>
                             Create New #Theme
                         </Text>
                         <EvilIcons name={"chevron-right"} size={24} color={Colors.main} />
@@ -181,14 +175,14 @@ export default class ExtendedStatus extends Component {
                             position: 'absolute',
                             top: 100,
                             textAlign: 'center',
-                            fontFamily: 'roboto-bold',
+                            fontFamily: 'Roboto-Bold',
                             color: 'transparent', width: width - 70, zIndex: 15}}
                         placeholder={"New #Theme Name"} placeholderTextColor={Colors.white}
                         underlineColorAndroid={'rgba(0,0,0,0)'}
                         onChangeText={(textValue) => this.setState({textValue})}
                         value={this.state.textValue} />
                         <Text style={{zIndex: 14, color: Colors.white, position: 'absolute', marginLeft: 20, 
-                            position: 'absolute', backgroundColor: 'transparent', fontFamily: 'roboto-bold',
+                            position: 'absolute', backgroundColor: 'transparent', fontFamily: 'Roboto-Bold',
                             textShadowColor: 'rgba(0, 0, 0, 0.75)',
                             textShadowOffset: {width: 1, height: 1},
                             textShadowRadius: 10,
@@ -205,7 +199,7 @@ export default class ExtendedStatus extends Component {
                     <View style={{flexDirection: 'row', height: 50, width: width, zIndex: 20, backgroundColor: 'transparent'}}>
                         <TextInput autoFocus={true} style={{height: 30, fontSize: 16, marginTop: 10, marginBottom: 10,
                                         marginLeft: 20, 
-                                        fontFamily: 'roboto-light',
+                                        fontFamily: 'Roboto-Light',
                                         color: Colors.main, width: width - 60, zIndex: 15}}
                             placeholder={"New #Theme Name"} placeholderTextColor={Colors.gray}
                             underlineColorAndroid={'rgba(0,0,0,0)'}

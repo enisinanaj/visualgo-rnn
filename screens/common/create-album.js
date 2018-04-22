@@ -236,12 +236,12 @@ export default class NewAlbum extends Component {
               borderBottomColor: Colors.borderGray, flexDirection: 'row',
               justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
               <TouchableOpacity onPress={() => {this.closeThis({})}}>
-                <Text style={{color: Colors.main, fontFamily: 'roboto-light', fontSize: 16}}>Cancel</Text>
+                <Text style={{color: Colors.main, fontFamily: 'Roboto-Light', fontSize: 16}}>Cancel</Text>
               </TouchableOpacity>
 
             {false ? 
               <TouchableOpacity onPress={() => {this.finishAlbum()}}>
-                <Text style={{color: Colors.main, fontFamily: 'roboto-light', fontSize: 16}}>Pubblica</Text>
+                <Text style={{color: Colors.main, fontFamily: 'Roboto-Light', fontSize: 16}}>Pubblica</Text>
               </TouchableOpacity>
             : null}
           </View>
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
     },
     largeTitle: {
         fontSize: 30,
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         marginTop: 14,
         color: Colors.main
     },
@@ -365,12 +365,12 @@ const styles = StyleSheet.create({
     themeName: {
         color: Colors.black,
         fontSize: 22,
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         marginTop: 3
     },
     infoText: {
         fontSize: 18,
-        fontFamily: 'roboto-light',
+        fontFamily: 'Roboto-Light',
         marginTop: 20
     },
     optionsMenu: {
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
         marginBottom: 15
     },
     menuElement: {
-        fontFamily: 'roboto-regular',
+        fontFamily: 'Roboto-Regular',
         fontSize: 16,
     }
 });

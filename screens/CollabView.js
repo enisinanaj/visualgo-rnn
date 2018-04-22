@@ -379,8 +379,6 @@ const styles = StyleSheet.create({
 
     containerPdf: {
         flex: 1,
-        //justifyContent: 'flex-start',
-        //alignItems: 'center',
         marginTop: 0,
     },
     pdf: {
@@ -408,7 +406,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 14,
         color: 'black',
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         height: 16
     },
     
@@ -416,7 +414,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         height: 16,
         color: 'black',
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         marginLeft: 4
     },
 

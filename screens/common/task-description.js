@@ -42,10 +42,6 @@ export default class TaskDescription extends Component {
   }
 
   async loadFonts() {
-    // await Font.loadAsync({
-    //   'roboto-light': '../../assets/fonts/Roboto-Light.ttf'
-    // });
-
     this.setState({isReady: true});
   }
 
@@ -73,7 +69,7 @@ export default class TaskDescription extends Component {
           borderBottomColor: Colors.gray, flexDirection: 'row',
           justifyContent: 'space-between', alignItems: 'center', padding: 16}}>
           <TouchableOpacity onPress={this.props.closeModal}>
-            <Text style={{color: Colors.main, fontSize: 16, fontFamily: 'roboto-light'}}>Cancel</Text>
+            <Text style={{color: Colors.main, fontSize: 16, fontFamily: 'Roboto-Light'}}>Cancel</Text>
           </TouchableOpacity>
       </View>
     );
@@ -95,10 +91,6 @@ export default class TaskDescription extends Component {
   }
 
   render() {
-    // if (!this.state.isReady) {
-    //   return <AppLoading />;
-    // }
-
     var {visibleHeight} = this.state;
     var textInputHeight = visibleHeight - 80; //80 => renderHeader().height more or less (need to check on Android)
     
@@ -119,7 +111,7 @@ export default class TaskDescription extends Component {
               style={{fontSize: 16,
                 padding: 20,
                 paddingTop: 10,
-                fontFamily: 'roboto-light',
+                fontFamily: 'Roboto-Light',
                 paddingRight: 40}}
               multiline = {true}
               underlineColorAndroid={'rgba(0,0,0,0)'} 
@@ -136,7 +128,7 @@ export default class TaskDescription extends Component {
 
 const styles = StyleSheet.create({
   saveButton: {
-    fontFamily: 'roboto-bold',
+    fontFamily: 'Roboto-Bold',
     color: Colors.white,
     fontSize: 16,
     marginTop: -3

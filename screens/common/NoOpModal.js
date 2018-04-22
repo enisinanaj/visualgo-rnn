@@ -41,10 +41,6 @@ export default class NoOpModal extends Component {
   }
 
   async loadFonts() {
-    // await Font.loadAsync({
-    //   'roboto-light': '../../assets/fonts/Roboto-Light.ttf'
-    // });
-
     this.setState({isReady: true});
   }
 
@@ -53,10 +49,6 @@ export default class NoOpModal extends Component {
   }
 
   render() {
-      // if (!this.state.isReady) {
-      //   return <AppLoading />;
-      // }
-
       return <Modal
         animationType="fade"
         transparent={true}
@@ -97,7 +89,7 @@ export default class NoOpModal extends Component {
 const styles = StyleSheet.create({
   container: {marginTop: 0, backgroundColor: 'rgba(0,0,0, 0.3)', flex: 1, flexDirection: 'row', justifyContent: 'center', height: height, width: width},
   modal: {marginTop: 150, height: 300, backgroundColor: Colors.white, borderRadius: 15, flex: 1, justifyContent: 'center', marginLeft: 20, marginRight: 20},
-  headText: {marginTop: 30, textAlign: 'center', color: Colors.main, fontFamily: 'roboto-light', fontSize: 20, width: 200},
-  largeText: {marginTop: 15, textAlign: 'center', color: Colors.main, fontFamily: 'roboto-light', fontSize: 40},
+  headText: {marginTop: 30, textAlign: 'center', color: Colors.main, fontFamily: 'Roboto-Light', fontSize: 20, width: 200},
+  largeText: {marginTop: 15, textAlign: 'center', color: Colors.main, fontFamily: 'Roboto-Light', fontSize: 40},
   imageStyle: {height: 15, width: 72.58, marginTop: 7.5, marginLeft: 3}
 });

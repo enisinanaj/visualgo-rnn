@@ -116,11 +116,6 @@ export default class CreatePost extends Component{
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-light': '../../assets/fonts/Roboto-Light.ttf',
-        //     'roboto-regular': '../../assets/fonts/Roboto-Regular.ttf'
-        // });
-
         this.setState({isReady: true});
     }
 

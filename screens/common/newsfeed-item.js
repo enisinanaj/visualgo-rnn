@@ -203,13 +203,13 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 16,
         color: 'black',
-        fontFamily: 'roboto-light'
+        fontFamily: 'Roboto-Light'
     },
 
     time: {
         color: '#999999',
         fontSize: 12,
-        fontFamily: 'roboto-light'
+        fontFamily: 'Roboto-Light'
     },
 
     profile: {

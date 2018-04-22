@@ -30,13 +30,6 @@ export default class ButtonBar extends Component {
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto': require('../../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf')
-        // });
-
         this.setState({isReady: true});
     }
 
@@ -96,6 +89,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'transparent',
         textAlign: 'center',
         color: Colors.main,
-        fontFamily: 'roboto-light'
+        fontFamily: 'Roboto-Light'
     }
 });

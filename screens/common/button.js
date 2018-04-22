@@ -33,13 +33,6 @@ export default class Button extends Component {
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf'),
-        //     'roboto-regular': require('../../assets/fonts/Roboto-Regular.ttf')
-        // });
-
         this.setState({isReady: true});
     }
 

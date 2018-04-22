@@ -53,13 +53,6 @@ export default class FitlerBar extends Component {
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto': require('../../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf')
-        // });
-
         this.setState({ isReady: true });
     }
 
@@ -118,7 +111,7 @@ export default class FitlerBar extends Component {
                                 <TextInput underlineColorAndroid={'rgba(0,0,0,0)'} 
                                     placeholder={data.searchPlaceHolder}
                                     autoFocus={data.autoFocus != undefined ? data.autoFocus : true}
-                                    style={{backgroundColor: 'transparent', width: 200, fontFamily: 'roboto-light', fontSize: 14}}
+                                    style={{backgroundColor: 'transparent', width: 200, fontFamily: 'Roboto-Light', fontSize: 14}}
                                     onChangeText={(arg) => {this._setQuery(data, arg)} }
                                     ref="searchTextBox" value={this.state.searchQuery} /> 
                                 <TouchableOpacity onPress={() => this._toggleSearch()}>
@@ -143,7 +136,7 @@ export default class FitlerBar extends Component {
                             <TextInput underlineColorAndroid={'rgba(0,0,0,0)'} 
                                 placeholder={data.searchPlaceHolder}
                                 autoFocus={data.autoFocus != undefined ? data.autoFocus : true}
-                                style={{backgroundColor: 'transparent', width: 200, fontFamily: 'roboto-light', fontSize: 14}}
+                                style={{backgroundColor: 'transparent', width: 200, fontFamily: 'Roboto-Light', fontSize: 14}}
                                 onChangeText={(arg) => {this._setQuery(data, arg)} }
                                 ref="searchTextBox" value={this.state.searchQuery} />
                             <TouchableOpacity onPress={() => this._toggleSearch()}>
@@ -286,7 +279,7 @@ const styles = StyleSheet.create({
     filterBarHeader: {
         fontSize: 14,
         paddingLeft: 20,
-        fontFamily: 'roboto-bold'
+        fontFamily: 'Roboto-Bold'
     },
     filtersListView: {
         flex: 1,
@@ -343,7 +336,7 @@ const styles = StyleSheet.create({
         height: 16,
         textAlign: 'center',
         fontSize: 14,
-        fontFamily: 'roboto-light'
+        fontFamily: 'Roboto-Light'
     },
     buttonNewGroupContentStyle: {
         padding: 0,
@@ -351,7 +344,7 @@ const styles = StyleSheet.create({
         margin: 0,
         textAlign: 'center',
         fontSize: 14,
-        fontFamily: 'roboto-bold'
+        fontFamily: 'Roboto-Bold'
     },
     buttonStyle: {
         flex: 1,

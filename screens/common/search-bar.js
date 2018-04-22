@@ -182,6 +182,6 @@ const styles = StyleSheet.create({
         color: "#B2B2B2",
         fontSize: 12,
         marginLeft: 8,
-        fontFamily: 'roboto-light'
+        fontFamily: 'Roboto-Light'
     }
 })

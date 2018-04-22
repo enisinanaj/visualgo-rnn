@@ -506,7 +506,7 @@ bigTextbox:{
 },
 
 bigTextFontStyle: {
-    fontFamily: 'roboto-light',
+    fontFamily: 'Roboto-Light',
     fontSize: 16
 },
 

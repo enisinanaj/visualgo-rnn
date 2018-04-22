@@ -71,13 +71,6 @@ export default class Login extends Component {
   }
 
   async loadFonts() {
-      // await Font.loadAsync({
-      //   'roboto-thin': require('../assets/fonts/Roboto-Thin.ttf'),
-      //   'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
-      //   'roboto-regular': require('../assets/fonts/Roboto-Regular.ttf'),
-      //   'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf')
-      // });
-
       this.setState({ isReady: true });
   }
 
@@ -332,7 +325,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: Colors.white,
     fontSize: 18,
-    fontFamily: 'roboto-light',
+    fontFamily: 'Roboto-Light',
     backgroundColor: 'transparent'
   },
 
@@ -388,7 +381,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 0,
     marginRight: 3,
-    fontFamily: 'roboto-thin'
+    fontFamily: 'Roboto-Thin'
   },
 
   textFieldUserContent: {
@@ -398,7 +391,7 @@ const styles = StyleSheet.create({
     marginRight: 3,
     marginTop: 2,
     fontSize: 18,
-    fontFamily: 'roboto-bold',
+    fontFamily: 'Roboto-Bold',
     color: Colors.main,
   },
 
@@ -412,7 +405,7 @@ const styles = StyleSheet.create({
     marginLeft: -11,
     color: Colors.main,
     justifyContent: 'center',
-    fontFamily: 'roboto-bold'
+    fontFamily: 'Roboto-Bold'
   },
 
   OrText:{
@@ -420,7 +413,7 @@ const styles = StyleSheet.create({
     color: Colors.main,
     marginLeft: 40,
     marginTop: 20,
-    fontFamily: 'roboto-bold'
+    fontFamily: 'Roboto-Bold'
   },
 
   grayText:{
@@ -428,7 +421,7 @@ const styles = StyleSheet.create({
     color: Colors.grayText98,
     marginLeft: 40,
     marginTop: 20,
-    fontFamily: 'roboto-light'
+    fontFamily: 'Roboto-Light'
   },
 
   ShowPasswordText:{
@@ -437,7 +430,7 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginTop: 0,
     marginBottom: 15,
-    fontFamily: 'roboto-bold'
+    fontFamily: 'Roboto-Bold'
   },
 
   ForgottenText:{
@@ -446,7 +439,7 @@ const styles = StyleSheet.create({
     marginLeft: 40,
     marginTop: 15,
     marginBottom: 30,
-    fontFamily: 'roboto-bold'
+    fontFamily: 'Roboto-Bold'
   },
 
   headerView: {

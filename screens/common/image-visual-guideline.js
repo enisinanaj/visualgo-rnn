@@ -43,13 +43,6 @@ export default class ImageVisualGuideline extends Component {
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf'),
-        //     'roboto-regular': require('../../assets/fonts/Roboto-Regular.ttf')
-        // });
-
         this.setState({isReady: true});
     }
 
@@ -116,7 +109,7 @@ const styles = StyleSheet.create({
         paddingBottom: 8
     },
     textContent: {
-        fontFamily: 'roboto-light',
+        fontFamily: 'Roboto-Light',
         fontSize: 14
     }
 });

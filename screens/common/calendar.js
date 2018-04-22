@@ -41,9 +41,9 @@ export default class CalendarView extends Component {
 
     async loadFonts() {
         // await Font.loadAsync({
-        //     'roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto': require('../../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf')
+        //     'Roboto-thin': require('../../assets/fonts/Roboto-Thin.ttf'),
+        //     'Roboto': require('../../assets/fonts/Roboto-Regular.ttf'),
+        //     'Roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf')
         // });
 
         this.setState({ isReady: true });
@@ -201,7 +201,7 @@ export default class CalendarView extends Component {
 
 const styles = StyleSheet.create({
     saveButton: {
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         color: Colors.white,
         fontSize: 16,
         marginTop: -2
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     },
     date: {
         color: Colors.white,
-        fontFamily: 'roboto-regular',
+        fontFamily: 'Roboto-Regular',
         fontSize: 14,
     },
     alignRight: {

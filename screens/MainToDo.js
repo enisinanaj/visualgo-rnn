@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginLeft: 20,
         color:'#9a9a9a',
-        fontFamily: 'roboto-bolditalic'
+        fontFamily: 'Roboto-BoldItalic'
     },
 
     taskButton:{ 
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginRight: 20,
         color: Colors.main,
-        fontFamily: 'roboto-bold'
+        fontFamily: 'Roboto-Bold'
     },
     
     SingleTaskContainer:{

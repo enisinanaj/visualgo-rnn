@@ -20,8 +20,6 @@ import Drawer from 'react-native-drawer'
 
 const {width, height} = Dimensions.get('window');
 
-// import {Font, AppLoading} from 'expo';
-
 import Colors from '../constants/Colors';
 import SearchBar from './common/search-bar';
 import VisualGuidelineItem from './common/visual-guideline-item';
@@ -87,13 +85,6 @@ export default class VisualGuidelines extends Component {
     }
 
     async loadFonts(onLoaded) {
-        // await Font.loadAsync({
-        //     'roboto-thin': require('../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto': require('../assets/fonts/Roboto-Regular.ttf'),
-        //     'roboto-bold': require('../assets/fonts/Roboto-Bold.ttf')
-        // });
-
         this.setState({isReady: true});
         onLoaded();
     }
@@ -222,11 +213,6 @@ export default class VisualGuidelines extends Component {
                 150);
             }
         }
-
-        // this.offsetY = offset;
-        // if(offset + this.content_height + 100 >= l_height) {
-        //     this.loadMore();
-        // }
     }
 
     getStyle() {
@@ -239,10 +225,6 @@ export default class VisualGuidelines extends Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //     return <AppLoading />
-        // }
-
         return (
             <View ref='view' style={styles.container}>
                 <ListView

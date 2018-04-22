@@ -79,14 +79,14 @@ class TaskFeedItem extends Component {
         return (
             <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                 <View style={{flexDirection: 'row'}}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'roboto-light'}}>
+                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
                         Commenti 
                     </Text>
                     <Switch color={Colors.main} style={styles.switchAndroid}
                         value={this.state.commentsEnabled} onValueChange={(v) => this.setState({commentsEnabled: v})}/>
                 </View>
                 <View style={{flexDirection: 'row'}}>
-                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'roboto-light'}}>
+                    <Text style={{color: Colors.black, fontSize: 14, marginTop: 6, fontFamily: 'Roboto-Light'}}>
                         Notification 
                     </Text>
                     <Switch color={Colors.main} style={styles.switchAndroid}
@@ -94,7 +94,7 @@ class TaskFeedItem extends Component {
                 </View>
                 <TouchableOpacity onPress={() => this.setState({privacyModal: true})}>
                     <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-start'}}>
-                        <Text style={{color: Colors.black, fontSize: 14, marginRight: 5, fontFamily: 'roboto-light', marginTop: 6}}>
+                        <Text style={{color: Colors.black, fontSize: 14, marginRight: 5, fontFamily: 'Roboto-Light', marginTop: 6}}>
                             Tutti
                         </Text>
                         <Octicons name={"globe"} size={16} color={Colors.main} style={{paddingTop: 6}} />
@@ -109,13 +109,6 @@ class TaskFeedItem extends Component {
     }
 
     async loadFonts() {
-        // await Font.loadAsync({
-        //     'roboto': require('../../assets/fonts/Roboto-Thin.ttf'),
-        //     'roboto-light': require('../../assets/fonts/Roboto-Light.ttf'),
-        //     'roboto-bold': require('../../assets/fonts/Roboto-Bold.ttf'),
-        //     'roboto-regular': require('../../assets/fonts/Roboto-Regular.ttf')
-        // });
-
         this.loadAlbum();
         this.setState({ isReady: true });
     }
@@ -280,7 +273,7 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 14,
         color: 'black',
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         height: 16
     },
 
@@ -288,14 +281,14 @@ const styles = StyleSheet.create({
         fontSize: 14,
         height: 16,
         color: 'black',
-        fontFamily: 'roboto-bold',
+        fontFamily: 'Roboto-Bold',
         marginLeft: 4
     },
 
     time: {
         color: '#999999',
         fontSize: 12,
-        fontFamily: 'roboto-light',
+        fontFamily: 'Roboto-Light',
         marginTop: 3
     },
 

@@ -81,13 +81,7 @@ export default class NewsFeedItem extends Component {
     renderAvatar() {
         const {time} = this.state;
         let {data} = this.props;
-        let profile = {};
-
-        try {
-            profile = JSON.parse(data.profile);
-        } catch(e) {
-            return null;
-        }
+        let profile = data.author;
         
         return (<View style={styles.avatarContainer}>
                 <Image style={styles.profile} source={{uri: 'https://s3.amazonaws.com/visualgotest-hosting-mobilehub-922920593/uploads/' + profile.mediaurl}}/>
@@ -107,12 +101,7 @@ export default class NewsFeedItem extends Component {
             return
         }
 
-        return null /*(
-            <View style={styles.likesComments}>
-                <Text style={styles.likeText}>{likes > 0 ? <Ionicons name='md-thumbs-up' color={Colors.main}/> : ''}{likes == 0 ? '' : ' ' + likes}</Text>
-                <Text style={styles.likeText}>{comments == 0 ? '' : comments + ' Comments'}</Text>
-            </View>
-        )*/
+        return null
     }
 
     renderLikeBar() {

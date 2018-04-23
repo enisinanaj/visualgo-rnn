@@ -116,13 +116,7 @@ class TaskFeedItem extends Component {
     renderAvatar() {
         const {time, album} = this.state;
         let {data} = this.props;
-        let profile = {};
-
-        try {
-            profile = JSON.parse(data.profile);
-        } catch(e) {
-            return null;
-        }
+        let profile = data.post.author;
 
         return (
             <View style={[styles.avatarContainer]}>
@@ -204,9 +198,6 @@ class TaskFeedItem extends Component {
       }
 
     render() {
-        // if (!this.state.isReady) {
-        //   return <AppLoading />;
-        // }
         const {data} = this.props;
         const {album} = this.state;
 

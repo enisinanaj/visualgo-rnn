@@ -168,31 +168,23 @@ class Landing extends Component {
                     responseJson.forEach(element => {
                         if (element.idcommentPost == null) {
                             this.setState({offset: this.state.offset + 1});
-
-                            promises.push(new Promise((resolve, reject) => {
-                                getProfile(element.idauthor, (responseJson) => {
-                                    element.profile = responseJson;
-                                    element.isPost = true;
-                                    resolve(element);
-                                })
-                            }))
+                            element.isPost = true;
                         }
                     });
 
-                    if(promises.length) {
-                        Promise.all(promises)
-                        .then(response => {
-                            data = data.concat(response)
-                            this.setState({dataSource: ds.cloneWithRows(data)})
-                        })
-                        .finally(test => {
-                            console.log("Finally rendered all posts", test);
-                            this.setState({loading: false});
-                        })
-                        .catch(error => console.log(error))
-                    }
-
                     return responseJson;
+                })
+                .then(response => {
+                    data = ['0', '1', ...response];
+
+                    console.log(" ###################### tutti i dati: " + JSON.stringify(data));
+
+                    this.setState({dataSource: ds.cloneWithRows(data)})
+                    return response.length
+                })
+                .finally(result => {
+                    console.log("Finally rendered all posts", result);
+                    this.setState({loading: false});
                 })
                 .catch((error) => {
                     console.error(error);
@@ -252,30 +244,14 @@ class Landing extends Component {
                     responseJson.forEach(element => {
                         if (element.idcommentPost == null) {
                             this.setState({offset: this.state.offset + 1});
-
-                            promises.push(new Promise((resolve, reject) => {
-                                getProfile(element.post.idauthor, (responseJson) => {
-                                    element.profile = responseJson;
-                                    element.isTask = true;
-                                    resolve(element);
-                                })
-                            }))
+                            element.isTask = true;
+                            console.log("task is: " + JSON.stringify(element))
                         }
                     });
 
-                    if(promises.length) {
-                        Promise.all(promises)
-                        .then(response => {
-                            dataTasks = dataTasks.concat(response)
-                            this.setState({dataSourceTasks: ds.cloneWithRows(dataTasks)})
-                        })
-                        .finally(test => {
-                            console.log("Finally rendered all tasks", test);
-                            this.setState({loading: false});
-                        })
-                        .catch(error => console.log(error))
-                    }
+                    dataTasks = ['0', '1', ...responseJson];
 
+                    this.setState({dataSourceTasks: ds.cloneWithRows(dataTasks)})
                     return responseJson;
                 })
                 .catch((error) => {

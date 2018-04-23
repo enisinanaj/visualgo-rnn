@@ -1,10 +1,22 @@
 import React from 'react';
-import { StyleSheet, video,ListView, ScrollView,
-        FlatList, Platform, Image, 
-        backgroundColor, Text, 
-        Dimensions, StatusBar,
-        View, Button, TouchableHighlight, 
-        TextInput, TouchableOpacity, Alert,} from 'react-native';
+import { StyleSheet,
+        video,
+        ListView, 
+        ScrollView,
+        FlatList, 
+        Platform, 
+        Image, 
+        backgroundColor, 
+        Text, 
+        Dimensions, 
+        StatusBar,
+        View, 
+        Button, 
+        TouchableHighlight, 
+        TextInput, 
+        TouchableOpacity, 
+        Alert,
+        Modal,} from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -19,11 +31,15 @@ import ActionSheet from '@yfuks/react-native-action-sheet';
 //import {Font, AppLoading} from 'expo';
 import Colors from '../constants/Colors';
 import DefaultRow from './common/default-row';
-import { isIphoneX, getFileExtension } from './helpers';
+import { isIphoneX, getFileExtension, getFileName } from './helpers';
 import ImageVisualGuideline from './common/image-visual-guideline';
 import { AWS_OPTIONS } from './helpers/appconfig';
 import Shadow from '../constants/Shadow';
 import BottomMenu from './common/BottomMenu';
+import { RNCamera } from 'react-native-camera';
+import ImageBrowser from './ImageBrowser';
+import {RNS3} from 'react-native-aws3';
+import * as Progress from 'react-native-progress';
 
 var {width, height} = Dimensions.get("window");
 
@@ -43,13 +59,23 @@ export default class AlbumDetail extends React.Component {
         ];
 
         var {data} = this.props.navigation != undefined ? this.props.navigation.state.params : {};
+        var dataMedias = (data.taskout.post.medias != undefined && data.taskout.post.medias.length > 0) ? data.taskout.post.medias : [];
 
         this.state = {
             isReady: false,
             visibleHeight: height,
             data: data,
-            albumTime: moment(new Date(data.taskout.post.created)).format("D MMMM [alle ore] HH:mm")
+            albumTime: moment(new Date(data.taskout.post.created)).format("D MMMM [alle ore] HH:mm"),
+            medias: dataMedias,
+            fileprogress: [],
+            cameraModal: false,
+            imageBrowserOpen: false,
         };
+
+        this.state.medias.map((file, i) => {
+            this.state.medias[i].done = true;
+            this.state.medias[i].progress = 100;
+        })
     }
 
     componentDidMount() {
@@ -109,6 +135,148 @@ export default class AlbumDetail extends React.Component {
         });
     }
 
+    async uploadFiles() {
+        console.error(this.state.medias);
+
+        await this.state.medias.map((file, i) => {
+
+            if (this.state.medias[i].done) {
+                return true;
+            }
+
+            const fileObj = {
+                uri: file.uri != null ? file.uri : file.file,
+                name: file.md5 ? file.md5 + '.' + getFileExtension(file) : getFileName(file),
+                type: "image/" + getFileExtension(file)
+            }
+
+            RNS3.put(fileObj, AWS_OPTIONS)
+            .progress((e) => {
+                let progress = this.state.fileprogress;
+                progress[i] = e.percent;
+                this.setState({fileprogress: progress});
+            })
+            .then(response => {
+                if (response.status !== 201)
+                    throw new Error("Failed to upload image to S3");
+                
+                this.state.medias[i].done = true;
+            })
+            .catch(function(error) {
+                console.log(error);
+            });
+        })
+    }
+
+    renderCameraModal() {  
+        const cameraStyles = StyleSheet.create({
+            container: {
+              flex: 1,
+              flexDirection: 'column',
+              backgroundColor: 'black'
+            },
+            preview: {
+              flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'center'
+            },
+            capture: {
+              flex: 0,
+              backgroundColor: '#fff',
+              borderRadius: 5,
+              padding: 15,
+              paddingHorizontal: 20,
+              alignSelf: 'center',
+              margin: 20
+            }
+          });
+
+        
+        return (<Modal
+            animationType={"fade"}
+            transparent={false}
+            visible={this.state.cameraModal}
+            onRequestClose={() => this.setState({cameraModal: false})}>
+            <View style={cameraStyles.container}>
+                <RNCamera
+                    ref={ref => {this.camera = ref;}}
+                    style = {cameraStyles.preview}
+                    type={RNCamera.Constants.Type.back}
+                    flashMode={RNCamera.Constants.FlashMode.on}
+                    permissionDialogTitle={'Permission to use camera'}
+                    permissionDialogMessage={'We need your permission to use your camera phone'}
+                />
+                <TouchableOpacity onPress={() => {this.setState({cameraModal: false});}} 
+                    style={{backgroundColor: 'transparent', top: 30, left: 10, position: 'absolute'}}>
+                    <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
+                </TouchableOpacity>
+                <View style={{flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'space-between', height: 70, width: width, position: 'absolute', bottom: 0}}>
+                    <TouchableOpacity style={{marginLeft: 20, width: 60}}
+                        onPress={() => {
+                        this.setState({
+                            type: this.state.type === RNCamera.Constants.Type.back
+                            ? RNCamera.Constants.Type.front
+                            : RNCamera.Constants.Type.back,
+                        });
+                        }}>
+                        <Ionicons name={"ios-reverse-camera-outline"} size={50} color={Colors.white} style={{marginTop: 5}}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{width: 62, position: 'absolute', left: width/2 - 30}}
+                        onPress={() => {this.snap()}}>
+                        <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center'}}>
+                        <View style={{width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#000', backgroundColor: '#fff', marginLeft: 6}}></View>
+                        </View>
+                    </TouchableOpacity>
+                    <View>
+                    </View>
+                </View>
+            </View>
+          </Modal>)
+    }
+
+    snap = async () => {
+        if (this.camera) {
+            const options = { quality: 0.5, base64: true };
+            const data = await this.camera.takePictureAsync(options)
+            this.setState({
+                cameraModal: false,
+                medias: [...this.state.medias, data],
+            });
+
+            this.uploadFiles();
+        }
+    };
+
+    imageBrowserCallback = (callback) => {
+        callback.then((photos) => {
+
+            if (photos.length == 0) {
+                this.setState({imageBrowserOpen: false});
+                return;
+            }
+
+          this.setState({
+            imageBrowserOpen: false,
+            medias: [...this.state.medias, ...photos]
+          });
+
+          this.uploadFiles();
+        }).catch((e) => console.log(e))
+    }
+
+    _renderImagePickerModal() {
+        return (
+            <Modal
+                animationType={"slide"}
+                transparent={false}
+                visible={this.state.imageBrowserOpen}
+                onRequestClose={() => this.setState({imageBrowserOpen: false})}>
+                
+                <ImageBrowser max={4} callback={this.imageBrowserCallback}/>
+            </Modal>
+        );
+    }
+
     renderAlbumBody() {
         const {environment, theme, profile, taskout} = this.state.data;
 
@@ -161,7 +329,7 @@ export default class AlbumDetail extends React.Component {
                         Upload Attachements
                     </Text>
                     <View style={{flexDirection: 'row', width: 40, marginRight: 0, justifyContent: 'flex-end', marginRight: 10}}>
-                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, marginTop: 3}}>({taskout.post.medias == undefined ? 0 : taskout.post.medias.length}) </Text>
+                        <Text style={{fontFamily: 'Roboto-Regular', fontSize: 16, marginTop: 3}}>({this.state.medias == undefined ? 0 : this.state.medias.length}) </Text>
                         <Ionicons  style={styles.forwardIcon} name={"ios-attach"} size={25} color={Colors.main}/>
                         <EvilIcons name={"chevron-right"} color={Colors.main} size={32} />
                     </View>
@@ -186,14 +354,12 @@ export default class AlbumDetail extends React.Component {
     }
 
     renderMedias() {
-        const {data} = this.state;
-        
-        if(data.taskout.post.medias != undefined && data.taskout.post.medias.length > 0) {
-            if (data.taskout.post.medias[0].url == 'undefined.pdf') {
-                data.taskout.post.medias[0].url = 'AON_IT_Develpoment_and_Security_Standards_V02.pdf';
+        if(this.state.medias != undefined && this.state.medias.length > 0) {
+            if (this.state.medias[0].url == 'undefined.pdf') {
+                this.state.medias[0].url = 'AON_IT_Develpoment_and_Security_Standards_V02.pdf';
             }
 
-            return data.taskout.post.medias.map((i, index) => {
+            return this.state.medias.map((i, index) => {
                 return ( (i.url == 'AON_IT_Develpoment_and_Security_Standards_V02.pdf') ? 
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
                         {this.renderPdfIcon()}
@@ -219,9 +385,7 @@ export default class AlbumDetail extends React.Component {
     }
 
     renderAllFilesGroup() {
-        const {data} = this.state;
-        
-        if(data.taskout.post.medias == undefined || data.taskout.post.medias.length == 0) {
+        if(this.state.medias == undefined || this.state.medias.length == 0) {
             return null;
         }
 
@@ -231,7 +395,7 @@ export default class AlbumDetail extends React.Component {
             </View>
 
             {
-                data.taskout.post.medias.map((i, index) => {
+                this.state.medias.map((i, index) => {
                     return (<DefaultRow>
                         <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
@@ -243,9 +407,18 @@ export default class AlbumDetail extends React.Component {
                                     </Text>
                                 </View>
                             </View>
-                            <View style={{flexDirection: 'column', width: 30, marginRight: 0, justifyContent: 'center'}}>
-                                <EvilIcons name={"close"} color={Colors.main} size={24} />
-                            </View>
+                            {this.state.fileprogress[index] < 1 ?
+                                <Progress.Circle size={22} animated={true} progress={this.state.fileprogress[index]} color={Colors.main} thickness={2} style={{position: 'absolute', right: 10, marginTop: 10}}/>
+                            :
+                                <View style={{flexDirection: 'column', width: 30, marginRight: 0, justifyContent: 'center'}}>
+                                    <EvilIcons name={"close"} color={Colors.main} size={24} />
+                                </View>
+                            }
+                            {this.state.fileprogress[index] < 1 ?
+                                <View style={{position: 'absolute', bottom: 0, }}>
+                                    <Progress.Bar width={width} animated={true} progress={this.state.fileprogress[index]} color={Colors.main} borderRadius={0} borderWidth={0} height={2} />
+                                </View>
+                            :null }
                         </TouchableOpacity>
                     </DefaultRow>)
                 })
@@ -336,6 +509,8 @@ export default class AlbumDetail extends React.Component {
                 </ScrollView>
                 <BottomMenu referer={(b) => {this.bottomMenuContainer = b}}
                     browse={() => this.selectFile()} picture={() => this.selectPicture()}/>
+                {this._renderImagePickerModal()}
+                {this.renderCameraModal()}
             </View>
         );
     }

@@ -33,7 +33,7 @@ import {withNavigation} from 'react-navigation';
 
 import _ from 'lodash';
 import Shadow from '../constants/Shadow';
-import AppSettings, { getProfile, makeCancelable } from './helpers/index';
+import AppSettings, { makeCancelable } from './helpers/index';
 import ApplicationConfig from './helpers/appconfig';
 
 var data = ['0', '1'];
@@ -95,7 +95,6 @@ class Landing extends Component {
             }
 
             if (filters[i].title == 'Post') {
-                console.log("changingType to posts");
                 filters[i].onPress = () => {
                     this.setState({selectType: 'posts'});
                     this.resetDatasource({reload: true});
@@ -144,7 +143,6 @@ class Landing extends Component {
         this.cancelablePostPromise = makeCancelable(
             new Promise(r => {
                 if (this.state.loading) {
-                    console.log("already loading...");
                     return Promise.reject("already loading...")
                 }
 
@@ -176,14 +174,10 @@ class Landing extends Component {
                 })
                 .then(response => {
                     data = ['0', '1', ...response];
-
-                    console.log(" ###################### tutti i dati: " + JSON.stringify(data));
-
                     this.setState({dataSource: ds.cloneWithRows(data)})
                     return response.length
                 })
                 .finally(result => {
-                    console.log("Finally rendered all posts", result);
                     this.setState({loading: false});
                 })
                 .catch((error) => {
@@ -219,7 +213,6 @@ class Landing extends Component {
         this.cancelableTaskPromise = makeCancelable(
             new Promise(r => {
                 if (this.state.loading) {
-                    console.log("already loading...");
                     return Promise.reject("already loading...")
                 }
 
@@ -240,12 +233,10 @@ class Landing extends Component {
                 })
                 .then((responseJson) => {
                     let promises = []
-                    console.log('Number of tasks: ' + responseJson.length)
                     responseJson.forEach(element => {
                         if (element.idcommentPost == null) {
                             this.setState({offset: this.state.offset + 1});
                             element.isTask = true;
-                            console.log("task is: " + JSON.stringify(element))
                         }
                     });
 
@@ -307,7 +298,6 @@ class Landing extends Component {
     }
 
     resetDatasource(obj) {
-        console.log('new 1')
         this._clearPosts();
         this._clearTasks();
 

@@ -15,7 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import moment from 'moment';
 import locale from 'moment/locale/it'
-import {getProfile, MenuIcons} from '../helpers';
+import {MenuIcons} from '../helpers';
 
 import Colors from '../../constants/Colors';
 import Shadow from '../../constants/Shadow';
@@ -60,14 +60,7 @@ class TaskFeedItem extends Component {
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + this.props.data.idalbum)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            console.debug("loading task album: " + responseJson);
             var parsedResponse = JSON.parse(responseJson);
-
-            if (parsedResponse.taskout.post.medias.length == 0) {
-                //console.error("task album has no media! size: " + parsedResponse.taskout.post.medias.length);
-            }
-
-            console.debug("loading task album: " + responseJson);
             this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme});
         })
         .catch((error) => {

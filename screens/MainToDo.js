@@ -10,7 +10,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import locale from 'moment/locale/it'
 
-import {MenuIcons, getProfile} from './helpers/index';
+import {MenuIcons} from './helpers/index';
 
 import FilterBar from './common/filter-bar';
 import NoOpModal from './common/NoOpModal';
@@ -121,16 +121,6 @@ export default class MainToDo extends React.Component {
         .then(task => {
             return this.loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
         })
-        // .then((t) => {
-        //     var promises = [];
-            
-        //     return new Promise((resolve, reject) => {
-        //         getProfile(t.idauthor, (responseJson) => {
-        //             t.profile = responseJson;
-        //             resolve(t);
-        //         })
-        //     })
-        // })
         .catch((error) => {
             console.error(error);
         });

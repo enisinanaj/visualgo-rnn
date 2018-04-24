@@ -189,10 +189,6 @@ export default class Login extends Component {
 
   render() {
     var {visibleHeight, passTyped, emailTyped, emailFieldFocused, passwordFieldFocused, secureEntryPassword} = this.state;
-    
-    // if (!this.state.isReady) {
-    //   return <AppLoading />;
-    // }
 
     return (
       <KeyboardAvoidingView style={{flex: 1, height: visibleHeight}} behavior={"padding"}>

@@ -21,7 +21,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../constants/Colors';
 import Shadow from '../../constants/Shadow';
 import {TaskAvatar} from '../../constants/StyleSheetCommons';
-import {getProfile, MenuIcons} from '../helpers';
+import {MenuIcons} from '../helpers';
 import ImageVisualGuideline from './image-visual-guideline';
 import Button from './button';
 import NoOpModal from './NoOpModal';
@@ -79,7 +79,7 @@ export default class VisualGuidelineItem extends Component {
                             {data.environment.tagName}
                         </Text>
                     </View>
-                    <Text style={TaskAvatar.time}>{data.profile.name} {data.profile.surname} - {this.state.time}</Text>
+                    <Text style={TaskAvatar.time}>{data.taskout.post.author.name} {data.taskout.post.author.surname} - {this.state.time}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{position: 'absolute', right: 0, top: -10}} onPress={() => this.contextualMenu.toggleState()}>
                     <Ionicons name="ios-more-outline" color={Colors.main} size={30} />

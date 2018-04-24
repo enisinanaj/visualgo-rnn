@@ -36,7 +36,7 @@ import CommentBar from '../constants/commentBar';
 import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
-import AppSettings, { getProfile, getFileExtension } from './helpers/index';
+import AppSettings, { getFileExtension } from './helpers/index';
 import { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
@@ -188,10 +188,8 @@ export default class CollabView extends Component {
                 <Pdf
                     source={source}
                     onLoadComplete={(numberOfPages,filePath)=>{
-                        console.log(`number of pages: ${numberOfPages}`);
                     }}
                     onPageChanged={(page,numberOfPages)=>{
-                        console.log(`current page: ${page}`);
                     }}
                     onError={(error)=>{
                         console.error(error);

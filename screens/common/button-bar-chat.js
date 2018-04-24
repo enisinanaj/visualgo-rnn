@@ -26,7 +26,6 @@ export default class ButtonBarChat extends Component {
     }
 
     measureView() {
-        console.log('measuring view');
         this.refs.container.measure((a, b, w, h, x, y) => {
             this.setState({height: new Animated.Value(h), original: h});
         });

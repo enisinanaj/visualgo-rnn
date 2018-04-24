@@ -17,7 +17,6 @@ import moment from 'moment';
 import locale from 'moment/locale/it'
 
 import Colors from '../../constants/Colors';
-import {getProfile} from '../helpers';
 import ImagePost from './image-post';
 import Button from './button';
 import Shadow from '../../constants/Shadow';

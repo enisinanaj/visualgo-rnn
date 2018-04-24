@@ -119,30 +119,14 @@ export default class VisualGuidelines extends Component {
                 return Promise.resolve(sorted);
             })
             .then((responseJson) => {
-                let promises = []
-                console.log('Number of tasks: ' + responseJson.length)
                 responseJson.forEach(element => {
                     if (element.idcommentPost == null) {
                         this.setState({offset: this.state.offset + 1});
-
-                        promises.push(new Promise((resolve, reject) => {
-                            getProfile(element.taskout.post.idauthor, (responseJson) => {
-                                element.profile = JSON.parse(responseJson);
-                                resolve(element);
-                            })
-                        }))
                     }
                 });
 
-                if(promises.length) {
-                    Promise.all(promises)
-                    .then(response => {
-                        data = data.concat(response)
-                        this.setState({dataSource: ds.cloneWithRows(data), refreshing: false});
-                    })
-                    .finally(test => console.log("Finally rendered all tasks", test))
-                    .catch(error => console.log(error))
-                }
+                data = ['0', ...responseJson];
+                this.setState({dataSource: ds.cloneWithRows(data), refreshing: false});
             })
             .catch((error) => {
                 console.error(error);

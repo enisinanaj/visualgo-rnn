@@ -110,13 +110,13 @@ export default class AlbumDetail extends React.Component {
     }
 
     renderAlbumBody() {
-        const {environment, theme, profile, taskout} = this.state.data;
+        const {environment, theme, taskout} = this.state.data;
 
         return (<View>
             <View style={styles.userName}>
                 <Image style={styles.profilepic} source={{uri: 'https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg-1024x683.jpg'}}/>
                 <View style={styles.UserNameView}>
-                    <Text style={styles.userNameTextStyle1}>{profile.name} {profile.surname}</Text>
+                    <Text style={styles.userNameTextStyle1}>{taskout.post.author.name} {taskout.post.author.surname}</Text>
                     <Text style={styles.userNameTextStyle2}>{this.state.albumTime}</Text>
                 </View>
             </View>

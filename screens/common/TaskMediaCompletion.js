@@ -32,7 +32,7 @@ import moment from 'moment';
 import locale from 'moment/locale/it';
 import Shadow from '../../constants/Shadow';
 import DefaultRow from './default-row';
-import { isIphoneX, getProfile } from '../helpers';
+import { isIphoneX} from '../helpers';
 import ApplicationConfig from '../helpers/appconfig';
 
 export default class TaskMediaCompletion extends Component {

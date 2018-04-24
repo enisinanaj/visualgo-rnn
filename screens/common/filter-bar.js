@@ -83,9 +83,6 @@ export default class FitlerBar extends Component {
     }
 
     _setQuery(sender, q) {
-        console.log("sender: " + sender);
-        console.log("query: " + q);
-
         this.setState({searchQuery: q});
 
         if (sender.onType != undefined) {

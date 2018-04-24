@@ -59,7 +59,6 @@ export default class PostPrivacy extends Component {
 
     for (let i = 0; i < allRows.length; i++) {
       if (allRows[i].title == rowData.title) {
-        console.log("rowdata is selected: " + rowData.selected);
         if (!rowData.selected) {
           allRows[i].selected = true;
         } else if(rowData.selected) {

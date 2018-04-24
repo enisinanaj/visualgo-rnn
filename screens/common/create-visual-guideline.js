@@ -552,7 +552,6 @@ export default class CreateVisualGuideline extends Component {
     }
 
     finishEnvironments(environment) {
-        console.log("selected environement: " + JSON.stringify(environment));
         this.setState({environment: environment, environmentModal: false});
     }
 
@@ -609,7 +608,6 @@ export default class CreateVisualGuideline extends Component {
 
         if (allNotify.length > 0) {
             var clustersLength = allNotify.filter((row) => row.category == 'managers').length;
-            console.log(clustersLength);
             var clustersLabel = '';
 
             if (clustersLength > 1) {
@@ -661,7 +659,6 @@ export default class CreateVisualGuideline extends Component {
 
         if (allShared.length > 0) {
             var clustersLength = allShared.filter((row) => row.category == 'managers').length;
-            console.log(clustersLength);
             var clustersLabel = '';
 
             if (clustersLength > 1) {
@@ -713,7 +710,6 @@ export default class CreateVisualGuideline extends Component {
 
         if (allContributors.length > 0) {
             var clustersLength = allContributors.filter((row) => row.category == 'managers').length;
-            console.log(clustersLength);
             var clustersLabel = '';
 
             if (clustersLength > 1) {

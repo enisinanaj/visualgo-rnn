@@ -64,7 +64,6 @@ export default class CreatePost extends Component{
         super(props);
 
         var {post} = this.props.navigation != undefined ? this.props.navigation.state.params : {};
-        console.log("Post summary got: " + JSON.stringify(post));
 
         var images = [];
         var postBackgroundColor = '#fff';
@@ -461,7 +460,6 @@ export default class CreatePost extends Component{
     }
 
     finishTags(tags) {
-        console.log("received tags: " + tags.length);
         this.setState({allTags: tags, tagModal: false});
     }
 
@@ -610,7 +608,6 @@ export default class CreatePost extends Component{
                 name: file.md5 + '.' + getFileExtension(file),
                 type: "image/" + getFileExtension(file)
             }
-            console.log("uploading file" + JSON.stringify(fileObj) + getFileExtension(file));
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
                 let progress = this.state.fileprogress;

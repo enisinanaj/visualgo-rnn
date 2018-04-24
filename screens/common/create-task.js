@@ -152,8 +152,6 @@ export default class CreateTask extends Component {
             }
         });
 
-        console.debug("Post task body: " + postBody);
-
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createtask', {
             method: 'POST',
             headers: {
@@ -164,20 +162,15 @@ export default class CreateTask extends Component {
         })
         .then((response) => response.json())
         .then((response) => {
-            console.debug("Create task result: " + JSON.stringify(response));
             this.props.closeModal({reload: true, taskId: response})
         })
         .catch(e => {
             console.error("error: " + e);
         })
-        //this.props.closeModal({reload: true, alreadyPublished: false});
     }
 
     isPublishable() {
         var result = !this.state.alreadyPublished && this.state.album != undefined;
-
-        console.log("is publish enabled: " + result);
-        console.log("is publish enabled: " + JSON.stringify(this.state.album));
 
         return result;
     }
@@ -438,12 +431,10 @@ export default class CreateTask extends Component {
 
     async lookupForAlbum() {
         let {selectedTheme, environment} = this.state;
-        console.log("came here: " + selectedTheme.id + " - " + environment.id);
         if (selectedTheme.id > 0 && environment.id > 0) {
             await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=" + environment.id + "&idtheme=" + selectedTheme.id + "&idalbum=0")
             .then((response) => {return response.json()})
             .then((responseJson) => {
-                console.log("result" + JSON.stringify(responseJson));
                 if (responseJson == "") {
                     this.setState({albumRequired: true});
                     this.setState({album: undefined});

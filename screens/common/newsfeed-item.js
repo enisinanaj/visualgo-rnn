@@ -53,7 +53,6 @@ export default class NewsFeedItem extends Component {
     }
 
     buttonOnPress(name) {
-        console.log(name);
         switch(name) {
             case 'Like':
                 this.setState({likes: this.state.likes + 1});

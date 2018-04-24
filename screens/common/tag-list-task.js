@@ -243,7 +243,6 @@ export default class TagListTask extends Component {
           this.setState({userResponse: JSON.parse(responseJson)});
           var managersList = [];
           this.state.userResponse.map((el, i) => {
-            console.log("element for tagging: " + JSON.stringify(el));
             if (el.role == 0) {
               let obj = {title: el.name + ' ' + el.surname, subtitle: el.username, img: require('../img/me.png'), selected: false, id: el.id};  
               managersList.push(obj);
@@ -254,7 +253,6 @@ export default class TagListTask extends Component {
           this.setState({tagSource: ds.cloneWithRows(tagsToShow)});
           isResponseEmpty = false;  
         } catch (e) {
-          console.log(e);
           isResponseEmpty = true;
         }
       }

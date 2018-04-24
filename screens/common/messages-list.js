@@ -32,7 +32,7 @@ export default class MessagesList extends Component {
     }
 
     onPress(){
-        console.log("click");
+
     }
 
     renderFilters() {

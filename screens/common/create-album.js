@@ -195,8 +195,6 @@ export default class NewAlbum extends Component {
             },(error,res) => {
                 // Android
                 const { uri, type: mimeType, fileName } = res;
-                console.log("file: " + res);
-
                 this.setState({files: [res], visualGuidelineModal: true});
             });
         } catch (e) {

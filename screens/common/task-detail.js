@@ -643,7 +643,6 @@ export default class TaskDetail extends Component {
 
         if (allTags.length > 0) {
             var clustersLength = allTags.filter((row) => row.category == 'clusters').length;
-            console.log(clustersLength);
             var clustersLabel = '';
 
             if (clustersLength > 1) {
@@ -656,7 +655,6 @@ export default class TaskDetail extends Component {
             objs[0].innerName = clustersLabel;
 
             var managersLength = allTags.filter((row) => row.category == 'managers').length;
-            console.log(managersLength);
             var managersLabel = '';
 
             if (managersLength > 1) {
@@ -867,7 +865,6 @@ export default class TaskDetail extends Component {
     }
 
     finishEnvironments(environments) {
-        console.log("received environments: " + environments.length);
         this.setState({allEnvironments: environments, environmentModal: false});
     }
 

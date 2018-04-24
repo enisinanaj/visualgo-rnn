@@ -130,7 +130,6 @@ export default class ExtendedStatus extends Component {
     toggleState() {
         var newState = !this.state.creatingNew;
         this.setState({creatingNew: newState});
-        console.log("new State: " + newState);
         this.props.onStateChange(newState);
     }
 

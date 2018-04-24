@@ -227,13 +227,9 @@ export default class ThemeList extends Component {
   }
 
   pushTheme() {
-    console.log("pushing theme onto the server");
-
     if (!this.state.backgroundUploaded) {
-      console.log("uploading background");
       this.uploadBackground();
     } else if (this.state.backgroundUploaded) {
-      console.log("uploading theme");
 
       fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/themes/createtheme', {
         method: 'POST',
@@ -250,7 +246,7 @@ export default class ThemeList extends Component {
         })
       })
       .then((response) => response.json())
-      .then((response) => {console.log("theme id: " + response); this.props.closeModal({themeName: this.state.themeDescription, photo: this.state.photos[0], id: response})})
+      .then((response) => {this.props.closeModal({themeName: this.state.themeDescription, photo: this.state.photos[0], id: response})})
       .catch(e => {
           console.error("error: " + e);
       })

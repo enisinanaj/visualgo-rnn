@@ -207,7 +207,7 @@ export default class EnvironmentList extends Component {
           })
       })
       .then((response) => response.json())
-      .then((response) => {console.log("environment id: " + response); this.props.closeModal({environmentName: this.state.environment, background: this.state.background, id: response})})
+      .then((response) => {this.props.closeModal({environmentName: this.state.environment, background: this.state.background, id: response})})
       .catch(e => {
           console.error("error: " + e);
       })

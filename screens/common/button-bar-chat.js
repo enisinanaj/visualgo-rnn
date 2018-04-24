@@ -35,7 +35,6 @@ export default class ButtonBarChat extends Component {
         if(this.state.animating) {
             return;
         }
-        console.log('animating');
 
         this.setState({animating: true});
         Animated.timing(
@@ -48,7 +47,6 @@ export default class ButtonBarChat extends Component {
         if(!this.state.animating) {
             return;
         }
-        console.log('animating');
         this.setState({animating: false});
         Animated.timing(
             this.state.height,

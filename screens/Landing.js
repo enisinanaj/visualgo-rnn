@@ -161,8 +161,6 @@ class Landing extends Component {
                     return Promise.resolve(sorted);
                 })
                 .then((responseJson) => {
-                    let promises = []
-                    
                     responseJson.forEach(element => {
                         if (element.idcommentPost == null) {
                             this.setState({offset: this.state.offset + 1});
@@ -173,7 +171,7 @@ class Landing extends Component {
                     return responseJson;
                 })
                 .then(response => {
-                    data = ['0', '1', ...response];
+                    data = data.concat(response);
                     this.setState({dataSource: ds.cloneWithRows(data)})
                     return response.length
                 })
@@ -208,7 +206,6 @@ class Landing extends Component {
 
     _loadTasks(query) {
         var addQuery = query != undefined ? '&q=' + query : '';
-        console.debug("loading tasks from: " + 'https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettasks?elementsno=100&fromindex=' + this.state.offset + '&iduser=' + ApplicationConfig.getInstance().me.id + addQuery);
 
         this.cancelableTaskPromise = makeCancelable(
             new Promise(r => {
@@ -232,7 +229,6 @@ class Landing extends Component {
                     return Promise.resolve(sorted);
                 })
                 .then((responseJson) => {
-                    let promises = []
                     responseJson.forEach(element => {
                         if (element.idcommentPost == null) {
                             this.setState({offset: this.state.offset + 1});
@@ -240,7 +236,7 @@ class Landing extends Component {
                         }
                     });
 
-                    dataTasks = ['0', '1', ...responseJson];
+                    dataTasks = dataTasks.concat(responseJson);
 
                     this.setState({dataSourceTasks: ds.cloneWithRows(dataTasks)})
                     return responseJson;

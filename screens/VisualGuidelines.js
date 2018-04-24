@@ -125,7 +125,7 @@ export default class VisualGuidelines extends Component {
                     }
                 });
 
-                data = ['0', ...responseJson];
+                data = data.concat(responseJson);
                 this.setState({dataSource: ds.cloneWithRows(data), refreshing: false});
             })
             .catch((error) => {

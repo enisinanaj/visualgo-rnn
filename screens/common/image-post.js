@@ -26,6 +26,7 @@ import Router from '../../navigation/Router';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
 import Colors from '../../constants/Colors';
+import { AWS_OPTIONS } from '../helpers/appconfig';
 
 export default class ImagePost extends Component {
     constructor(props) {
@@ -52,7 +53,7 @@ export default class ImagePost extends Component {
             images.map((o,i) => {
                 if (!o.hasPath) {
                     o.hasPath = true;
-                    o.url = 'https://s3.amazonaws.com/visualgotest-hosting-mobilehub-922920593/uploads/' + o.url;
+                    o.url = AWS_OPTIONS.bucketAddress + o.url;
                 }
             });
         }

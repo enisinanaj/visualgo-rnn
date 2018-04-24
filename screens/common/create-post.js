@@ -35,7 +35,6 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 
-// import {Font, AppLoading} from 'expo';
 import Colors from '../../constants/Colors';
 import TagList from './tag-list';
 import PostPrivacy from './privacy';

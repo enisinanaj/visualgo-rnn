@@ -20,7 +20,7 @@ import Colors from '../../constants/Colors';
 import ImagePost from './image-post';
 import Button from './button';
 import Shadow from '../../constants/Shadow';
-import ApplicationConfig from '../helpers/appconfig';
+import ApplicationConfig, { AWS_OPTIONS } from '../helpers/appconfig';
 
 
 const {width, height} = Dimensions.get('window');
@@ -82,7 +82,7 @@ export default class NewsFeedItem extends Component {
         let profile = data.author;
         
         return (<View style={styles.avatarContainer}>
-                <Image style={styles.profile} source={{uri: 'https://s3.amazonaws.com/visualgotest-hosting-mobilehub-922920593/uploads/' + profile.mediaurl}}/>
+                <Image style={styles.profile} source={{uri: AWS_OPTIONS.bucketAddress + profile.mediaurl}}/>
                 <TouchableOpacity style={styles.nameContainer} onPress={() => this.openPostSummary(data)}>
                     <Text style={styles.name}>{profile.name} {profile.surname}</Text>
                     <Text style={styles.time}>{time}</Text>

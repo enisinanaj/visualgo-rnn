@@ -87,7 +87,7 @@ export default class ThemeList extends Component {
         var parsedResponse = JSON.parse(responseJson);
         parsedResponse.forEach(it => {
           ths.push({
-            title: it.tagName, img: {url: 'https://s3.amazonaws.com/visualgotest-hosting-mobilehub-922920593/uploads/' + it.mediaUrl}, ...it
+            title: it.tagName, img: {url: AWS_OPTIONS.bucketAddress + it.mediaUrl}, ...it
           })
         });
         this.setState({themeSource: ds.cloneWithRows(ths)});

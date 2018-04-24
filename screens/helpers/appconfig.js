@@ -24,10 +24,10 @@ export default ApplicationConfig = (() => {
 
 export const AWS_OPTIONS = {
   keyPrefix: "uploads/",
-  bucket: "visualgotest-hosting-mobilehub-922920593",
-  region: "us-east-1",
+  bucket: "visualgo",
+  region: "eu-central-1",
   accessKey: "AKIAJJ2F7PIGCSVS72UQ",
   secretKey: "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",
   successActionStatus: 201,
-  bucketAddress: 'https://s3.amazonaws.com/visualgotest-hosting-mobilehub-922920593/uploads/'
+  bucketAddress: 'https://s3.eu-central-1.amazonaws.com/visualgo/uploads/'
 }

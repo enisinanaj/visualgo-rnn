@@ -136,8 +136,6 @@ export default class AlbumDetail extends React.Component {
     }
 
     async uploadFiles() {
-        console.error(this.state.medias);
-
         await this.state.medias.map((file, i) => {
 
             if (this.state.medias[i].done) {

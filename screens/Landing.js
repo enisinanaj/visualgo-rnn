@@ -147,7 +147,7 @@ class Landing extends Component {
                 }
 
                 this.setState({loading: true});
-                fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/posts/getposts?pagesize=100&pageindex=' + this.state.offset + '&iduser=' + ApplicationConfig.getInstance().me.id + addQuery)
+                fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/posts/getposts?pagesize=1000&pageindex=' + this.state.offset + '&iduser=' + ApplicationConfig.getInstance().me.id + addQuery)
                 .then((response) => {return response.json()})
                 .then((response) => {
                     try {

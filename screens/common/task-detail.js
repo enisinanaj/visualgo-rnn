@@ -54,13 +54,7 @@ import { isIphoneX, getProfile, getAddressForUrl } from '../helpers';
 import { AWS_OPTIONS } from '../helpers/appconfig';
 import ApplicationConfig from '../helpers/appconfig';
 
-const messages = []; 
-// [{from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-//                 {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo', read: true, date: new Date()},
-//                 {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem', read: false, date: new Date()},
-//                 {from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-//                 {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem Dolo', read: true, date: new Date()},
-//                 {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()}];
+const messages = [];
 
 export default class TaskDetail extends Component {
     task;
@@ -217,7 +211,7 @@ export default class TaskDetail extends Component {
                 <View style={{flex:1}}>
                     <Image style={{flex: 1, height: 48, width: width, 
                                     position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                    source={{uri: getAddressForUrl(this.state.album.post.medias[0].url)}} />
+                                    source={{uri: getAddressForUrl(this.state.album.themeUrl)}} />
                     <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between'}}>
                         <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                             <TouchableOpacity onPress={() => this.goBack()}>
@@ -899,7 +893,7 @@ export default class TaskDetail extends Component {
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16, marginTop: 10}}>
                         <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                            <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(this.state.album.post.medias[0].url)}} />
+                            <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(this.state.album.themeUrl)}} />
                         </View>
                         <Text style={styles.name}>{this.state.theme.tagName}</Text>
                         <Text style={[styles.environment, {color: this.state.environment.mediaUrl}]}>

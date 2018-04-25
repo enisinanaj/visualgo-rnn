@@ -118,7 +118,7 @@ class TaskFeedItem extends Component {
         return (
             <View style={[styles.avatarContainer]}>
                 <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(album.post.medias[0].url)}} />
+                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(album.themeUrl)}} />
                 </View>
                 <View style={[styles.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl)}}/>
@@ -168,7 +168,7 @@ class TaskFeedItem extends Component {
         const {album} = this.state;
         if(album != undefined && album.post.medias != undefined && album.post.medias.length > 0) {
             return (
-                <Image source={{ uri: getAddressForUrl(album.post.medias[0].url)}} style={{height: 180, width: null, resizeMode: 'cover'}} />
+                <Image source={{ uri: getAddressForUrl(album.themeUrl)}} style={{height: 180, width: null, resizeMode: 'cover'}} />
             )
         }
     }

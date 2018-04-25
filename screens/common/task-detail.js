@@ -51,7 +51,7 @@ import {TaskAvatar} from '../../constants/StyleSheetCommons';
 import nodeEmoji from 'node-emoji';
 import DefaultRow from './default-row';
 import { isIphoneX, getProfile, getAddressForUrl } from '../helpers';
-import { AWS_OPTIONS } from '../helpers/appconfig';
+import appconfig, { AWS_OPTIONS } from '../helpers/appconfig';
 import ApplicationConfig from '../helpers/appconfig';
 import SMTaskSummarySupport from './taskSummarySMSupport';
 
@@ -953,6 +953,24 @@ export default class TaskDetail extends Component {
         return ApplicationConfig.getInstance().isHVM() && this.state.profile.id == this.state.taskout.post.idauthor
     }
 
+    async loadSMMedia() {
+        console.log("address: " + "https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + this.props.navigation.state.params.idtask + "&iduser=" + appconfig.getInstance().me.id);
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + this.props.navigation.state.params.idtask + "&iduser=" + appconfig.getInstance().me.id)
+            .then((response) => {return response.json()})
+            .then((responseJson) => {
+                return JSON.parse(responseJson);
+            })
+            .then((media) => {
+                media = media;
+                this.setState({smMedia: media})
+
+                console.log("manager media: " + JSON.stringify(media));
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
     render() {
          if (!this.state.isReady) {
              return <View />
@@ -996,7 +1014,7 @@ export default class TaskDetail extends Component {
                         {ApplicationConfig.getInstance().isHVM() ? this.renderTaskAdmins() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
-                        {ApplicationConfig.getInstance().isSM() ? <SMTaskSummarySupport photoNumber={this.state.taskout.foto} /> : null}
+                        {ApplicationConfig.getInstance().isSM() ? <SMTaskSummarySupport photoNumber={this.state.taskout.foto} updateTask={() => this.loadSMMedia()} /> : null}
                     </ScrollView>
                     {this.renderTaskComment()}
                     {this.renderThemeModal()}

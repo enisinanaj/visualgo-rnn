@@ -173,6 +173,7 @@ export default class SMTaskSummarySupport extends Component {
         .then((response) => {
             //reload task detail
             console.debug("Attach Media to Task response: " + JSON.stringify(response));
+            this.props.updateTask();
         })
         .catch(e => {
             console.error("error: " + e);

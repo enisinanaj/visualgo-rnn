@@ -110,9 +110,7 @@ export default class ImageTile extends React.PureComponent {
   snap = async () => {
       if (this.camera) {
         const options = { quality: 0.5, base64: true };
-        console.debug("options: " + options);
         const data = await this.camera.takePictureAsync(options)
-        console.debug("data uri: " + data);
         this.setState({cameraModal: false});
         this.props.selectImage(data);
       }      

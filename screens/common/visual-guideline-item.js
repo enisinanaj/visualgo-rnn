@@ -21,7 +21,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Colors from '../../constants/Colors';
 import Shadow from '../../constants/Shadow';
 import {TaskAvatar} from '../../constants/StyleSheetCommons';
-import {MenuIcons} from '../helpers';
+import {MenuIcons, getAddressForUrl} from '../helpers';
 import ImageVisualGuideline from './image-visual-guideline';
 import Button from './button';
 import NoOpModal from './NoOpModal';
@@ -67,7 +67,7 @@ export default class VisualGuidelineItem extends Component {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri: AWS_OPTIONS.bucketAddress + data.theme.mediaUrl}} />
+                    <Image style={TaskAvatar.taskThumbnail} source={{uri: getAddressForUrl(data.theme.mediaUrl)}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('../img/dp2.jpg')}/>
@@ -90,14 +90,6 @@ export default class VisualGuidelineItem extends Component {
     }
 
     renderCardTitle() {
-        const {time} = this.state;
-        let profile = {};
-        try {
-             profile = this.props.data.profile;
-        } catch(e) {
-            return null;
-        }
-
         return this.renderAvatar();
     }
 
@@ -126,10 +118,6 @@ export default class VisualGuidelineItem extends Component {
     }
 
     render() {
-        // if (!this.state.isReady) {
-        //   return <AppLoading />;
-        // }
-
         return (
             <View style={{height: 290, padding: 0, margin: 0}} >
                 <View style={[styles.container, Shadow.cardShadow]}>

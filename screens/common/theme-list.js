@@ -25,7 +25,7 @@ import SingleImage from './single-image';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import { isIphoneX } from '../helpers';
+import { isIphoneX, getAddressForUrl } from '../helpers';
 
 import _ from 'lodash';
 import Shadow from '../../constants/Shadow';
@@ -87,7 +87,7 @@ export default class ThemeList extends Component {
         var parsedResponse = JSON.parse(responseJson);
         parsedResponse.forEach(it => {
           ths.push({
-            title: it.tagName, img: {url: AWS_OPTIONS.bucketAddress + it.mediaUrl}, ...it
+            title: it.tagName, img: {url: getAddressForUrl(it.mediaUrl)}, ...it
           })
         });
         this.setState({themeSource: ds.cloneWithRows(ths)});

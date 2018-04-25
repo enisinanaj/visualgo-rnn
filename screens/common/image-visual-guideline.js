@@ -16,7 +16,7 @@ import {
 
 // import {Font, AppLoading} from 'expo';
 
-import {getImage} from '../helpers';
+import {getImage, getAddressForUrl} from '../helpers';
 const {width, height} = Dimensions.get('window');
 
 import _ from 'lodash';
@@ -51,7 +51,7 @@ export default class ImageVisualGuideline extends Component {
 
         return images.map((i, index) => {
             return (<View key={index} style={[styles.imageContainer, Shadow.filterShadow]}> 
-                    <Image source={{uri: AWS_OPTIONS.bucketAddress + i.url}} style={styles.img} resizeMode={"cover"}/>
+                    <Image source={{uri: getAddressForUrl(i.url)}} style={styles.img} resizeMode={"cover"}/>
                 </View>);
         });
     }

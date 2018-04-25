@@ -36,7 +36,7 @@ import CommentBar from '../constants/commentBar';
 import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
-import AppSettings, { getFileExtension } from './helpers/index';
+import AppSettings, { getFileExtension, getAddressForUrl } from './helpers/index';
 import { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
@@ -329,8 +329,8 @@ export default class CollabView extends Component {
                 <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
                         {((viewData != undefined) && (viewData != {})) ?
-                        (getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.bucketAddress + viewData.data.url) :
-                            <Image source={{uri: AWS_OPTIONS.bucketAddress + viewData.data.url}} style={{height: null, width: width}} resizeMode={'cover'}/> :
+                        (getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
+                            <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/> :
                             <View>
                                 <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
                                 <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>

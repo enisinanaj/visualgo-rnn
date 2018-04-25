@@ -147,11 +147,11 @@ export default class CreateTask extends Component {
                 foto: this.state.countPhoto,
                 video: this.state.countVideo,
                 foto360: this.state.count360,
-                commentsenabled: this.state.commentsEnabled,
-                notificationsenabled: this.state.notificationsEnabled
+                commentsenabled: this.state.commentsEnabled ? 1 : 0,
+                notificationsenabled: this.state.notificationsEnabled ? 1 : 0
             }
         });
-
+        
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createtask', {
             method: 'POST',
             headers: {

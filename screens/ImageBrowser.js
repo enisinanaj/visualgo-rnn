@@ -112,7 +112,7 @@ export default class ImageBrowser extends React.Component {
     return new Promise((resolve, reject) => {
       RNFetchBlob.fs.readFile(url, 'base64')
       .then((data) => {
-        let hex_md5 = md5.hex_md5( data )
+        let hex_md5 = md5.hex_md5( data );
         resolve({data: data, md5: hex_md5, uri: url})
       })
       .catch(reject)

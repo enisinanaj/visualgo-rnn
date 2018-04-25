@@ -166,11 +166,13 @@ export default class CreateVisualGuideline extends Component {
                 idenvironment: String(this.state.environment.id),
                 idtheme: String(this.state.selectedTheme.id),
                 message: String(this.state.taskDescription),
-                backgroundmediaurl: '',
+                backgroundmediaurl: "",
                 mediaurl: filesToPost,
                 id: this.state.album != undefined ? this.state.album.taskout.id : null
             }
         });
+
+        console.log("new album: " + tempBody);
 
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createalbum', {
             method: 'POST',
@@ -182,6 +184,7 @@ export default class CreateVisualGuideline extends Component {
         })
         .then((response) => response.json())
         .then((response) => {
+            console.log("create album response: " + response);
             this.props.closeModal({reload: true, album: response})
         })
         .catch(e => {
@@ -202,6 +205,8 @@ export default class CreateVisualGuideline extends Component {
                 type: "image/" + getFileExtension(file)
             }
 
+            console.log("log image: " + JSON.stringify(fileObj));
+
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
                 let progress = this.state.fileprogress;
@@ -209,6 +214,7 @@ export default class CreateVisualGuideline extends Component {
                 this.setState({fileprogress: progress});
             })
             .then(response => {
+                console.log("log image: " + JSON.stringify(response));
                 if (response.status !== 201)
                     throw new Error("Failed to upload image to S3");
                 

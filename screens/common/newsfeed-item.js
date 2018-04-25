@@ -21,6 +21,7 @@ import ImagePost from './image-post';
 import Button from './button';
 import Shadow from '../../constants/Shadow';
 import ApplicationConfig, { AWS_OPTIONS } from '../helpers/appconfig';
+import { getAddressForUrl } from '../helpers';
 
 
 const {width, height} = Dimensions.get('window');
@@ -82,7 +83,7 @@ export default class NewsFeedItem extends Component {
         let profile = data.author;
         
         return (<View style={styles.avatarContainer}>
-                <Image style={styles.profile} source={{uri: AWS_OPTIONS.bucketAddress + profile.mediaurl}}/>
+                <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl)}}/>
                 <TouchableOpacity style={styles.nameContainer} onPress={() => this.openPostSummary(data)}>
                     <Text style={styles.name}>{profile.name} {profile.surname}</Text>
                     <Text style={styles.time}>{time}</Text>

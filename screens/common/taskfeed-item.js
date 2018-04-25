@@ -15,7 +15,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Octicons from 'react-native-vector-icons/Octicons';
 import moment from 'moment';
 import locale from 'moment/locale/it'
-import {MenuIcons} from '../helpers';
+import {MenuIcons, getAddressForUrl} from '../helpers';
 
 import Colors from '../../constants/Colors';
 import Shadow from '../../constants/Shadow';
@@ -60,8 +60,12 @@ class TaskFeedItem extends Component {
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + this.props.data.idalbum)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            var parsedResponse = JSON.parse(responseJson);
-            this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme});
+            try {
+                var parsedResponse = JSON.parse(responseJson);
+                this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme});
+            } catch(e) {
+                console.log(e);
+            }
         })
         .catch((error) => {
             console.error(error);
@@ -114,10 +118,10 @@ class TaskFeedItem extends Component {
         return (
             <View style={[styles.avatarContainer]}>
                 <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={styles.taskThumbnail} source={{uri: AWS_OPTIONS.bucketAddress + album.post.medias[0].url}} />
+                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(album.post.medias[0].url)}} />
                 </View>
                 <View style={[styles.avatarPhotoContainer, Shadow.filterShadow]}>
-                    <Image style={styles.profile} source={{uri: AWS_OPTIONS.bucketAddress + profile.mediaurl}}/>
+                    <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl)}}/>
                 </View>
                 <TouchableOpacity onPress={() => {this.openTaksDetail()}} style={styles.nameContainer}> 
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
@@ -164,7 +168,7 @@ class TaskFeedItem extends Component {
         const {album} = this.state;
         if(album != undefined && album.post.medias != undefined && album.post.medias.length > 0) {
             return (
-                <Image source={{ uri: AWS_OPTIONS.bucketAddress + album.post.medias[0].url}} style={{height: 180, width: null, resizeMode: 'center'}} />
+                <Image source={{ uri: getAddressForUrl(album.post.medias[0].url)}} style={{height: 180, width: null, resizeMode: 'cover'}} />
             )
         }
     }
@@ -174,7 +178,6 @@ class TaskFeedItem extends Component {
         data.theme = this.state.theme;
         data.environment = this.state.environment;
         data.album = this.state.album;
-        //this.props.navigation.navigate('MainCalendar');
         ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: data.id});
     }
 

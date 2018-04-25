@@ -29,5 +29,6 @@ export const AWS_OPTIONS = {
   accessKey: "AKIAJJ2F7PIGCSVS72UQ",
   secretKey: "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",
   successActionStatus: 201,
-  bucketAddress: 'https://s3.eu-central-1.amazonaws.com/visualgo/uploads/'
+  bucketAddress: 'https://s3.eu-central-1.amazonaws.com/visualgo/thumbnails/uploads/',
+  baseBucketAddress: 'https://s3.eu-central-1.amazonaws.com/visualgo/uploads/'
 }

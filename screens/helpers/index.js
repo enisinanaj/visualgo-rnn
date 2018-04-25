@@ -2,6 +2,7 @@ import{
     Dimensions,
     Platform
 } from 'react-native';
+import { AWS_OPTIONS } from './appconfig';
 
 // import {ImagePicker} from 'expo';
 
@@ -69,6 +70,15 @@ export async function getProfile(profileId, getData) {
     .catch((error) => {
         console.error(error);
     });
+}
+
+export function getAddressForUrl(url) {
+      try {
+        let response = fetch(AWS_OPTIONS.bucketAddress + url);
+        return AWS_OPTIONS.bucketAddress + url;
+      } catch (error) {
+        return AWS_OPTIONS.baseBucketAddress + url;
+      }
 }
 
 export const makeCancelable = (promise) => {

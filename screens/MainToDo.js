@@ -10,7 +10,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import locale from 'moment/locale/it'
 
-import {MenuIcons} from './helpers/index';
+import {MenuIcons, getAddressForUrl} from './helpers/index';
 
 import FilterBar from './common/filter-bar';
 import NoOpModal from './common/NoOpModal';
@@ -153,7 +153,7 @@ export default class MainToDo extends React.Component {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri: AWS_OPTIONS.bucketAddress + obj.task.album.theme.mediaUrl}} />
+                    <Image style={TaskAvatar.taskThumbnail} source={{uri:  getAddressForUrl(obj.task.album.theme.mediaUrl)}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('./img/dp2.jpg')}/>

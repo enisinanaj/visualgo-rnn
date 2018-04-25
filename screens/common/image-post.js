@@ -15,7 +15,7 @@ import {
 
 // import {Font, AppLoading} from 'expo';
 
-import {getImage} from '../helpers';
+import {getImage, getAddressForUrl} from '../helpers';
 const {width, height} = Dimensions.get('window');
 
 import _ from 'lodash';
@@ -53,7 +53,7 @@ export default class ImagePost extends Component {
             images.map((o,i) => {
                 if (!o.hasPath) {
                     o.hasPath = true;
-                    o.url = AWS_OPTIONS.bucketAddress + o.url;
+                    o.url = getAddressForUrl(o.url);
                 }
             });
         }

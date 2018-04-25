@@ -183,9 +183,14 @@ export default class CreatePost extends Component{
 
     async loadComments() {
         messages = [];
+        if (this.state.id == undefined || this.state.id == null) {
+            return;
+        }
+
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getpostcomments?pagesize=1000&pageindex=0&idpost=" + this.state.id)
             .then((response) => {return response.json()})
             .then((responseJson) => {
+                console.log("postcomments: " + responseJson);
                 var result = JSON.parse(responseJson);
                 result = result.filter(it => it.idcommentPost != null);
                 var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    

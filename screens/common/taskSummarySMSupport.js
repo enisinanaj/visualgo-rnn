@@ -24,7 +24,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import ImageBrowser from '../ImageBrowser';
 import { getFileExtension } from '../helpers';
 import { RNS3 } from 'react-native-aws3/lib/RNS3';
-import { AWS_OPTIONS } from '../helpers/appconfig';
+import appconfig, { AWS_OPTIONS } from '../helpers/appconfig';
 
 const {width, height} = Dimensions.get('window');
 
@@ -80,10 +80,26 @@ export default class SMTaskSummarySupport extends Component {
         return { length, offset: length * index, index }
     }
 
+    handleImageTap(index) {
+        if (this.state.photos[index] != undefined) {
+            setState({imageBrowserOpen: true})
+        } else {
+            ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {image: this.state.photos[index]});
+        }
+    }
+
     renderImageTileElement = ({item, index}) => {
+        var image;
+        if (this.state.photos[index] != undefined) {
+            image = this.state.photos;
+        }
+
         return(
-            <TouchableOpacity style={[TaskMedia, Shadow.smallCardShadow]} onPress={() => this.setState({imageBrowserOpen: true})}>
+            <TouchableOpacity style={[TaskMedia, Shadow.smallCardShadow]} onPress={() => this.handleImageTap(index)}>
+                {image == undefined || image == null ?
                 <Entypo name={"image-inverted"} size={60} style={TaskMediaIcon}/>
+                : 
+                <Image source={image} />}
             </TouchableOpacity>
         )
     }
@@ -99,25 +115,63 @@ export default class SMTaskSummarySupport extends Component {
 
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
-                let progress = this.state.fileprogress;
-                progress[i] = e.percent;
-                this.setState({fileprogress: progress});
+                // let progress = this.state.fileprogress;
+                // progress[i] = e.percent;
+                // this.setState({fileprogress: progress});
             })
             .then(response => {
                 if (response.status !== 201) {
                     throw new Error("Failed to upload image to S3");
                 }
                 
-                if (i == this.state.files.length - 1) {
+                if (i == this.state.photos.length - 1) {
                     //siamo arrivati a fine upload files
                     this.setState({filesUploaded: true});
-                    this.post();
+                    this.attachPicturesToTask();
                 }             
             })
             .catch(function(error) {
                 console.log(error);
             });
         });
+    }
+
+    attachPicturesToTask() {
+        let filesToPost = [];
+        this.state.photos.map((f, i) => {
+            let tmp = {
+                id: f.md5 + '.' + getFileExtension(f),
+                type: "image/" + getFileExtension(f)
+            };
+            
+            filesToPost.push(tmp);
+        });
+
+        var addmedia2task = JSON.stringify({
+            addmedia2task: {
+                idtask: this.state.text,
+                idauthor: appconfig.getInstance().me.id,
+                mediaurl: filesToPost,
+            }
+        });
+
+        console.log("mediaToTask body: " + addmedia2task);
+
+        fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/addmediatotask', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: addmedia2task
+        })
+        .then((response) => {
+            //reload task detail
+            console.debug("Attach Media to Task response: " + JSON.stringify(response));
+        })
+        .catch(e => {
+            console.error("error: " + e);
+        })
     }
 
     imageBrowserCallback = (callback) => {
@@ -144,7 +198,7 @@ export default class SMTaskSummarySupport extends Component {
                 visible={this.state.imageBrowserOpen}
                 onRequestClose={() => this.setState({imageBrowserOpen: false})}>
                 
-                <ImageBrowser max={this.props.photoNumber} callback={this.imageBrowserCallback}/>
+                <ImageBrowser max={this.props.photoNumber - this.state.photos.length} callback={this.imageBrowserCallback}/>
             </Modal>
         );
     }

@@ -37,7 +37,7 @@ import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
 import AppSettings, { getFileExtension, getAddressForUrl } from './helpers/index';
-import { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
+import appconfig, { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
 
@@ -316,6 +316,42 @@ export default class CollabView extends Component {
         )
     }
 
+    approveMedia() {
+        this.voteMedia(1);
+    }
+
+    disapproveMedia() {
+        this.voteMedia(-1);
+    }
+
+    voteMedia(vote) {     
+        var voteMedia = JSON.stringify({
+            like: {
+                idmedia: this.state.idMedia,
+                iduser: appconfig.getInstance().me.id,
+                like: vote
+            }
+        });
+
+        console.log("mediaToTask body: " + addmedia2task);
+
+        fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/posts/likepostmedia', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: voteMedia
+        })
+        .then((response) => {
+            //change UI
+            //show toast notification for action
+        })
+        .catch(e => {
+            console.error("error: " + e);
+        })
+    }
+
     render() {
         const {viewData} = this.state;
         
@@ -341,23 +377,20 @@ export default class CollabView extends Component {
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />
                     </View>
-                    {/* <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: 100, left: 64, justifyContent: 'center'}, Shadow.filterShadow]}>
-                        <Image source={require('../assets/images/icons/share-icon.png')}  style={{width: 14, height: 18, backgroundColor: 'transparent', marginLeft: 10}}/>
-                    </View> */}
                     {((viewData != undefined) && (viewData != {})) ? null :
                         <View style={{position: 'absolute', right: 30, bottom: 60}}>
                             <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
                                 <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
                                     <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
                                 </View>
-                                <View style={[styles.pinMenu, Shadow.filterShadow]}>
+                                <View style={[styles.pinMenu, Shadow.filterShadow]} onSelect={(it) => this.disapproveMedia()}>
                                     <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
                                 </View>
                                 <View style={[styles.pinMenu, Shadow.filterShadow]}>
                                     <Feather name={"download"} size={23} color={Colors.main} style={{width: 23, height: 23, backgroundColor: 'transparent', marginTop: 15}}/>
                                 </View>
                                 <View style={[styles.pinMenu, Shadow.filterShadow]}
-                                    onSelect={(it) => console.log("up")}>
+                                    onSelect={(it) => this.approveMedia()}>
                                     <Feather name={"thumbs-up"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
                                 </View>
                             </RadialMenu>

@@ -50,6 +50,11 @@ export default class MainToDo extends React.Component {
                                     {title: 'Rigetta 1 file', image: MenuIcons.THUMB_DOWN, onPress: () => {}}, 
                                     {title: 'Alert', image: MenuIcons.ALERT, onPress: () => {}},
                                     {title: 'Commenta task', image: MenuIcons.COMMENT, onPress: () => {}},
+                                    {title: 'Cronologia Notifiche Store per singolo task', featureName: 'Cronologia Notifiche', image: MenuIcons.HISTORY, disabled: true, onPress: () => {}}],
+            addMediaMenuActions: [{title: 'Camera', image: MenuIcons.CAMERA, onPress: () => {}}, 
+                                    {title: 'Upload', image: MenuIcons.BROWSE, onPress: () => {}}, 
+                                    {title: 'View task summary', image: MenuIcons.EYE, onPress: () => {}},
+                                    {title: 'Commenta task', image: MenuIcons.COMMENT, onPress: () => {}},
                                     {title: 'Cronologia Notifiche Store per singolo task', featureName: 'Cronologia Notifiche', image: MenuIcons.HISTORY, disabled: true, onPress: () => {}}]
         }
     }
@@ -115,7 +120,6 @@ export default class MainToDo extends React.Component {
             if (responseJson == "") {
                 return;
             }
-
             return JSON.parse(responseJson);
         })
         .then(task => {
@@ -139,6 +143,10 @@ export default class MainToDo extends React.Component {
 
     openContextualMenu(index) {
         this.contextualMenu.toggleState();
+    }
+
+    openAddMediaMenu(index) {
+        this.addMediaMenu.toggleState();
     }
 
     navigateToCollabView() {
@@ -187,6 +195,41 @@ export default class MainToDo extends React.Component {
 
     renderElements() {
         return this.state.notifications.map((obj, i) => {
+            var fotoRender = [];
+            var videoRender = [];
+            var foto360Render = [];
+
+
+            for(let k = 0; k < obj.task.foto; k++){
+                fotoRender.push(
+                    <TouchableOpacity onPress={() => this.openAddMediaMenu(1)}>
+                        <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                            <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
+
+            for(let k = 0; k < obj.task.video; k++){
+                videoRender.push(
+                    <TouchableOpacity onPress={() => this.openAddMediaMenu(1)}>
+                        <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                            <Entypo name={"video-camera"} size={30} style={styles.TaskMediaIcon}/>                                      
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
+
+            for(let k = 0; k < obj.task.foto360; k++){
+                foto360Render.push(
+                    <TouchableOpacity onPress={() => this.openAddMediaMenu(1)}>
+                        <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                            <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
+                        </View>
+                    </TouchableOpacity>
+                )
+            }
+
             return <View key={i}>
                 <View style={[styles.SingleTaskContainer, Shadow.cardShadow]}>
                     {this.renderCardTitle(obj)}
@@ -202,16 +245,10 @@ export default class MainToDo extends React.Component {
                             <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
                                 <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
                             </View>
-                        </TouchableOpacity> */}
-                        <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                            <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
-                        </View>
-                        <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                            <Entypo name={"video-camera"} size={30} style={styles.TaskMediaIcon}/>            
-                        </View>
-                        <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                            <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
-                        </View>
+                                </TouchableOpacity> */}
+                        { fotoRender }
+                        { videoRender }
+                        { foto360Render }
                     </ScrollView>
                 </View>
             </View>
@@ -248,6 +285,7 @@ export default class MainToDo extends React.Component {
                 {this.renderSectionTitle()}
                 {this.renderElements()}
                 <ContextualActionsMenu ref={e => this.contextualMenu = e} buttons={this.state.contextualMenuActions} />
+                <ContextualActionsMenu ref={e => this.addMediaMenu = e} buttons={this.state.addMediaMenuActions} />
                 {this.renderNewTaskModal()}
             </ScrollView>
         );

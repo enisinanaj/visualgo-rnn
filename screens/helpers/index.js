@@ -57,6 +57,9 @@ export const MenuIcons = {
     ALERT: require('../../assets/images/icons/alert.png'),
     COMMENT: require('../../assets/images/icons/comment-outline.png'),
     USER_SHARE: require('../../assets/images/icons/user-share.png'),
+    CAMERA: require('../../assets/images/icons/camera.png'),
+    BROWSE: require('../../assets/images/icons/browse.png'),
+    EYE: require('../../assets/images/icons/eye.png'),
 }
 
 export default settings = {

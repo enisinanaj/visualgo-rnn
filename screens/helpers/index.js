@@ -72,13 +72,12 @@ export async function getProfile(profileId, getData) {
     });
 }
 
-export function getAddressForUrl(url) {
-      try {
-        let response = fetch(AWS_OPTIONS.bucketAddress + url);
-        return AWS_OPTIONS.bucketAddress + url;
-      } catch (error) {
-        return AWS_OPTIONS.baseBucketAddress + url;
-      }
+export function getAddressForUrl(url, setUrl) {
+    if (url.indexOf('.pdf')) {
+        return AWS_OPTIONS.baseBucketAddress + url
+    }
+
+    return AWS_OPTIONS.bucketAddress + url;
 }
 
 export const makeCancelable = (promise) => {

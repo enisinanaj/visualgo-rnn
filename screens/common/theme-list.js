@@ -221,8 +221,8 @@ export default class ThemeList extends Component {
         this.setState({backgroundUploaded: true});
         this.pushTheme();
     })
-    .catch(function(error) {
-        console.log(error);
+    .catch((error) => {
+        console.log("PHO03 - error uploading photo: " + error);
     });
   }
 
@@ -231,19 +231,21 @@ export default class ThemeList extends Component {
       this.uploadBackground();
     } else if (this.state.backgroundUploaded) {
 
+      var themeBody = JSON.stringify({
+        theme: {
+          name: this.state.themeDescription,
+          description: "",
+          mediaurl: this.state.photos[0].name
+        }
+      });
+
       fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/themes/createtheme', {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          theme: {
-            name: this.state.themeDescription,
-            description: "",
-            mediaurl: this.state.photos[0].name
-          }
-        })
+        body: themeBody
       })
       .then((response) => response.json())
       .then((response) => {this.props.closeModal({themeName: this.state.themeDescription, photo: this.state.photos[0], id: response})})

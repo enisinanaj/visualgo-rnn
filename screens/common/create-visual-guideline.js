@@ -15,6 +15,7 @@ import {
     Modal,
     ScrollView
 } from 'react-native';
+import md5 from  'react-native-md5'
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -153,12 +154,15 @@ export default class CreateVisualGuideline extends Component {
         let filesToPost = [];
         this.state.files.map((f, i) => {
             let tmp = {
+                //file.md5 ? file.md5 + '.' + getFileExtension(file) : getFileName(file)
                 id: (f.fileName != undefined ? f.fileName : f.md5) + '.' + getFileExtension(f),
                 type: getFileExtension(f) == 'pdf' ? 'application/pdf' : 'image/' + getFileExtension(f)
             };
             
             filesToPost.push(tmp);
         });
+
+        console.log("FUP01 - files to upload: " + JSON.stringify(filesToPost));
 
         let tempBody = JSON.stringify({
             albumvg: {
@@ -171,8 +175,6 @@ export default class CreateVisualGuideline extends Component {
                 id: this.state.album != undefined ? this.state.album.taskout.id : null
             }
         });
-
-        console.log("new album: " + tempBody);
 
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/createalbum', {
             method: 'POST',
@@ -205,8 +207,6 @@ export default class CreateVisualGuideline extends Component {
                 type: "image/" + getFileExtension(file)
             }
 
-            console.log("log image: " + JSON.stringify(fileObj));
-
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
                 let progress = this.state.fileprogress;
@@ -214,7 +214,6 @@ export default class CreateVisualGuideline extends Component {
                 this.setState({fileprogress: progress});
             })
             .then(response => {
-                console.log("log image: " + JSON.stringify(response));
                 if (response.status !== 201)
                     throw new Error("Failed to upload image to S3");
                 
@@ -296,6 +295,10 @@ export default class CreateVisualGuideline extends Component {
         if (this.camera) {
             const options = { quality: 0.5, base64: true };
             const data = await this.camera.takePictureAsync(options)
+            
+            let hex_md5 = md5.hex_md5( data.base64 ) + "-" + md5.hex_md5(new Date().getTime());
+            data = {md5: hex_md5, uri: data.uri};
+
             this.setState({
                 cameraModal: false,
                 files: [...this.state.files, data],
@@ -462,7 +465,7 @@ export default class CreateVisualGuideline extends Component {
         // console.log("selected themes: " + JSON.stringify(selectedTheme));
 
         if (selectedTheme.themeName != undefined) {
-            var img = {uri: selectedTheme.photo.url};
+            var img = selectedTheme.photo;
         }
 
         return (

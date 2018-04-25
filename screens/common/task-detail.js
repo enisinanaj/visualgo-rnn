@@ -176,28 +176,9 @@ export default class TaskDetail extends Component {
                 return Promise.resolve(sorted);
             })
             .then((posts) => {
-                promises = [];
-
-                posts.forEach(it => {
-                    promises.push(new Promise((resolve, reject) => {
-                        getProfile(it.idauthor, (responseJson) => {
-                            it.profile = responseJson;
-                            resolve(it);
-                        });
-                    }))
-                })
-
-                if (promises.length) {
-                    Promise.all(promises)
-                        .then(response => {
-                            messages = messages.concat(response)
-                            this.setState({messages: ds.cloneWithRows(messages)})
-                        })
-                        .finally(test => {
-                            this.setState({loading: false});
-                        })
-                        .catch(error => console.log(error))
-                }
+                messages = messages.concat(posts)
+                this.setState({messages: ds.cloneWithRows(messages)})
+                this.setState({loading: false});
             })
             .catch((error) => {
                 console.error(error);
@@ -750,14 +731,12 @@ export default class TaskDetail extends Component {
     }
 
     renderMessageRow(data) {
-        const profile = JSON.parse(data.profile);
-
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <Image source={profile.mediaurl} style={styles.selectableDisplayPicture} />
+                    <Image source={data.author.mediaurl} style={styles.selectableDisplayPicture} />
                     <View style={styles.textInRow}>
-                        <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{profile.name} {profile.surname}
+                        <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.author.name} {data.author.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>
                         </Text>
                     </View>

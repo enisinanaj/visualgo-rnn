@@ -11,6 +11,7 @@ import moment from 'moment';
 import locale from 'moment/locale/it'
 
 import {MenuIcons, getAddressForUrl} from './helpers/index';
+import { RNCamera } from 'react-native-camera';
 
 import FilterBar from './common/filter-bar';
 import NoOpModal from './common/NoOpModal';
@@ -25,6 +26,7 @@ import {TaskAvatar} from '../constants/StyleSheetCommons';
 import AppSettings from './helpers/index';
 import ApplicationConfig, { AWS_OPTIONS } from './helpers/appconfig';
 import CreateTask from './common/create-task';
+import ImageBrowser from './ImageBrowser';
 
 const {width, height} = Dimensions.get('window');
 const filters = [{type: 'search', searchPlaceHolder: 'Store, Cluster, Task, Post, Survey, etc.'},
@@ -46,13 +48,16 @@ export default class MainToDo extends React.Component {
             newTaskModal: false,
             isReady: false,
             notifications: [],
+            cameraPicsOpen: false,
+            cameraModal: false,
+            photos: [],
             contextualMenuActions: [{title: 'Approva 1 file', image: MenuIcons.THUMB_UP, onPress: () => {}}, 
                                     {title: 'Rigetta 1 file', image: MenuIcons.THUMB_DOWN, onPress: () => {}}, 
                                     {title: 'Alert', image: MenuIcons.ALERT, onPress: () => {}},
                                     {title: 'Commenta task', image: MenuIcons.COMMENT, onPress: () => {}},
                                     {title: 'Cronologia Notifiche Store per singolo task', featureName: 'Cronologia Notifiche', image: MenuIcons.HISTORY, disabled: true, onPress: () => {}}],
-            addMediaMenuActions: [{title: 'Camera', image: MenuIcons.CAMERA, onPress: () => {}}, 
-                                    {title: 'Upload', image: MenuIcons.BROWSE, onPress: () => {}}, 
+            addMediaMenuActions: [{title: 'Camera', image: MenuIcons.CAMERA, onPress: () => this.openCamera()}, 
+                                    {title: 'Upload', image: MenuIcons.BROWSE, onPress: () => this.openImages()}, 
                                     {title: 'View task summary', image: MenuIcons.EYE, onPress: () => {}},
                                     {title: 'Commenta task', image: MenuIcons.COMMENT, onPress: () => {}},
                                     {title: 'Cronologia Notifiche Store per singolo task', featureName: 'Cronologia Notifiche', image: MenuIcons.HISTORY, disabled: true, onPress: () => {}}]
@@ -255,6 +260,122 @@ export default class MainToDo extends React.Component {
         });
     }
 
+    renderCameraModal() {  
+        const cameraStyles = StyleSheet.create({
+            container: {
+              flex: 1,
+              flexDirection: 'column',
+              backgroundColor: 'black'
+            },
+            preview: {
+              flex: 1,
+              justifyContent: 'flex-end',
+              alignItems: 'center'
+            },
+            capture: {
+              flex: 0,
+              backgroundColor: '#fff',
+              borderRadius: 5,
+              padding: 15,
+              paddingHorizontal: 20,
+              alignSelf: 'center',
+              margin: 20
+            }
+          });
+
+        
+        return (<Modal
+            animationType={"fade"}
+            transparent={false}
+            visible={this.state.cameraModal}
+            onRequestClose={() => this.setState({cameraModal: false})}>
+            <View style={cameraStyles.container}>
+                <RNCamera
+                    ref={ref => {this.camera = ref;}}
+                    style = {cameraStyles.preview}
+                    type={RNCamera.Constants.Type.back}
+                    flashMode={RNCamera.Constants.FlashMode.on}
+                    permissionDialogTitle={'Permission to use camera'}
+                    permissionDialogMessage={'We need your permission to use your camera phone'}
+                />
+                <TouchableOpacity onPress={() => {this.setState({cameraModal: false});}} 
+                    style={{backgroundColor: 'transparent', top: 30, left: 10, position: 'absolute'}}>
+                    <Text style={{ fontSize: 22, marginBottom: 10, color: 'white' }}>Cancel</Text>
+                </TouchableOpacity>
+                <View style={{flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'space-between', height: 70, width: width, position: 'absolute', bottom: 0}}>
+                    <TouchableOpacity style={{marginLeft: 20, width: 60}}
+                        onPress={() => {
+                        this.setState({
+                            type: this.state.type === RNCamera.Constants.Type.back
+                            ? RNCamera.Constants.Type.front
+                            : RNCamera.Constants.Type.back,
+                        });
+                        }}>
+                        <Ionicons name={"ios-reverse-camera-outline"} size={50} color={Colors.white} style={{marginTop: 5}}/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{width: 62, position: 'absolute', left: width/2 - 30}}
+                        onPress={() => {this.snap()}}>
+                        <View style={{width: 60, height: 60, borderRadius: 30, backgroundColor: '#fff', justifyContent: 'center'}}>
+                        <View style={{width: 48, height: 48, borderRadius: 24, borderWidth: 2, borderColor: '#000', backgroundColor: '#fff', marginLeft: 6}}></View>
+                        </View>
+                    </TouchableOpacity>
+                    <View>
+                    </View>
+                </View>
+            </View>
+          </Modal>)
+    }
+    
+    snap = async () => {
+        if (this.camera) {
+            const options = { quality: 0.5, base64: true };
+            const data = await this.camera.takePictureAsync(options)
+            this.setState({
+                cameraModal: false,
+                photos: [data],
+            });
+
+            this.setState({visualGuidelineModal: true});
+        }
+    };
+
+    imageBrowserCallback = (callback) => {
+        callback.then((photos) => {
+          if (photos.length == 0) {
+              this.setState({cameraPicsOpen: false});
+              return;
+          }
+          
+          this.setState({
+            cameraPicsOpen: false,
+            photos
+          })
+        }).catch((e) => console.log(e))
+    }
+
+    _renderImagePickerModal() {
+        return (
+            <Modal
+                animationType={"slide"}
+                transparent={false}
+                visible={this.state.cameraPicsOpen}
+                onRequestClose={() => this.setState({cameraPicsOpen: false})}>
+                
+                <ImageBrowser max={4} callback={this.imageBrowserCallback}/>
+            </Modal>
+        );
+    }
+
+    openCamera() {
+        {this.openAddMediaMenu(1)}
+        this.setState({cameraModal: true});
+    }
+
+    openImages() {
+        {this.openAddMediaMenu(1)}
+        this.setState({cameraPicsOpen: true});
+    }
+
     openNewTaskModal() {
         this.setState({newTaskModal: true});
     }
@@ -287,6 +408,8 @@ export default class MainToDo extends React.Component {
                 <ContextualActionsMenu ref={e => this.contextualMenu = e} buttons={this.state.contextualMenuActions} />
                 <ContextualActionsMenu ref={e => this.addMediaMenu = e} buttons={this.state.addMediaMenuActions} />
                 {this.renderNewTaskModal()}
+                {this._renderImagePickerModal()}
+                {this.renderCameraModal()}
             </ScrollView>
         );
     }

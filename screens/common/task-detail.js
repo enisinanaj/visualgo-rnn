@@ -53,6 +53,7 @@ import DefaultRow from './default-row';
 import { isIphoneX, getProfile, getAddressForUrl } from '../helpers';
 import { AWS_OPTIONS } from '../helpers/appconfig';
 import ApplicationConfig from '../helpers/appconfig';
+import SMTaskSummarySupport from './taskSummarySMSupport';
 
 const messages = [];
 
@@ -140,9 +141,7 @@ export default class TaskDetail extends Component {
             return parsedResponse;
         })
         .then(parsedResponse => {
-            getProfile(parsedResponse.post.idauthor, (responseJson) => {
-                this.setState({profile: JSON.parse(responseJson)});
-            });
+            this.setState({profile: parsedResponse.post.author});
             this.task = parsedResponse;
             this.setState({taskout: parsedResponse});
             this.loadAlbum(parsedResponse.idalbum);
@@ -275,7 +274,7 @@ export default class TaskDetail extends Component {
                     </View>
                 : <View style={styles.viewAndroid}>
                     <Text style={{color: Colors.black, fontSize: 16, marginTop: 6, marginLeft: 7, fontFamily: 'Roboto-Light'}}>
-                        Comments Allowed 
+                        Comments {this.state.taskout.commentsEnabled ? 'Allowed' : 'Not allowed' }
                     </Text>
                 </View>}
                 { ApplicationConfig.getInstance().isHVM() ?
@@ -470,7 +469,7 @@ export default class TaskDetail extends Component {
                 </View>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
                     <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: Colors.main, fontFamily: 'Roboto-Light'}}>
-                        4
+                        {this.state.taskout.foto}
                     </Text>
                 </View>
             </View>
@@ -478,8 +477,10 @@ export default class TaskDetail extends Component {
     }
 
     renderPhoto() {
-        if (ApplicationConfig.getInstance().isSM()) {
+        if (ApplicationConfig.getInstance().isSM() && this.state.taskout.foto > 0) {
             return this.renderRequiredPhotosNumber();
+        } else if (ApplicationConfig.getInstance().isSM() && this.state.taskout.foto == 0) {
+            return null;
         }
 
         return (
@@ -520,7 +521,7 @@ export default class TaskDetail extends Component {
                 </View>
                 <View style={{flex: 1, flexDirection: 'row', justifyContent: 'flex-end', marginRight: 10}}>
                     <Text style={{marginRight: 5, alignSelf: 'center', fontSize: 20, color: Colors.main, fontFamily: 'Roboto-Light'}}>
-                        1
+                        {this.state.taskout.video}
                     </Text>
                 </View>
             </View>
@@ -528,8 +529,10 @@ export default class TaskDetail extends Component {
     }
 
     renderVideo() {
-        if (ApplicationConfig.getInstance().isSM()) {
+        if (ApplicationConfig.getInstance().isSM() && this.state.taskout.video > 0) {
             return this.renderRequiredVideoNumber();
+        } else if (ApplicationConfig.getInstance().isSM() && this.state.taskout.video == 0) {
+            return null;
         }
 
         return (
@@ -568,8 +571,10 @@ export default class TaskDetail extends Component {
     }
 
     render360() {
-        if (ApplicationConfig.getInstance().isSM()) {
+        if (ApplicationConfig.getInstance().isSM() && this.state.taskout.foto360 > 0) {
             return this.renderRequired360Number();
+        } else if (ApplicationConfig.getInstance().isSM() && this.state.taskout.foto360 == 0) {
+            return null;
         }
 
         return (
@@ -746,6 +751,10 @@ export default class TaskDetail extends Component {
 
     renderTaskComment() {
         var {height, visibleHeight} = this.state;
+
+        if (!this.state.taskout.commentsEnabled) {
+            return null;
+        }
 
         if (this.state.showTaskComment) {
             return (
@@ -987,6 +996,7 @@ export default class TaskDetail extends Component {
                         {ApplicationConfig.getInstance().isHVM() ? this.renderTaskAdmins() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
+                        {ApplicationConfig.getInstance().isSM() ? <SMTaskSummarySupport photoNumber={this.state.taskout.foto} /> : null}
                     </ScrollView>
                     {this.renderTaskComment()}
                     {this.renderThemeModal()}

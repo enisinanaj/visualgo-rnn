@@ -339,7 +339,7 @@ export default class CreateTask extends Component {
         var {selectedTheme} = this.state;
 
         if (selectedTheme.themeName != undefined) {
-            var img = {uri: selectedTheme.photo.url};
+            var img = selectedTheme.photo;
         }
 
         return (

@@ -62,7 +62,7 @@ export default class ExtendedStatus extends Component {
     
           let newPhotos = [];
           photos.forEach(element => {
-              newPhotos.push({url: element.uri != null ? element.uri : element.file, md5: element.md5, 
+              newPhotos.push({uri: element.uri != null ? element.uri : element.file, md5: element.md5, 
                 name: element.md5 + '.' + getFileExtension(element),
                 type: "image/" + getFileExtension(element)});
           });
@@ -168,7 +168,7 @@ export default class ExtendedStatus extends Component {
                         justifyContent: 'flex-start', padding: 0}}>
                 {this.state.photos.length == 1 ? 
                     <View style={{height: 240, width: width, position: 'relative', left: 0, zIndex: 10}}>
-                        <SingleImage image={{uri: this.state.photos[0].url}} removeSingleVisibile={false}/>
+                        <SingleImage image={this.state.photos[0]} removeSingleVisibile={false}/>
                         <TextInput autoFocus={false} style={{height: 30, fontSize: 20, marginTop: 10, marginBottom: 10,
                             marginLeft: 20, 
                             position: 'absolute',

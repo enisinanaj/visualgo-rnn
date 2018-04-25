@@ -22,6 +22,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 
+import md5 from  'react-native-md5'
 import { NavigatorIOS, WebView} from 'react-native';
 import moment from 'moment';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
@@ -236,6 +237,10 @@ export default class AlbumDetail extends React.Component {
         if (this.camera) {
             const options = { quality: 0.5, base64: true };
             const data = await this.camera.takePictureAsync(options)
+
+            let hex_md5 = md5.hex_md5( data.base64 ) + "-" + md5.hex_md5(new Date().getTime());
+            data = {md5: hex_md5, uri: data.uri};
+            
             this.setState({
                 cameraModal: false,
                 medias: [...this.state.medias, data],

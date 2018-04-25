@@ -18,6 +18,7 @@ import {
 
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import { RNCamera } from 'react-native-camera';
+import md5 from  'react-native-md5'
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
@@ -142,7 +143,11 @@ export default class NewAlbum extends Component {
     snap = async () => {
         if (this.camera) {
             const options = { quality: 0.5, base64: true };
-            const data = await this.camera.takePictureAsync(options)
+            var data = await this.camera.takePictureAsync(options)
+
+            let hex_md5 = md5.hex_md5( data.base64 ) + "-" + md5.hex_md5(new Date().getTime());
+            data = {md5: hex_md5, uri: data.uri};
+
             this.setState({
                 cameraModal: false,
                 photos: [data],

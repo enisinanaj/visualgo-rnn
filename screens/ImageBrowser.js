@@ -125,11 +125,12 @@ export default class ImageBrowser extends React.Component {
           }
         }
         if (file == undefined || file == null) {
+          console.debug("PHO05 - photo selection rejected. Tried to select a captured picture but not found it's data.");
           reject();
         }
 
         let hex_md5 = md5.hex_md5( file.base64 ) + "-" + md5.hex_md5(new Date().getTime());
-        resolve({data: file.base64, md5: hex_md5, uri: file.uri});
+        resolve({md5: hex_md5, uri: file.uri});
       })
     })
   }

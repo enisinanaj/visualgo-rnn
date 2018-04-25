@@ -62,7 +62,8 @@ export default class SMTaskSummarySupport extends Component {
         super(props);
 
         this.state = {
-            imageBrowserOpen: false
+            imageBrowserOpen: false,
+            photos: []
         }
     }
     
@@ -81,8 +82,8 @@ export default class SMTaskSummarySupport extends Component {
     }
 
     handleImageTap(index) {
-        if (this.state.photos[index] != undefined) {
-            setState({imageBrowserOpen: true})
+        if (this.state.photos[index] == undefined) {
+            this.setState({imageBrowserOpen: true})
         } else {
             ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {image: this.state.photos[index]});
         }
@@ -91,7 +92,7 @@ export default class SMTaskSummarySupport extends Component {
     renderImageTileElement = ({item, index}) => {
         var image;
         if (this.state.photos[index] != undefined) {
-            image = this.state.photos;
+            image = this.state.photos[index];
         }
 
         return(
@@ -99,7 +100,11 @@ export default class SMTaskSummarySupport extends Component {
                 {image == undefined || image == null ?
                 <Entypo name={"image-inverted"} size={60} style={TaskMediaIcon}/>
                 : 
-                <Image source={image} />}
+                <Image source={image} style={{
+                    height:170,
+                    width:170,
+                    borderRadius:15
+                }} resizeMode={"cover"}/>}
             </TouchableOpacity>
         )
     }
@@ -183,7 +188,7 @@ export default class SMTaskSummarySupport extends Component {
           
           this.setState({
             imageBrowserOpen: false,
-            photos
+            photos: [...this.state.photos, ...photos]
           });
 
           this.uploadFiles();

@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
     searchIcon: {
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 12,
+        marginTop: -2,
         marginLeft: 2
     },
 

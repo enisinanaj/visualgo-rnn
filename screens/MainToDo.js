@@ -12,6 +12,8 @@ import locale from 'moment/locale/it'
 
 import {MenuIcons, getAddressForUrl} from './helpers/index';
 import { RNCamera } from 'react-native-camera';
+import {RNS3} from 'react-native-aws3';
+import * as Progress from 'react-native-progress';
 
 import FilterBar from './common/filter-bar';
 import NoOpModal from './common/NoOpModal';
@@ -25,6 +27,7 @@ import {TaskAvatar} from '../constants/StyleSheetCommons';
 
 import AppSettings from './helpers/index';
 import ApplicationConfig, { AWS_OPTIONS } from './helpers/appconfig';
+import { getFileExtension } from './helpers';
 import CreateTask from './common/create-task';
 import ImageBrowser from './ImageBrowser';
 
@@ -51,6 +54,10 @@ export default class MainToDo extends React.Component {
             cameraPicsOpen: false,
             cameraModal: false,
             photos: [],
+            fileprogress: [],
+            filesUploaded: false,
+            publishDisabled: false,
+            idtask: 0,
             contextualMenuActions: [{title: 'Approva 1 file', image: MenuIcons.THUMB_UP, onPress: () => {}}, 
                                     {title: 'Rigetta 1 file', image: MenuIcons.THUMB_DOWN, onPress: () => {}}, 
                                     {title: 'Alert', image: MenuIcons.ALERT, onPress: () => {}},
@@ -146,11 +153,97 @@ export default class MainToDo extends React.Component {
         });
     }
 
+    post() {
+        this.setState({publishDisabled: true});
+        if (!this.state.filesUploaded && this.state.photos.length > 0) {
+            this.uploadFiles();
+        } else {
+            let filesToPost = [];
+            this.state.photos.map((f, i) => {
+                let tmp = {
+                    id: f.md5 + '.' + getFileExtension(f),
+                    type: 'image/' + getFileExtension(f)
+                };
+                
+                filesToPost.push(tmp);
+            });
+
+            var addMediaTaskBody = JSON.stringify({
+                postvg: {
+                  idtask: this.state.idtask,
+                  idauthor: ApplicationConfig.getInstance().me.id,
+                  mediaurl: filesToPost
+                }
+            });
+
+            fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/addmediatotask', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: addMediaTaskBody
+            })
+            .then((response) => {
+                console.error(this.state.idtask);
+                //reload
+            })
+            .catch(e => {
+                console.error("error: " + e);
+            })
+        }
+    }
+
+    isPublishable() {
+        var result = (this.state.photos.length > 0 || this.state.text != '') && !this.state.publishDisabled;
+
+        return result;
+    }
+
+    async uploadFiles() {
+        await this.state.photos.map((file, i) => {
+            const fileObj = {
+                // `uri` can also be a file system path (i.e. file://)
+                uri: file.uri != null ? file.uri : file.file,
+                name: file.md5 + '.' + getFileExtension(file),
+                type: "image/" + getFileExtension(file)
+            }
+            RNS3.put(fileObj, AWS_OPTIONS)
+            .progress((e) => {
+                let progress = this.state.fileprogress;
+                progress[i] = e.percent;
+                this.setState({fileprogress: progress});
+            })
+            .then(response => {
+                if (response.status !== 201) {
+                    throw new Error("Failed to upload image to S3");
+                }
+                
+                if (i == this.state.photos.length - 1) {
+
+                    //siamo arrivati a fine upload files
+                    this.setState({filesUploaded: true});
+                    this.post();
+                }
+
+                //TODO: non si chiude qua il modal
+                //this.props.closeModal({reload: true});               
+            })
+            .catch(function(error) {
+                console.error(error);
+            });
+        });
+    }
+
     openContextualMenu(index) {
         this.contextualMenu.toggleState();
     }
 
     openAddMediaMenu(index) {
+        if (index > 0) {
+            this.setState({idtask: index});
+        }
+        
         this.addMediaMenu.toggleState();
     }
 
@@ -204,10 +297,9 @@ export default class MainToDo extends React.Component {
             var videoRender = [];
             var foto360Render = [];
 
-
             for(let k = 0; k < obj.task.foto; k++){
                 fotoRender.push(
-                    <TouchableOpacity onPress={() => this.openAddMediaMenu(1)}>
+                    <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
                         <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
                         </View>
@@ -217,7 +309,7 @@ export default class MainToDo extends React.Component {
 
             for(let k = 0; k < obj.task.video; k++){
                 videoRender.push(
-                    <TouchableOpacity onPress={() => this.openAddMediaMenu(1)}>
+                    <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
                         <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"video-camera"} size={30} style={styles.TaskMediaIcon}/>                                      
                         </View>
@@ -227,7 +319,7 @@ export default class MainToDo extends React.Component {
 
             for(let k = 0; k < obj.task.foto360; k++){
                 foto360Render.push(
-                    <TouchableOpacity onPress={() => this.openAddMediaMenu(1)}>
+                    <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
                         <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
                         </View>
@@ -254,6 +346,11 @@ export default class MainToDo extends React.Component {
                         { fotoRender }
                         { videoRender }
                         { foto360Render }
+                        {this.state.fileprogress[i] < 1 ?
+                            <View style={{position: 'absolute', bottom: 0, }}>
+                                <Progress.Bar width={width} animated={true} progress={this.state.fileprogress[i]} color={Colors.main} borderRadius={0} borderWidth={0} height={2} />
+                            </View>
+                        :null }
                     </ScrollView>
                 </View>
             </View>
@@ -350,6 +447,8 @@ export default class MainToDo extends React.Component {
             cameraPicsOpen: false,
             photos
           })
+
+          {this.post()}
         }).catch((e) => console.log(e))
     }
 
@@ -367,12 +466,12 @@ export default class MainToDo extends React.Component {
     }
 
     openCamera() {
-        {this.openAddMediaMenu(1)}
+        {this.openAddMediaMenu(0)}
         this.setState({cameraModal: true});
     }
 
     openImages() {
-        {this.openAddMediaMenu(1)}
+        {this.openAddMediaMenu(0)}
         this.setState({cameraPicsOpen: true});
     }
 

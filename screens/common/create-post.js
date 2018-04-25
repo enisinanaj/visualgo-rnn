@@ -162,8 +162,6 @@ export default class CreatePost extends Component{
                 }
             });
 
-            console.debug("sending post: " + createPostBody);
-
             fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/postmanage', {
                 method: 'POST',
                 headers: {
@@ -173,7 +171,6 @@ export default class CreatePost extends Component{
                 body: createPostBody
             })
             .then((response) => {
-                console.debug("Create post result: " + JSON.stringify(response));
                 if (this.props.closeModal) {
                     this.props.closeModal({reload: true})
                 } else {

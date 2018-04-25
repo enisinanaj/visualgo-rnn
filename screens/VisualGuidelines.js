@@ -107,7 +107,6 @@ export default class VisualGuidelines extends Component {
         return fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbums')
             .then((response) => response.json())
             .then((responseJson) => {
-                console.debug("albums response: " + responseJson);
                 try {
                     var array = JSON.parse(responseJson)
                 } catch (e) {

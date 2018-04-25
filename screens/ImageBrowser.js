@@ -26,7 +26,8 @@ export default class ImageBrowser extends React.Component {
       photos: ['camera'],
       selected: {},
       after: null,
-      has_next_page: true
+      has_next_page: true,
+      takenPictures: []
     }
   }
 
@@ -61,7 +62,8 @@ export default class ImageBrowser extends React.Component {
     let photos = this.state.photos.filter((it) => it != 'camera')
 
     this.setState({
-        photos: ['camera', image.uri, ...photos]
+        photos: ['camera', image.uri, ...photos],
+        takenPictures: [...this.state.takenPictures, image]
     });
 
     this.shiftSelectedImages();
@@ -113,17 +115,28 @@ export default class ImageBrowser extends React.Component {
       RNFetchBlob.fs.readFile(url, 'base64')
       .then((data) => {
         let hex_md5 = md5.hex_md5( data ) + "-" + md5.hex_md5(new Date().getTime());
-        //console.log("time = " + hex_md5);
         resolve({data: data, md5: hex_md5, uri: url})
       })
-      .catch(reject)
+      .catch(() => {
+        var file;
+        for (var i = 0; i < this.state.takenPictures.length; i++) {
+          if (this.state.takenPictures[i].uri == url) {
+            file = this.state.takenPictures[i];
+          }
+        }
+        if (file == undefined || file == null) {
+          reject();
+        }
+
+        let hex_md5 = md5.hex_md5( file.base64 ) + "-" + md5.hex_md5(new Date().getTime());
+        resolve({data: file.base64, md5: hex_md5, uri: file.uri});
+      })
     })
   }
 
   renderHeader = () => {
     let selectedCount = Object.keys(this.state.selected).length;
     let headerText = "Camera Roll"; //selectedCount + ' Selected';
-    //if (selectedCount === this.props.max) headerText = headerText + ' (Max)';
     return (
       <View>
         <StatusBar barStyle={'light-content'} animated={true} />

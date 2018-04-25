@@ -73,10 +73,14 @@ export async function getProfile(profileId, getData) {
 }
 
 export function getAddressForUrl(url, setUrl) {
-    if (url.indexOf('.pdf')) {
-        return AWS_OPTIONS.baseBucketAddress + url
+    try {
+        if (url.indexOf('.pdf')) {
+            return AWS_OPTIONS.baseBucketAddress + url
+        }
+    } catch(e) {
+        console.debug("given url goes in error: " + url);
     }
-
+    
     return AWS_OPTIONS.bucketAddress + url;
 }
 

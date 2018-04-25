@@ -51,12 +51,7 @@ import * as Progress from 'react-native-progress';
 import ApplicationConfig from '../helpers/appconfig';
 import Shadow from '../../constants/Shadow';
 
-const messages = [{from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-                {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo', read: true, date: new Date()},
-                {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem', read: false, date: new Date()},
-                {from: {name: 'John', image: require('../img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-                {from: {name: 'Andy', image: require('../img/bob.png')}, message: 'Lorem Ipsum Dolo Lorem Ipsum Dolo Lorem Dolo', read: true, date: new Date()},
-                {from: {name: 'Ivan', image: require('../img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()}];
+var messages = [];
 
 export default class CreatePost extends Component{
     constructor(props) {
@@ -102,6 +97,7 @@ export default class CreatePost extends Component{
             canEdit: canEdit,
             showTaskComment: false,
             messages: ds.cloneWithRows(messages),
+            newMessage: '',
             newCommentOnFocus: false,
             id: id
         }
@@ -111,6 +107,7 @@ export default class CreatePost extends Component{
         Keyboard.addListener('keyboardWillShow', this.keyboardWillShow.bind(this));
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadFonts();
+        this.loadComments();
     }
 
     async loadFonts() {
@@ -182,6 +179,59 @@ export default class CreatePost extends Component{
                 console.error("error: " + e);
             })
         }
+    }
+
+    async loadComments() {
+        messages = [];
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getpostcomments?pagesize=1000&pageindex=0&idpost=" + this.state.id)
+            .then((response) => {return response.json()})
+            .then((responseJson) => {
+                var result = JSON.parse(responseJson);
+                result = result.filter(it => it.idcommentPost != null);
+                var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
+
+                return Promise.resolve(sorted);
+            })
+            .then((posts) => {
+                messages = messages.concat(posts)
+                this.setState({messages: ds.cloneWithRows(messages)})
+                this.setState({loading: false});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
+    reloadComments() {
+        messages = [];
+        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''}, () => this.loadComments())
+    }
+
+    async postComment() {
+
+        let taskComment = {
+            commentpost: {
+              iduser: "" + ApplicationConfig.getInstance().me.id,
+              idpost: "" + this.state.id,
+              comment: "" + this.state.newMessage,
+              mediaurl: []
+            }
+        };
+
+        await fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/commentpost', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(taskComment)
+            })
+            .then((response) => {
+                this.reloadComments(this.props.navigation.state.params.idtask);
+            })
+            .catch(e => {
+                console.error("error: " + e);
+            })
     }
 
     isPublishable() {
@@ -320,9 +370,9 @@ export default class CreatePost extends Component{
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <Image source={data.from.image} style={styles.selectableDisplayPicture} />
+                    <Image source={data.author.image} style={styles.selectableDisplayPicture} />
                     <View style={styles.textInRow}>
-                        <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.from.name}
+                        <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.author.name} {data.author.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>
                         </Text>
                     </View>
@@ -376,17 +426,16 @@ export default class CreatePost extends Component{
                                         underlineColorAndroid={'rgba(0,0,0,0)'} onFocus={() => this.setState({newCommentOnFocus: true})}
                                         onBlur={() => this.setState({newCommentOnFocus: false})}/>
 
-                                    {this.state.newCommentOnFocus?
-                                        <TouchableOpacity>
-
-                                        </TouchableOpacity>
-                                    : null}
-                                    
-                                    <View style={{height: 26, width: 26, marginTop: 5, marginRight: 10}}>
+                                    <View style={{height: 26, width: 60, marginTop: 5, marginRight: 10, flexDirection: 'row', justifyContent: 'flex-end'}}>
                                         <Image
                                             style={{flex: 1, width: undefined, height: undefined}}
                                             source={require('../../assets/images/icons/camera.png')}
                                             resizeMode="contain"/>
+                                        {this.state.newCommentOnFocus || this.state.newMessage.length > 0 ?
+                                            <TouchableOpacity onPress={() => this.postComment()} style={{marginLeft: 5, marginRight: 0}}>
+                                                <Ionicons name={"md-send"} color={Colors.main} size={24}/>
+                                            </TouchableOpacity>
+                                        : null}
                                     </View>
                                 </View>
                             </View>

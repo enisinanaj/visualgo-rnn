@@ -37,7 +37,7 @@ import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
 import AppSettings, { getFileExtension, getAddressForUrl } from './helpers/index';
-import appconfig, { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
+import appconfig, {AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
 
@@ -93,6 +93,7 @@ export default class CollabView extends Component {
             paddingBottomScrollV: 90,
             bottomDots: 100,
             renderAll: renderAll,
+            newMessage: ''
         };
     }
 
@@ -102,6 +103,10 @@ export default class CollabView extends Component {
         this.loadFonts();
         this._mounted = true;
         {!this.state.renderAll ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
+
+        if (this.state.renderAll) {
+            this.reloadComments()
+        }
     }
     
     async loadFonts() {
@@ -116,14 +121,40 @@ export default class CollabView extends Component {
     reloadComments() {
         messages = [];
 
-        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''})
+        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''}, () =>  this.loadComments())
+    }
+
+    async loadComments() {
+        messages = [];
+        // if (this.state.id == undefined || this.state.id == null) {
+        //     return;
+        // }
+
+        // await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getpostcomments?pagesize=1000&pageindex=0&idpost=" + this.state.id)
+        //     .then((response) => {return response.json()})
+        //     .then((responseJson) => {
+        //         console.log("postcomments: " + responseJson);
+        //         var result = JSON.parse(responseJson);
+        //         result = result.filter(it => it.idcommentPost != null);
+        //         var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
+
+        //         return Promise.resolve(sorted);
+        //     })
+        //     .then((posts) => {
+        //         messages = messages.concat(posts)
+        //         this.setState({messages: ds.cloneWithRows(messages)})
+        //         this.setState({loading: false});
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
     }
 
     async postComment() {
 
         let taskComment = {
             commentpost: {
-              iduser: "" + ApplicationConfig.getInstance().me.id,
+              iduser: "" + appconfig.getInstance().me.id,
               idpost: "" + this.props.navigation.state.params.idtask,
               comment: "" + this.state.newMessage,
               mediaurl: []
@@ -252,7 +283,7 @@ export default class CollabView extends Component {
                                             underlineColorAndroid={'rgba(0,0,0,0)'} />
                                         
                                         <View style={{height: 26, width: 60, marginTop: 5, marginRight: 10, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                            <View style={{height: 26, width: 26, marginTop: 5, marginRight: 10}}>
+                                            <View style={{height: 26, width: 26, marginTop: 0, marginRight: 10}}>
                                                 <Image
                                                     style={{flex: 1, width: undefined, height: undefined}}
                                                     source={require('../assets/images/icons/camera.png')}
@@ -375,19 +406,26 @@ export default class CollabView extends Component {
                     {!this.state.renderAll ? null :
                         <View style={{position: 'absolute', right: 30, bottom: 60}}>
                             <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
+                                {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
                                     <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
                                 </View>
+                                : <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
+                                    <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+                                </View>}
+                                {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.pinMenu, Shadow.filterShadow]} onSelect={(it) => this.disapproveMedia()}>
                                     <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
                                 </View>
+                                : null}
                                 <View style={[styles.pinMenu, Shadow.filterShadow]}>
                                     <Feather name={"download"} size={23} color={Colors.main} style={{width: 23, height: 23, backgroundColor: 'transparent', marginTop: 15}}/>
                                 </View>
+                                {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.pinMenu, Shadow.filterShadow]}
                                     onSelect={(it) => this.approveMedia()}>
                                     <Feather name={"thumbs-up"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
-                                </View>
+                                </View> : null }
                             </RadialMenu>
                         </View> }
                 </View>

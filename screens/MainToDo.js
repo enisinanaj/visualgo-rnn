@@ -262,8 +262,8 @@ export default class MainToDo extends React.Component {
         this.addMediaMenu.toggleState();
     }
 
-    navigateToCollabView() {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView");
+    navigateToCollabView(media) {
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media});
     }
 
     navigateToTaskSummary(id) {
@@ -308,9 +308,17 @@ export default class MainToDo extends React.Component {
 
     renderMedias(medias) {
         return medias.map((obj, i) => {
-            return  (<View key = {i} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                        <Image source={{uri: getAddressForUrl(obj.url)}}  resizeMode={"cover"}/>
-                    </View>)
+            return  (
+                    <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                        <Image source={{uri: getAddressForUrl(obj.url)}}
+                            style={{height:65,
+                                width:65,
+                                borderRadius:10}} />
+                        <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
+                            <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
+                        </View>
+                    </TouchableOpacity>
+                    )
         })
     }
 

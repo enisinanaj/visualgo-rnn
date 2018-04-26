@@ -39,7 +39,8 @@ const filters = [{type: 'search', searchPlaceHolder: 'Store, Cluster, Task, Post
     {title: 'Task', selected: true, active: true},
     {title: 'Done', active: true, selected: false}];
 
-const notifications = [];
+var notifications = [];
+var loadedNotifications = [];
 
 export default class MainToDo extends React.Component {
 
@@ -94,8 +95,7 @@ export default class MainToDo extends React.Component {
 
     async loadNotifications() {
         notifications = [];
-
-        console.log("notifications loaded-----------------------------------");
+        loadedNotifications = [];
 
         if (ApplicationConfig.getInstance().isHVM()) {
             loadNotificationsForHVM((n) => this.setState({notifications: n}));
@@ -111,6 +111,13 @@ export default class MainToDo extends React.Component {
             var promises = [];
 
             r.forEach(post => {
+
+                if (loadedNotifications.indexOf(post.idpost) >= 0) {
+                    return;
+                }
+
+                loadedNotifications.push(post.idpost);
+
                 promises.push(new Promise((resolve, reject) => {
                     this.loadTaskByPostId(post.idpost)
                     .then(task => {
@@ -193,7 +200,7 @@ export default class MainToDo extends React.Component {
             });
 
             var addMediaTaskBody = JSON.stringify({
-                postvg: {
+                addmedia2task: {
                   idtask: this.state.idtask,
                   idauthor: ApplicationConfig.getInstance().me.id,
                   mediaurl: filesToPost
@@ -209,6 +216,7 @@ export default class MainToDo extends React.Component {
                 body: addMediaTaskBody
             })
             .then((response) => {
+                this.setState({notifications: []});
                 this.loadNotifications();
             })
             .catch(e => {
@@ -219,18 +227,17 @@ export default class MainToDo extends React.Component {
 
     isPublishable() {
         var result = (this.state.photos.length > 0 || this.state.text != '') && !this.state.publishDisabled;
-
         return result;
     }
 
     async uploadFiles() {
         await this.state.photos.map((file, i) => {
             const fileObj = {
-                // `uri` can also be a file system path (i.e. file://)
                 uri: file.uri != null ? file.uri : file.file,
                 name: file.md5 + '.' + getFileExtension(file),
                 type: "image/" + getFileExtension(file)
             }
+
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
                 let progress = this.state.fileprogress;
@@ -243,14 +250,9 @@ export default class MainToDo extends React.Component {
                 }
                 
                 if (i == this.state.photos.length - 1) {
-
-                    //siamo arrivati a fine upload files
                     this.setState({filesUploaded: true});
                     this.post();
-                }
-
-                //TODO: non si chiude qua il modal
-                //this.props.closeModal({reload: true});               
+                }            
             })
             .catch(function(error) {
                 console.error(error);
@@ -474,7 +476,8 @@ export default class MainToDo extends React.Component {
                 photos: [data],
             });
 
-            this.setState({visualGuidelineModal: true});
+            //TODO: fare l'upload della foto
+            this.post();
         }
     };
 
@@ -490,7 +493,7 @@ export default class MainToDo extends React.Component {
             photos
           })
 
-          {this.post()}
+          this.post();
         }).catch((e) => console.log(e))
     }
 

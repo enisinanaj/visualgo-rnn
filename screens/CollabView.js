@@ -80,6 +80,7 @@ export default class CollabView extends Component {
         super(props);
 
         var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
+        var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
 
         this.state = {
             isReady: false,
@@ -88,7 +89,8 @@ export default class CollabView extends Component {
             viewData: viewData,
             messages: ds.cloneWithRows([]),
             paddingBottomScrollV: 90,
-            bottomDots: 100
+            bottomDots: 100,
+            renderAll: renderAll,
         };
     }
 
@@ -97,7 +99,7 @@ export default class CollabView extends Component {
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadFonts();
         this._mounted = true;
-        {((this.state.viewData != undefined) && (this.state.viewData != {})) ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
+        {!this.state.renderAll ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
     }
     
     async loadFonts() {
@@ -202,7 +204,7 @@ export default class CollabView extends Component {
     renderCommentBar() {
         var {height, visibleHeight, viewData} = this.state;
 
-        if ((viewData != undefined) && (viewData != {})) {
+        if (!this.state.renderAll) {
             return(null);
         }
 
@@ -364,7 +366,7 @@ export default class CollabView extends Component {
                 {this.renderHeader()}
                 <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {((viewData != undefined) && (viewData != {})) ?
+                        {this.state.renderAll ?
                         (getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
                             <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/> :
                             <View>
@@ -377,7 +379,7 @@ export default class CollabView extends Component {
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />
                     </View>
-                    {((viewData != undefined) && (viewData != {})) ? null :
+                    {!this.state.renderAll ? null :
                         <View style={{position: 'absolute', right: 30, bottom: 60}}>
                             <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
                                 <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>

@@ -263,7 +263,7 @@ export default class MainToDo extends React.Component {
     }
 
     navigateToCollabView(media) {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media});
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media, renderAll: true});
     }
 
     navigateToTaskSummary(id) {

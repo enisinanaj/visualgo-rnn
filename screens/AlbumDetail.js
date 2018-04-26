@@ -353,7 +353,7 @@ export default class AlbumDetail extends React.Component {
     }
 
     navigateToCollabView(data) {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data});
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data, renderAll: false});
     }
 
     renderMedias() {

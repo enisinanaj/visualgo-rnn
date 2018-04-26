@@ -25,6 +25,7 @@ import ImageBrowser from '../ImageBrowser';
 import { getFileExtension, getAddressForUrl } from '../helpers';
 import { RNS3 } from 'react-native-aws3/lib/RNS3';
 import appconfig, { AWS_OPTIONS } from '../helpers/appconfig';
+import * as Progress from 'react-native-progress';
 
 const {width, height} = Dimensions.get('window');
 
@@ -69,7 +70,8 @@ export default class SMTaskSummarySupport extends Component {
         this.state = {
             imageBrowserOpen: false,
             photos: photos,
-            toUpload: []
+            toUpload: [],
+            fileprogress: []
         }
     }
     
@@ -111,6 +113,10 @@ export default class SMTaskSummarySupport extends Component {
                     width:170,
                     borderRadius:15
                 }} resizeMode={"cover"}/>}
+                {/* {this.state.fileprogress[index] != undefined && this.state.fileprogress[index] < 1 ?
+                <View style={{position: 'absolute', bottom: 0, zIndex: 999999, width: 170}}>
+                    <Progress.Bar width={width} animated={true} progress={this.state.fileprogress[index]} color={Colors.main} borderRadius={0} borderWidth={0} height={2} />
+                </View> : null } */}
             </TouchableOpacity>
         )
     }
@@ -129,9 +135,9 @@ export default class SMTaskSummarySupport extends Component {
 
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
-                // let progress = this.state.fileprogress;
-                // progress[i] = e.percent;
-                // this.setState({fileprogress: progress});
+                let progress = this.state.fileprogress;
+                progress[i] = e.percent;
+                this.setState({fileprogress: progress});
             })
             .then(response => {
                 if (response.status !== 201) {

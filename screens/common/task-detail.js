@@ -143,7 +143,7 @@ export default class TaskDetail extends Component {
         .then(parsedResponse => {
             this.setState({profile: parsedResponse.post.author});
             this.task = parsedResponse;
-            this.setState({taskout: parsedResponse});
+            this.setState({taskout: parsedResponse, countPhoto: parsedResponse.foto, countVideo: parsedResponse.video, count360: parsedResponse.foto360});
             this.loadAlbum(parsedResponse.idalbum);
         })
         .catch((error) => {

@@ -30,6 +30,7 @@ import ApplicationConfig, { AWS_OPTIONS } from './helpers/appconfig';
 import { getFileExtension } from './helpers';
 import CreateTask from './common/create-task';
 import ImageBrowser from './ImageBrowser';
+import { loadNotificationsForHVM } from './HVMNotificationsSupport';
 
 const {width, height} = Dimensions.get('window');
 const filters = [{type: 'search', searchPlaceHolder: 'Store, Cluster, Task, Post, Survey, etc.'},
@@ -92,6 +93,15 @@ export default class MainToDo extends React.Component {
     }
 
     async loadNotifications() {
+        notifications = [];
+
+        console.log("notifications loaded-----------------------------------");
+
+        if (ApplicationConfig.getInstance().isHVM()) {
+            loadNotificationsForHVM((n) => this.setState({notifications: n}));
+            return;
+        }
+
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getnotifications?iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
@@ -157,8 +167,7 @@ export default class MainToDo extends React.Component {
     }
 
     async loadMediasForTask(idtask) {
-        //return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
-        return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=8")
+        return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
             return JSON.parse(responseJson);
@@ -200,8 +209,7 @@ export default class MainToDo extends React.Component {
                 body: addMediaTaskBody
             })
             .then((response) => {
-                //console.error(response);
-                //reload
+                this.loadNotifications();
             })
             .catch(e => {
                 console.error("error: " + e);
@@ -328,7 +336,9 @@ export default class MainToDo extends React.Component {
             var videoRender = [];
             var foto360Render = [];
 
-            for(let k = 0; k < obj.task.foto - obj.task.medias.length; k++){
+            var maxPhotos = (obj.task.foto - (obj.task.medias === false ? 0 : obj.task.medias.length));
+
+            for(let k = 0; k < maxPhotos; k++){
                 fotoRender.push(
                     <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
                         <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>

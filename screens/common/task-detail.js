@@ -1014,7 +1014,9 @@ export default class TaskDetail extends Component {
                         {ApplicationConfig.getInstance().isHVM() ? this.renderTaskAdmins() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
-                        {ApplicationConfig.getInstance().isSM() ? <SMTaskSummarySupport photoNumber={this.state.taskout.foto} updateTask={() => this.loadSMMedia()} /> : null}
+                        {ApplicationConfig.getInstance().isSM() ? 
+                            <SMTaskSummarySupport photoNumber={this.state.taskout.foto} updateTask={() => this.loadSMMedia()} idtask={this.state.taskout.id}/> 
+                        : null}
                     </ScrollView>
                     {this.renderTaskComment()}
                     {this.renderThemeModal()}

@@ -154,7 +154,7 @@ export default class SMTaskSummarySupport extends Component {
 
         var addmedia2task = JSON.stringify({
             addmedia2task: {
-                idtask: this.state.text,
+                idtask: this.props.idtask,
                 idauthor: appconfig.getInstance().me.id,
                 mediaurl: filesToPost,
             }

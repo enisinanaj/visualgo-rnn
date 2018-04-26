@@ -81,6 +81,8 @@ export default class CollabView extends Component {
 
         var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
         var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
+        
+        console.log("viewdata: " + JSON.stringify(viewData));
 
         this.state = {
             isReady: false,
@@ -366,15 +368,15 @@ export default class CollabView extends Component {
                 {this.renderHeader()}
                 <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {this.state.renderAll ?
-                        (getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
-                            <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/> :
-                            <View>
+                        {/* {this.state.renderAll ? */}
+                        {(getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
+                            <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/>}
+                            {/* <View>
                                 <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
                                 <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
                                 <Image source={{uri: 'http://retaildesignblog.net/wp-content/uploads/2012/11/VILA-Clothes-shop-by-Riis-Retail-Copenhagen.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
                             </View>
-                        }
+                        } */}
                     </ScrollView>
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />

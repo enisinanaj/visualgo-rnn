@@ -91,7 +91,7 @@ export default class SMTaskSummarySupport extends Component {
         if (this.state.photos[index] == undefined) {
             this.setState({imageBrowserOpen: true})
         } else {
-            ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {image: this.state.photos[index]});
+            ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: this.state.photos[index], renderAll: true});
         }
     }
 

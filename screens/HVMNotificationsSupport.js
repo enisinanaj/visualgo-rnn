@@ -34,9 +34,10 @@ import ImageBrowser from './ImageBrowser';
 const {width, height} = Dimensions.get('window');
 
 
-export async function loadNotificationsForHVM(c) {
+export async function loadNotificationsForHVM(c) { 
 
-    var notifiche = [];
+    notifications = [];
+    loadedNotifications = [];
 
     await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gethvmtasks?iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
@@ -44,12 +45,79 @@ export async function loadNotificationsForHVM(c) {
             return JSON.parse(responseJson);
         })
         .then(r => {
-            // TODO: da fare sulla falsariga del
-            //              async loadNotifications() { in MainToDo.js
+            var promises = [];
+
+            r.forEach(post => {
+
+                if (loadedNotifications.indexOf(post.idPost) >= 0) {
+                    return;
+                }
+
+                loadedNotifications.push(post.idPost);
+
+                promises.push(new Promise((resolve, reject) => {
+                    loadTaskByPostId(post.idPost)
+                    .then(task => {
+                        post.task = task;
+                        return post;
+                    })
+                    .then(r => resolve(post))
+                }));
+            })
+
+            if (promises.length) {
+                return Promise.all(promises)
+                    .then(el => {
+                        notifications = notifications.concat(el);
+                    })
+                    .catch(() => {});
+            }
         })
         .catch((error) => {
             console.error(error);
         });
 
-    c([]);
+    c = notifications;
+}
+
+export async function loadTaskByPostId(idPost) {
+    return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskbypost?idpost=" + idPost)
+    .then((response) => {return response.json()})
+    .then((responseJson) => {
+        if (responseJson == "") {
+            return;
+        }
+        return JSON.parse(responseJson);
+    })
+    .then(task => {
+        return loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
+    })
+    .then(task => {
+        return loadMediasForTask(task.id).then(medias => {task.medias = medias; return task})
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+export async function loadAlbumForTask(idalbum) {
+    return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
+    .then((response) => {return response.json()})
+    .then((responseJson) => {
+        return JSON.parse(responseJson);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+}
+
+export async function loadMediasForTask(idtask) {
+    return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
+    .then((response) => {return response.json()})
+    .then((responseJson) => {
+        return JSON.parse(responseJson);
+    })
+    .catch((error) => {
+        console.error(error);
+    });
 }

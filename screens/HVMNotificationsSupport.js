@@ -45,9 +45,9 @@ export async function loadNotificationsForHVM(c) {
             return JSON.parse(responseJson);
         })
         .then(notificationsArrayDaAggregare => {
-            notifications = [];
+            var notificationsAggregate = [];
             notificationsArrayDaAggregare.forEach (it => {
-                 var temp = cercaPostInNotifications(it.idPost, notifications);
+                 var temp = cercaPostInNotifications(it.idPost, notificationsAggregate);
                  if (temp == undefined || temp == null) { 
                       temp = {}; 
                       temp.id = it.idPost;
@@ -58,10 +58,10 @@ export async function loadNotificationsForHVM(c) {
             });
 
             if (temp == undefined || temp == null) { 
-                  notifications.push(temp);
+                  notificationsAggregate.push(temp);
             }
 
-            return notifications;
+            return notificationsAggregate;
         })
         .then(r => {
             var promises = [];

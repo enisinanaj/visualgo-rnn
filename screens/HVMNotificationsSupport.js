@@ -35,33 +35,17 @@ const {width, height} = Dimensions.get('window');
 
 
 export async function loadNotificationsForHVM(c) {
+
+    var notifiche = [];
+
     await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gethvmtasks?iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
             return JSON.parse(responseJson);
         })
         .then(r => {
-            var promises = [];
-
-            r.forEach(post => {
-                promises.push(new Promise((resolve, reject) => {
-                    this.loadTaskByPostId(post.idpost)
-                    .then(task => {
-                        post.task = task;
-                        return post;
-                    })
-                    .then(r => resolve(post))
-                }));
-            })
-
-            if (promises.length) {
-                return Promise.all(promises)
-                    .then(el => {
-                        notifications = notifications.concat(el);
-                        this.setState({notifications: notifications});
-                    })
-                    .catch(() => {});
-            }
+            // TODO: da fare sulla falsariga del
+            //              async loadNotifications() { in MainToDo.js
         })
         .catch((error) => {
             console.error(error);

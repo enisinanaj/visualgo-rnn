@@ -338,8 +338,8 @@ export default class MainToDo extends React.Component {
             var videoRender = [];
             var foto360Render = [];
 
-            var maxPhotos = (obj.task.foto - (obj.task.medias === false ? 0 : obj.task.medias.length));
-
+            var maxPhotos = (obj.task.foto - (obj.task.medias == undefined || obj.task.medias === false ? 0 : obj.task.medias.length));
+            
             for(let k = 0; k < maxPhotos; k++){
                 fotoRender.push(
                     <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
@@ -386,7 +386,7 @@ export default class MainToDo extends React.Component {
                                 <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
                             </View>
                                 </TouchableOpacity> */}
-                        {(obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
+                        {(obj.task.medias != undefined && obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
                         { fotoRender }
                         { videoRender }
                         { foto360Render }

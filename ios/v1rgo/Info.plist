@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.0.5</string>
+	<string>2.1.4</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
@@ -39,8 +39,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Accesso alla fotocamera per permettere agli utenti di completare i task</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Accesso alla galleria fotografica per il completamento dei task</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Accesso alla galleria fotografica per il completamento dei task</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Accesso alla galleria fotografica per il completamento dei task</string>
 	<key>UIAppFonts</key>

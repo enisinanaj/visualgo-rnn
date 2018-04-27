@@ -47,23 +47,23 @@ export async function loadNotificationsForHVM(c) {
         .then(notificationsArrayDaAggregare => {
             var notificationsAggregate = [];
             notificationsArrayDaAggregare.forEach (it => {
-                var temp = cercaPostInNotifications(it.idPost, notificationsAggregate);
-                if (temp == undefined || temp == null) { 
-                    temp = {}; 
+
+                var found = false;
+                notificationsAggregate.map((o, i) => {
+                    if (o.id == it.idPost) {
+                        o.media.push(it.mediaUrl);
+                        found = true;
+                    }
+                });
+
+                if (!found) {
+                    var temp = {};
                     temp.id = it.idPost;
                     temp.original = it;
                     temp.media = [];
                     temp.media.push(it.mediaUrl);
-                    temp.isNew = true;
-                } else {
-                    //errore #eni diocan
-                    temp.media.push(it.mediaUrl);
-                }
-                
-                if (temp.isNew) {
-                    temp.isNew = false;
                     notificationsAggregate.push(temp);
-                }             
+                }          
             });
             
             return notificationsAggregate;

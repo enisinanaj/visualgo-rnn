@@ -44,6 +44,19 @@ export async function loadNotificationsForHVM(c) {
         .then((responseJson) => {
             return JSON.parse(responseJson);
         })
+        .then(notificationsArrayDaAggregare => {
+            notifications = [];
+            notificationsArrayDaAggregare.forEach (it => {
+                 var temp = cercaPostInNotifications(it.idPost, notifications);
+                 if (temp == undefined || temp == null) { 
+                      temp = {}; 
+                      temp.id = it.idPost;
+                      temp.original = it;
+                      temp.media = [];
+                 }
+                 temp.media.push(it.mediaUrl)
+            })
+        })
         .then(r => {
             var promises = [];
 
@@ -69,15 +82,15 @@ export async function loadNotificationsForHVM(c) {
                 return Promise.all(promises)
                     .then(el => {
                         notifications = notifications.concat(el);
+                        return notifications;
                     })
+                    .then(notifications => c(notifications))
                     .catch(() => {});
             }
         })
         .catch((error) => {
             console.error(error);
         });
-
-    c = notifications;
 }
 
 export async function loadTaskByPostId(idPost) {
@@ -120,4 +133,13 @@ export async function loadMediasForTask(idtask) {
     .catch((error) => {
         console.error(error);
     });
+}
+
+export function cercaPostInNotifications(idpost, n) {
+    var pos = n.indexOf(idpost);
+    if (pos >= 0) {
+        return n[pos];
+    } else {
+        return null;
+    }
 }

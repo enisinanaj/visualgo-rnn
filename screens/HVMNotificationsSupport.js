@@ -55,21 +55,18 @@ export async function loadNotificationsForHVM(c) {
                       temp.media = [];
                  }
                  temp.media.push(it.mediaUrl)
-            })
+            });
+
+            return notifications;
         })
         .then(r => {
             var promises = [];
 
             r.forEach(post => {
-
-                if (loadedNotifications.indexOf(post.idPost) >= 0) {
-                    return;
-                }
-
-                loadedNotifications.push(post.idPost);
+                loadedNotifications.push(post.id);
 
                 promises.push(new Promise((resolve, reject) => {
-                    loadTaskByPostId(post.idPost)
+                    loadTaskByPostId(post.id)
                     .then(task => {
                         post.task = task;
                         return post;
@@ -105,9 +102,6 @@ export async function loadTaskByPostId(idPost) {
     .then(task => {
         return loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
     })
-    .then(task => {
-        return loadMediasForTask(task.id).then(medias => {task.medias = medias; return task})
-    })
     .catch((error) => {
         console.error(error);
     });
@@ -115,17 +109,6 @@ export async function loadTaskByPostId(idPost) {
 
 export async function loadAlbumForTask(idalbum) {
     return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
-    .then((response) => {return response.json()})
-    .then((responseJson) => {
-        return JSON.parse(responseJson);
-    })
-    .catch((error) => {
-        console.error(error);
-    });
-}
-
-export async function loadMediasForTask(idtask) {
-    return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
     .then((response) => {return response.json()})
     .then((responseJson) => {
         return JSON.parse(responseJson);

@@ -99,7 +99,8 @@ export default class TaskDetail extends Component {
             messages: ds.cloneWithRows([]),
             newCommentOnFocus: false,
             taskout: {},
-            profile: {}
+            profile: {},
+            smMedia: []
         }
     }
 
@@ -108,6 +109,7 @@ export default class TaskDetail extends Component {
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadTask(this.props.navigation.state.params.idtask);
         this.loadComments(this.props.navigation.state.params.idtask);
+        this.loadSMMedia();
     }
 
     componentWillUnmount() {
@@ -143,7 +145,7 @@ export default class TaskDetail extends Component {
         .then(parsedResponse => {
             this.setState({profile: parsedResponse.post.author});
             this.task = parsedResponse;
-            this.setState({taskout: parsedResponse});
+            this.setState({taskout: parsedResponse, countPhoto: parsedResponse.foto, countVideo: parsedResponse.video, count360: parsedResponse.foto360});
             this.loadAlbum(parsedResponse.idalbum);
         })
         .catch((error) => {
@@ -954,17 +956,18 @@ export default class TaskDetail extends Component {
     }
 
     async loadSMMedia() {
-        console.log("address: " + "https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + this.props.navigation.state.params.idtask + "&iduser=" + appconfig.getInstance().me.id);
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + this.props.navigation.state.params.idtask + "&iduser=" + appconfig.getInstance().me.id)
             .then((response) => {return response.json()})
             .then((responseJson) => {
                 return JSON.parse(responseJson);
             })
             .then((media) => {
-                media = media;
+                media.map((o, i) => {
+                    o.uri = getAddressForUrl(o.url);
+                    return o;
+                })
+                
                 this.setState({smMedia: media})
-
-                console.log("manager media: " + JSON.stringify(media));
             })
             .catch((error) => {
                 console.error(error);
@@ -1015,7 +1018,7 @@ export default class TaskDetail extends Component {
                         {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
                         {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
                         {ApplicationConfig.getInstance().isSM() ? 
-                            <SMTaskSummarySupport photoNumber={this.state.taskout.foto} updateTask={() => this.loadSMMedia()} idtask={this.state.taskout.id}/> 
+                            <SMTaskSummarySupport photoNumber={this.state.taskout.foto} media={this.state.smMedia} idtask={this.state.taskout.id}/> 
                         : null}
                     </ScrollView>
                     {this.renderTaskComment()}

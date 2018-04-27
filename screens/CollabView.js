@@ -37,7 +37,7 @@ import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
 import AppSettings, { getFileExtension, getAddressForUrl } from './helpers/index';
-import appconfig, { ApplicationConfig, AWS_OPTIONS } from './helpers/appconfig';
+import appconfig, {AWS_OPTIONS } from './helpers/appconfig';
 
 import _ from 'lodash';
 
@@ -80,6 +80,9 @@ export default class CollabView extends Component {
         super(props);
 
         var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
+        var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
+        
+        console.log("viewdata: " + JSON.stringify(viewData));
 
         this.state = {
             isReady: false,
@@ -88,7 +91,9 @@ export default class CollabView extends Component {
             viewData: viewData,
             messages: ds.cloneWithRows([]),
             paddingBottomScrollV: 90,
-            bottomDots: 100
+            bottomDots: 100,
+            renderAll: renderAll,
+            newMessage: ''
         };
     }
 
@@ -97,7 +102,11 @@ export default class CollabView extends Component {
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadFonts();
         this._mounted = true;
-        {((this.state.viewData != undefined) && (this.state.viewData != {})) ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
+        {!this.state.renderAll ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
+
+        if (this.state.renderAll) {
+            this.reloadComments()
+        }
     }
     
     async loadFonts() {
@@ -112,14 +121,40 @@ export default class CollabView extends Component {
     reloadComments() {
         messages = [];
 
-        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''})
+        this.setState({messages: ds.cloneWithRows(messages), newMessage: ''}, () =>  this.loadComments())
+    }
+
+    async loadComments() {
+        messages = [];
+        // if (this.state.id == undefined || this.state.id == null) {
+        //     return;
+        // }
+
+        // await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getpostcomments?pagesize=1000&pageindex=0&idpost=" + this.state.id)
+        //     .then((response) => {return response.json()})
+        //     .then((responseJson) => {
+        //         console.log("postcomments: " + responseJson);
+        //         var result = JSON.parse(responseJson);
+        //         result = result.filter(it => it.idcommentPost != null);
+        //         var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
+
+        //         return Promise.resolve(sorted);
+        //     })
+        //     .then((posts) => {
+        //         messages = messages.concat(posts)
+        //         this.setState({messages: ds.cloneWithRows(messages)})
+        //         this.setState({loading: false});
+        //     })
+        //     .catch((error) => {
+        //         console.error(error);
+        //     });
     }
 
     async postComment() {
 
         let taskComment = {
             commentpost: {
-              iduser: "" + ApplicationConfig.getInstance().me.id,
+              iduser: "" + appconfig.getInstance().me.id,
               idpost: "" + this.props.navigation.state.params.idtask,
               comment: "" + this.state.newMessage,
               mediaurl: []
@@ -202,7 +237,7 @@ export default class CollabView extends Component {
     renderCommentBar() {
         var {height, visibleHeight, viewData} = this.state;
 
-        if ((viewData != undefined) && (viewData != {})) {
+        if (!this.state.renderAll) {
             return(null);
         }
 
@@ -248,7 +283,7 @@ export default class CollabView extends Component {
                                             underlineColorAndroid={'rgba(0,0,0,0)'} />
                                         
                                         <View style={{height: 26, width: 60, marginTop: 5, marginRight: 10, flexDirection: 'row', justifyContent: 'flex-end'}}>
-                                            <View style={{height: 26, width: 26, marginTop: 5, marginRight: 10}}>
+                                            <View style={{height: 26, width: 26, marginTop: 0, marginRight: 10}}>
                                                 <Image
                                                     style={{flex: 1, width: undefined, height: undefined}}
                                                     source={require('../assets/images/icons/camera.png')}
@@ -333,8 +368,6 @@ export default class CollabView extends Component {
             }
         });
 
-        console.log("mediaToTask body: " + addmedia2task);
-
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/posts/likepostmedia', {
             method: 'POST',
             headers: {
@@ -364,35 +397,35 @@ export default class CollabView extends Component {
                 {this.renderHeader()}
                 <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
-                        {((viewData != undefined) && (viewData != {})) ?
-                        (getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
-                            <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/> :
-                            <View>
-                                <Image source={{uri: 'https://media.timeout.com/images/103399489/image.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
-                                <Image source={{uri: 'https://amp.businessinsider.com/images/55a6caf42acae716008b7018-750-562.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
-                                <Image source={{uri: 'http://retaildesignblog.net/wp-content/uploads/2012/11/VILA-Clothes-shop-by-Riis-Retail-Copenhagen.jpg'}} style={{height: height, width: width}} resizeMode={'cover'}/>
-                            </View>
-                        }
+                        {(getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
+                            <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/>}
                     </ScrollView>
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />
                     </View>
-                    {((viewData != undefined) && (viewData != {})) ? null :
+                    {!this.state.renderAll ? null :
                         <View style={{position: 'absolute', right: 30, bottom: 60}}>
                             <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
+                                {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
                                     <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
                                 </View>
+                                : <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
+                                    <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+                                </View>}
+                                {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.pinMenu, Shadow.filterShadow]} onSelect={(it) => this.disapproveMedia()}>
                                     <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
                                 </View>
+                                : null}
                                 <View style={[styles.pinMenu, Shadow.filterShadow]}>
                                     <Feather name={"download"} size={23} color={Colors.main} style={{width: 23, height: 23, backgroundColor: 'transparent', marginTop: 15}}/>
                                 </View>
+                                {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.pinMenu, Shadow.filterShadow]}
                                     onSelect={(it) => this.approveMedia()}>
                                     <Feather name={"thumbs-up"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
-                                </View>
+                                </View> : null }
                             </RadialMenu>
                         </View> }
                 </View>

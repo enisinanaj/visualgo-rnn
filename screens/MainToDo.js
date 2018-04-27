@@ -30,6 +30,7 @@ import ApplicationConfig, { AWS_OPTIONS } from './helpers/appconfig';
 import { getFileExtension } from './helpers';
 import CreateTask from './common/create-task';
 import ImageBrowser from './ImageBrowser';
+import { loadNotificationsForHVM } from './HVMNotificationsSupport';
 
 const {width, height} = Dimensions.get('window');
 const filters = [{type: 'search', searchPlaceHolder: 'Store, Cluster, Task, Post, Survey, etc.'},
@@ -38,7 +39,8 @@ const filters = [{type: 'search', searchPlaceHolder: 'Store, Cluster, Task, Post
     {title: 'Task', selected: true, active: true},
     {title: 'Done', active: true, selected: false}];
 
-const notifications = [];
+var notifications = [];
+var loadedNotifications = [];
 
 export default class MainToDo extends React.Component {
 
@@ -92,6 +94,14 @@ export default class MainToDo extends React.Component {
     }
 
     async loadNotifications() {
+        notifications = [];
+        loadedNotifications = [];
+
+        if (ApplicationConfig.getInstance().isHVM()) {
+            loadNotificationsForHVM((n) => this.setState({notifications: n}));
+            return;
+        }
+
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getnotifications?iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
@@ -101,6 +111,13 @@ export default class MainToDo extends React.Component {
             var promises = [];
 
             r.forEach(post => {
+
+                if (loadedNotifications.indexOf(post.idpost) >= 0) {
+                    return;
+                }
+
+                loadedNotifications.push(post.idpost);
+
                 promises.push(new Promise((resolve, reject) => {
                     this.loadTaskByPostId(post.idpost)
                     .then(task => {
@@ -137,6 +154,9 @@ export default class MainToDo extends React.Component {
         .then(task => {
             return this.loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
         })
+        .then(task => {
+            return this.loadMediasForTask(task.id).then(medias => {task.medias = medias; return task})
+        })
         .catch((error) => {
             console.error(error);
         });
@@ -144,6 +164,17 @@ export default class MainToDo extends React.Component {
 
     async loadAlbumForTask(idalbum) {
         return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
+        .then((response) => {return response.json()})
+        .then((responseJson) => {
+            return JSON.parse(responseJson);
+        })
+        .catch((error) => {
+            console.error(error);
+        });
+    }
+
+    async loadMediasForTask(idtask) {
+        return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
             return JSON.parse(responseJson);
@@ -169,7 +200,7 @@ export default class MainToDo extends React.Component {
             });
 
             var addMediaTaskBody = JSON.stringify({
-                postvg: {
+                addmedia2task: {
                   idtask: this.state.idtask,
                   idauthor: ApplicationConfig.getInstance().me.id,
                   mediaurl: filesToPost
@@ -185,8 +216,8 @@ export default class MainToDo extends React.Component {
                 body: addMediaTaskBody
             })
             .then((response) => {
-                console.error(this.state.idtask);
-                //reload
+                this.setState({notifications: []});
+                this.loadNotifications();
             })
             .catch(e => {
                 console.error("error: " + e);
@@ -196,18 +227,17 @@ export default class MainToDo extends React.Component {
 
     isPublishable() {
         var result = (this.state.photos.length > 0 || this.state.text != '') && !this.state.publishDisabled;
-
         return result;
     }
 
     async uploadFiles() {
         await this.state.photos.map((file, i) => {
             const fileObj = {
-                // `uri` can also be a file system path (i.e. file://)
                 uri: file.uri != null ? file.uri : file.file,
                 name: file.md5 + '.' + getFileExtension(file),
                 type: "image/" + getFileExtension(file)
             }
+
             RNS3.put(fileObj, AWS_OPTIONS)
             .progress((e) => {
                 let progress = this.state.fileprogress;
@@ -220,14 +250,9 @@ export default class MainToDo extends React.Component {
                 }
                 
                 if (i == this.state.photos.length - 1) {
-
-                    //siamo arrivati a fine upload files
                     this.setState({filesUploaded: true});
                     this.post();
-                }
-
-                //TODO: non si chiude qua il modal
-                //this.props.closeModal({reload: true});               
+                }            
             })
             .catch(function(error) {
                 console.error(error);
@@ -247,8 +272,8 @@ export default class MainToDo extends React.Component {
         this.addMediaMenu.toggleState();
     }
 
-    navigateToCollabView() {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView");
+    navigateToCollabView(media) {
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media, renderAll: true});
     }
 
     navigateToTaskSummary(id) {
@@ -291,13 +316,31 @@ export default class MainToDo extends React.Component {
         );
     }
 
+    renderMedias(medias) {
+        return medias.map((obj, i) => {
+            return  (
+                    <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                        <Image source={{uri: getAddressForUrl(obj.url)}}
+                            style={{height:65,
+                                width:65,
+                                borderRadius:10}} />
+                        <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
+                            <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
+                        </View>
+                    </TouchableOpacity>
+                    )
+        })
+    }
+
     renderElements() {
         return this.state.notifications.map((obj, i) => {
             var fotoRender = [];
             var videoRender = [];
             var foto360Render = [];
 
-            for(let k = 0; k < obj.task.foto; k++){
+            var maxPhotos = (obj.task.foto - (obj.task.medias === false ? 0 : obj.task.medias.length));
+
+            for(let k = 0; k < maxPhotos; k++){
                 fotoRender.push(
                     <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
                         <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
@@ -343,6 +386,7 @@ export default class MainToDo extends React.Component {
                                 <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
                             </View>
                                 </TouchableOpacity> */}
+                        {(obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
                         { fotoRender }
                         { videoRender }
                         { foto360Render }
@@ -432,7 +476,8 @@ export default class MainToDo extends React.Component {
                 photos: [data],
             });
 
-            this.setState({visualGuidelineModal: true});
+            //TODO: fare l'upload della foto
+            this.post();
         }
     };
 
@@ -448,7 +493,7 @@ export default class MainToDo extends React.Component {
             photos
           })
 
-          {this.post()}
+          this.post();
         }).catch((e) => console.log(e))
     }
 
@@ -606,6 +651,6 @@ const styles = StyleSheet.create({
         width: 9,
         height: 9,
         marginLeft: 2.5
-    }
+    },
 }
 );

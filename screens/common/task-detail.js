@@ -15,6 +15,7 @@ import {
     Modal,
     ScrollView,
     TouchableHighlight,
+    ActivityIndicator,
     KeyboardAvoidingView
 } from 'react-native';
 
@@ -93,14 +94,14 @@ export default class TaskDetail extends Component {
             taskDescription: '',
             commentsEnabled: false,
             notificationsEnabled: false,
-            isReady: false,
             showTaskComment: false,
             newMessage: '',
             messages: ds.cloneWithRows([]),
             newCommentOnFocus: false,
             taskout: {},
             profile: {},
-            smMedia: []
+            smMedia: [],
+            showActivityIndicator: true
         }
     }
 
@@ -131,11 +132,16 @@ export default class TaskDetail extends Component {
 
     goBack() {
         if (this.props.navigation) {
+            if (this.props.navigation.state.params.onGoBack != undefined) {
+                this.props.navigation.state.params.onGoBack();
+            }
+
             this.props.navigation.goBack();
         }
     }
 
     async loadTask(idtask) {
+        this.setState({showActivityIndicator: true});
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettask?idtask=" + idtask)
         .then((response) => {return response.json()})
         .then((responseJson) => {
@@ -158,7 +164,7 @@ export default class TaskDetail extends Component {
         .then((response) => {return response.json()})
         .then((responseJson) => {
             var parsedResponse = JSON.parse(responseJson);
-            this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme, isReady: true});
+            this.setState({album: parsedResponse.taskout, environment: parsedResponse.environment, theme: parsedResponse.theme, showActivityIndicator: false});
         })
         .catch((error) => {
             console.error(error);
@@ -975,61 +981,51 @@ export default class TaskDetail extends Component {
     }
 
     render() {
-         if (!this.state.isReady) {
-             return <View />
-         }
+
+        if (this.state.showActivityIndicator) {
+            return <ActivityIndicator size="large" style={{marginTop: 130}}/>;
+        }
 
         const {data} = this.props;
-        
-        if (false) {
-            return (
-                <View style={{height: this.state.visibleHeight}}>
-                    <StatusBar barStyle={'default'} animated={true}/>
-                    {this.renderHeader()}
-                    <ScrollView>
-                        {this.renderFilters()}
-                        {this.renderStores()}
-                    </ScrollView>
-                </View>
-            )
-        } else {
-            return (
-                <View style={{height: this.state.visibleHeight, backgroundColor: Colors.white}}>
-                    <StatusBar barStyle={'light-content'} animated={true}/>
-                    { isIphoneX() ? <View style={{backgroundColor: Colors.main, height: 44, top: 0, left: 0}}></View>
-                        : Platform.OS === 'ios' ? <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>
-                        : <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>}
-                    
-                    {this.renderHeader()}
-                    <ScrollView>
-                        {ApplicationConfig.getInstance().isHVM() ? this.renderFilters() : null}
-                        {this.renderCommentSwitchRow()}
-                        {this.renderTaskBody()}
-                        <View style={{bottom: Platform.OS === 'ios' ? 0 : 20}}>
-                            {this.renderText()}
-                        </View>
-                        {this.renderUploadAttach()}
-                        {this.renderStartDueDate()}
-                        {this.renderPhoto()}
-                        {this.renderVideo()}
-                        {this.render360()}
-                        {ApplicationConfig.getInstance().isHVM() ? this.renderAssignTo() : null}
-                        {ApplicationConfig.getInstance().isHVM() ? this.renderTaskAdmins() : null}
-                        {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
-                        {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
-                        {ApplicationConfig.getInstance().isSM() ? 
-                            <SMTaskSummarySupport photoNumber={this.state.taskout.foto} media={this.state.smMedia} idtask={this.state.taskout.id}/> 
-                        : null}
-                    </ScrollView>
-                    {this.renderTaskComment()}
-                    {this.renderThemeModal()}
-                    {this.renderEnvironmentsModal()}
-                    {this.renderPrivacyModal()}
-                    {this.renderTagListTaskModal()}
-                    {this.renderGuidelineDescriptionModal()}
-                </View>
-            )
-        }
+        return (
+            <View style={{height: this.state.visibleHeight, backgroundColor: Colors.white}}>
+                <StatusBar barStyle={'light-content'} animated={true}/>
+                { isIphoneX() ? <View style={{backgroundColor: Colors.main, height: 44, top: 0, left: 0}}></View>
+                    : Platform.OS === 'ios' ? <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>
+                    : <View style={{backgroundColor: Colors.main, height: 20, top: 0, left: 0}}></View>}
+                
+                {this.renderHeader()}
+                <ScrollView>
+                    {ApplicationConfig.getInstance().isHVM() ? this.renderFilters() : null}
+                    {this.renderCommentSwitchRow()}
+                    {this.renderTaskBody()}
+                    <View style={{bottom: Platform.OS === 'ios' ? 0 : 20}}>
+                        {this.renderText()}
+                    </View>
+                    {this.state.showActivityIndicator ?
+                        <ActivityIndicator size="large"/>
+                    : null}
+                    {this.renderUploadAttach()}
+                    {this.renderStartDueDate()}
+                    {this.renderPhoto()}
+                    {this.renderVideo()}
+                    {this.render360()}
+                    {ApplicationConfig.getInstance().isHVM() ? this.renderAssignTo() : null}
+                    {ApplicationConfig.getInstance().isHVM() ? this.renderTaskAdmins() : null}
+                    {ApplicationConfig.getInstance().isHVM() ? this.renderArchiveMenu() : null}
+                    {ApplicationConfig.getInstance().isHVM() ? this.renderDeleteMenu() : null}
+                    {ApplicationConfig.getInstance().isSM() ? 
+                        <SMTaskSummarySupport photoNumber={this.state.taskout.foto} media={this.state.smMedia} idtask={this.state.taskout.id}/> 
+                    : null}
+                </ScrollView>
+                {this.renderTaskComment()}
+                {this.renderThemeModal()}
+                {this.renderEnvironmentsModal()}
+                {this.renderPrivacyModal()}
+                {this.renderTagListTaskModal()}
+                {this.renderGuidelineDescriptionModal()}
+            </View>
+        )
     }
 }
 

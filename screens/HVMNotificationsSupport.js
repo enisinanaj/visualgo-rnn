@@ -37,7 +37,6 @@ const {width, height} = Dimensions.get('window');
 export async function loadNotificationsForHVM(c) { 
 
     notifications = [];
-    loadedNotifications = [];
 
     await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gethvmtasks?iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
@@ -50,34 +49,34 @@ export async function loadNotificationsForHVM(c) {
 
                 var found = false;
                 notificationsAggregate.map((o, i) => {
-                    if (o.id == it.idPost) {
-                        o.media.push(it.mediaUrl);
+                    if (o.id == (it.idPost + "-" + it.idauthor)) {
+                        o.media.push({url: it.mediaUrl, ilike: it.ilike});
                         found = true;
                     }
                 });
 
                 if (!found) {
                     var temp = {};
-                    temp.id = it.idPost;
+                    temp.id = it.idPost + "-" + it.idauthor;
                     temp.original = it;
                     temp.media = [];
-                    temp.media.push(it.mediaUrl);
+                    temp.media.push({url: it.mediaUrl, ilike: it.ilike});
                     notificationsAggregate.push(temp);
                 }          
             });
             
             return notificationsAggregate;
         })
-        .then(r => {
+        .then(notificationsAggregate => {
             var promises = [];
 
-            r.forEach(post => {
-                loadedNotifications.push(post.id);
+            notificationsAggregate.forEach(post => {
 
                 promises.push(new Promise((resolve, reject) => {
-                    loadTaskByPostId(post.id)
+                    loadTask(post.original.idTask)
                     .then(task => {
                         post.task = task;
+                        post.task.medias = post.media;
                         return post;
                     })
                     .then(r => resolve(post))
@@ -88,6 +87,7 @@ export async function loadNotificationsForHVM(c) {
                 return Promise.all(promises)
                     .then(el => {
                         notifications = notifications.concat(el);
+                        console.log("notifications: " + JSON.stringify(notifications));
                         return notifications;
                     })
                     .then(notifications => c(notifications))
@@ -99,8 +99,8 @@ export async function loadNotificationsForHVM(c) {
         });
 }
 
-export async function loadTaskByPostId(idPost) {
-    return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettaskbypost?idpost=" + idPost)
+export async function loadTask(id) {
+    return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/gettask?idtask=" + id)
     .then((response) => {return response.json()})
     .then((responseJson) => {
         if (responseJson == "") {

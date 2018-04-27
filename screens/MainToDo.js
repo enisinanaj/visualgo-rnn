@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, FlatList, Platform, 
     Image, backgroundColor, Text, fontFamily, fontSize, View, 
     Button, TouchableHighlight, TextInput, TouchableOpacity, 
-    Alert, ScrollView, Dimensions, Modal} from 'react-native';
+    Alert, ScrollView, Dimensions, Modal, ActivityIndicator} from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -60,6 +60,7 @@ export default class MainToDo extends React.Component {
             filesUploaded: false,
             publishDisabled: false,
             idtask: 0,
+            showActivityIndicator: true,
             contextualMenuActions: [{title: 'Approva 1 file', image: MenuIcons.THUMB_UP, onPress: () => {}}, 
                                     {title: 'Rigetta 1 file', image: MenuIcons.THUMB_DOWN, onPress: () => {}}, 
                                     {title: 'Alert', image: MenuIcons.ALERT, onPress: () => {}},
@@ -96,6 +97,7 @@ export default class MainToDo extends React.Component {
     async loadNotifications() {
         notifications = [];
         loadedNotifications = [];
+        this.setState({notifications: [], showActivityIndicator: true});
 
         if (ApplicationConfig.getInstance().isHVM()) {
             loadNotificationsForHVM((n) => this.setState({notifications: n}));
@@ -132,7 +134,7 @@ export default class MainToDo extends React.Component {
                 return Promise.all(promises)
                     .then(el => {
                         notifications = notifications.concat(el);
-                        this.setState({notifications: notifications});
+                        this.setState({notifications: notifications, showActivityIndicator: false});
                     })
                     .catch(() => {});
             }
@@ -273,11 +275,11 @@ export default class MainToDo extends React.Component {
     }
 
     navigateToCollabView(media) {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media, renderAll: true});
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media, renderAll: true, onGoBack: () => this.loadNotifications()});
     }
 
     navigateToTaskSummary(id) {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: id});
+        ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: id, onGoBack: () => this.loadNotifications()});
     }
 
     renderCardTitle(obj) {
@@ -316,19 +318,31 @@ export default class MainToDo extends React.Component {
         );
     }
 
+    getColorForMediaStatus(media) {
+        if (media.ilike == undefined || media.ilike == null || media.ilike == 0) {
+            return "grey";
+        }
+
+        if (media.ilike > 0) {
+            return "green";
+        } else if (media.ilike < 0) {
+            return "red";
+        }
+    }
+
     renderMedias(medias) {
         return medias.map((obj, i) => {
             return  (
-                    <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                        <Image source={{uri: getAddressForUrl(obj.url)}}
-                            style={{height:65,
-                                width:65,
-                                borderRadius:10}} />
-                        <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
-                            <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
-                        </View>
-                    </TouchableOpacity>
-                    )
+                <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                    <Image source={{uri: getAddressForUrl(obj.url)}}
+                        style={{height:65,
+                            width:65,
+                            borderRadius:10}} />
+                    <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
+                        <View style={[{backgroundColor: this.getColorForMediaStatus(obj)}, styles.innerStatusIcon]}></View>
+                    </View>
+                </TouchableOpacity>
+            )
         })
     }
 
@@ -377,15 +391,6 @@ export default class MainToDo extends React.Component {
                 <View>
                     <ScrollView style={styles.TaskMediaContainer} showsHorizontalScrollIndicator={false}
                         horizontal={true}>
-                        {/* <TouchableOpacity onPress={() => this.navigateToCollabView()} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                            <Image source={{uri: 'http://www.programmatic-rtb.com/wp-content/uploads/2017/10/store.png'}}
-                                style={{height:65,
-                                    width:65,
-                                    borderRadius:10}} />
-                            <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
-                                <View style={[{backgroundColor: 'green'}, styles.innerStatusIcon]}></View>
-                            </View>
-                                </TouchableOpacity> */}
                         {(obj.task.medias != undefined && obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
                         { fotoRender }
                         { videoRender }
@@ -549,6 +554,9 @@ export default class MainToDo extends React.Component {
                 </View>
                 {this.renderSectionTitle()}
                 {this.renderElements()}
+                {this.state.showActivityIndicator ?
+                    <ActivityIndicator size="large"/>
+                : null}
                 <ContextualActionsMenu ref={e => this.contextualMenu = e} buttons={this.state.contextualMenuActions} />
                 <ContextualActionsMenu ref={e => this.addMediaMenu = e} buttons={this.state.addMediaMenuActions} />
                 {this.renderNewTaskModal()}

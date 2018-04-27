@@ -81,6 +81,7 @@ export default class CollabView extends Component {
 
         var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
         var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
+        var idMedia = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.idMedia : false;
         
         console.log("viewdata: " + JSON.stringify(viewData));
 
@@ -93,7 +94,8 @@ export default class CollabView extends Component {
             paddingBottomScrollV: 90,
             bottomDots: 100,
             renderAll: renderAll,
-            newMessage: ''
+            newMessage: '',
+            idMedia: idMedia
         };
     }
 
@@ -192,6 +194,9 @@ export default class CollabView extends Component {
 
     goBack() {
         if (this.props.navigation) {
+            if (this.props.navigation.state.params.onGoBack != undefined) {
+                this.props.navigation.state.params.onGoBack();
+            }
             this.props.navigation.goBack();
         }
     }
@@ -352,21 +357,25 @@ export default class CollabView extends Component {
     }
 
     approveMedia() {
+        console.log("addlike to media");
         this.voteMedia(1);
     }
 
     disapproveMedia() {
+        console.log("adddisliketo media");
         this.voteMedia(-1);
     }
 
     voteMedia(vote) {     
         var voteMedia = JSON.stringify({
             like: {
-                idmedia: this.state.idMedia,
+                idmedia: this.state.idMedia ? this.state.idMedia : 420,
                 iduser: appconfig.getInstance().me.id,
                 like: vote
             }
         });
+
+        console.log("addlike to media: " + voteMedia);
 
         fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/posts/likepostmedia', {
             method: 'POST',
@@ -377,6 +386,7 @@ export default class CollabView extends Component {
             body: voteMedia
         })
         .then((response) => {
+            console.log("addlike to media response: " + JSON.stringify(response));
             //change UI
             //show toast notification for action
         })

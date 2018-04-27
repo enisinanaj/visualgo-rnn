@@ -53,12 +53,15 @@ export async function loadNotificationsForHVM(c) {
                       temp.id = it.idPost;
                       temp.original = it;
                       temp.media = [];
+                      temp.daAggiungere = true;
                  }
                  temp.media.push(it.mediaUrl)
             });
 
-            if (temp == undefined || temp == null) { 
-                  notificationsAggregate.push(temp);
+            //if (temp == undefined || temp == null) {  <------
+            if (temp.daAggiungere) {
+                temp.daAggiungere = false;
+                notificationsAggregate.push(temp);
             }
 
             return notificationsAggregate;

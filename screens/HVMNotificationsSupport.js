@@ -57,6 +57,10 @@ export async function loadNotificationsForHVM(c) {
                  temp.media.push(it.mediaUrl)
             });
 
+            if (temp == undefined || temp == null) { 
+                  notifications.push(temp);
+            }
+
             return notifications;
         })
         .then(r => {

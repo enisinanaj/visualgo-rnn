@@ -47,20 +47,25 @@ export async function loadNotificationsForHVM(c) {
         .then(notificationsArrayDaAggregare => {
             var notificationsAggregate = [];
             notificationsArrayDaAggregare.forEach (it => {
-                 var temp = cercaPostInNotifications(it.idPost, notificationsAggregate);
-                 if (temp == undefined || temp == null) { 
-                      temp = {}; 
-                      temp.id = it.idPost;
-                      temp.original = it;
-                      temp.media = [];
-                 }
-                 temp.media.push(it.mediaUrl)
+                var temp = cercaPostInNotifications(it.idPost, notificationsAggregate);
+                if (temp == undefined || temp == null) { 
+                    temp = {}; 
+                    temp.id = it.idPost;
+                    temp.original = it;
+                    temp.media = [];
+                    temp.media.push(it.mediaUrl);
+                    temp.isNew = true;
+                } else {
+                    //errore #eni
+                    temp.media.push(it.mediaUrl);
+                }
+                
+                if (temp.isNew) {
+                    temp.isNew = false;
+                    notificationsAggregate.push(temp);
+                }             
             });
-
-            if (temp == undefined || temp == null) { 
-                  notificationsAggregate.push(temp);
-            }
-
+            
             return notificationsAggregate;
         })
         .then(r => {
@@ -123,10 +128,11 @@ export async function loadAlbumForTask(idalbum) {
 }
 
 export function cercaPostInNotifications(idpost, n) {
-    var pos = n.indexOf(idpost);
-    if (pos >= 0) {
-        return n[pos];
-    } else {
+    result = n.filter(f => f.id == idpost);
+    
+    if (result.length <= 0) {
         return null;
+    } else {
+        return result;
     }
 }

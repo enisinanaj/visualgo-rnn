@@ -56,7 +56,7 @@ export async function loadNotificationsForHVM(c) {
                     temp.media.push(it.mediaUrl);
                     temp.isNew = true;
                 } else {
-                    //errore #eni
+                    //errore #eni diocan
                     temp.media.push(it.mediaUrl);
                 }
                 

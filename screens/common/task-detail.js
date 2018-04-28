@@ -970,6 +970,7 @@ export default class TaskDetail extends Component {
             .then((media) => {
                 media.map((o, i) => {
                     o.uri = getAddressForUrl(o.url);
+                    o.idMedia = o.id;
                     o.ilike = o.commentLikes[o.commentLikes.length - 1].ilike;
                     return o;
                 })

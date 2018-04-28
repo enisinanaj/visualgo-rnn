@@ -95,6 +95,8 @@ export default class CollabView extends Component {
             newMessage: '',
             idMedia: idMedia
         };
+
+        console.log("---------> idMedia: " + this.state.idMedia);
     }
 
     componentDidMount() {
@@ -105,6 +107,7 @@ export default class CollabView extends Component {
         {!this.state.renderAll ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
 
         if (this.state.renderAll) {
+            console.log("reloading comments.");
             this.reloadComments()
         }
     }
@@ -126,56 +129,55 @@ export default class CollabView extends Component {
 
     async loadComments() {
         messages = [];
-        // if (this.state.id == undefined || this.state.id == null) {
-        //     return;
-        // }
+        if (this.state.idMedia == undefined || this.state.idMedia == null) {
+            return;
+        }
 
-        // await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getpostcomments?pagesize=1000&pageindex=0&idpost=" + this.state.id)
-        //     .then((response) => {return response.json()})
-        //     .then((responseJson) => {
-        //         console.log("postcomments: " + responseJson);
-        //         var result = JSON.parse(responseJson);
-        //         result = result.filter(it => it.idcommentPost != null);
-        //         var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
+        await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getmediacomments?idmedia=" + this.state.idMedia)
+            .then((response) => {return response.json()})
+            .then((responseJson) => {
+                console.log("postcomments: " + responseJson);
+                var result = JSON.parse(responseJson);
+                var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
 
-        //         return Promise.resolve(sorted);
-        //     })
-        //     .then((posts) => {
-        //         messages = messages.concat(posts)
-        //         this.setState({messages: ds.cloneWithRows(messages)})
-        //         this.setState({loading: false});
-        //     })
-        //     .catch((error) => {
-        //         console.error(error);
-        //     });
+                return Promise.resolve(sorted);
+            })
+            .then((posts) => {
+                messages = messages.concat(posts)
+                console.log("postcomments: " + JSON.stringify(posts));
+                this.setState({messages: ds.cloneWithRows(messages)})
+                this.setState({loading: false});
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     async postComment() {
 
-        let taskComment = {
-            commentpost: {
-              iduser: "" + appconfig.getInstance().me.id,
-              idpost: "" + this.props.navigation.state.params.idtask,
-              comment: "" + this.state.newMessage,
-              mediaurl: []
+        var voteMedia = JSON.stringify({
+            like: {
+                idmedia: this.state.idMedia,
+                iduser: appconfig.getInstance().me.id,
+                comment: this.state.newMessage
             }
-        };
+        });
 
-        await fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/commentpost', {
-                method: 'POST',
-                headers: {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(taskComment)
-            })
-            .then((response) => {
-                console.warn("Create task result: " + JSON.stringify(response));
-                this.reloadComments();
-            })
-            .catch(e => {
-                console.error("error: " + e);
-            })
+        fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/addlikepostmedia', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: voteMedia
+        })
+        .then((response) => {
+            console.log("comment added: " + JSON.stringify(response));
+            this.setState({newMessage: ''}, () => this.reloadComments());
+        })
+        .catch(e => {
+            console.error("error: " + e);
+        })
     }
 
     keyboardWillShow (e) {
@@ -200,6 +202,7 @@ export default class CollabView extends Component {
     }
 
     _renderRow(data) {
+        console.log("comment: " + data);
         return <DefaultRow style={{padding: 0}} arguments={data} noborder={true}>
             {this.renderMessageRow(data)}
         </DefaultRow>
@@ -209,10 +212,10 @@ export default class CollabView extends Component {
         return (
             <View style={CommentBar.rowContainer}>
                 <TouchableOpacity style={CommentBar.rowContainer}>
-                    <Image source={data.from.image} style={CommentBar.selectableDisplayPicture} />
+                    <Image source={data.user.image} style={CommentBar.selectableDisplayPicture} />
                     <View style={CommentBar.textInRow}>
-                        <Text style={[CommentBar.rowTitle, !data.read ? CommentBar.unreadMessage : {}]}>{data.from.name}
-                            <Text style={CommentBar.rowSubTitle}> {data.message}</Text>
+                        <Text style={[CommentBar.rowTitle, !data.read ? CommentBar.unreadMessage : {}]}>{data.user.name} {data.user.surname}
+                            <Text style={CommentBar.rowSubTitle}> {data.comment}</Text>
                         </Text>
                     </View>
                 </TouchableOpacity>
@@ -266,9 +269,6 @@ export default class CollabView extends Component {
                                     </View>
                                     <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                                         <Text style={[CommentBar.taskTextStyle, {backgroundColor: 'transparent'}]}>1 Comment</Text>
-                                        <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                                            <Image style={styles.taskThumbnail} source={{uri: 'https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/fc/3067979-poster-p-1-clothes-shopping-sucks-reformations-new-store-totally-reimagines-the.jpg'}} />
-                                        </View>
                                     </View>
                                 </View>
                                 <ListView
@@ -318,9 +318,6 @@ export default class CollabView extends Component {
                         </View>
                         <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                             <Text style={[CommentBar.taskTextStyle, {backgroundColor: 'transparent'}]}>1 Comment</Text>
-                            <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                                <Image style={styles.taskThumbnail} source={{uri: 'https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/fc/3067979-poster-p-1-clothes-shopping-sucks-reformations-new-store-totally-reimagines-the.jpg'}} />
-                            </View>
                         </View>
                     </View>
                 </TouchableOpacity>

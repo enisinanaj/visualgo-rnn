@@ -183,6 +183,7 @@ export default class MainToDo extends React.Component {
             var medias = JSON.parse(responseJson);
             medias.map((o,i) => {
                 o.ilike = o.commentLikes[o.commentLikes.length - 1].ilike
+                o.idMedia = o.id;
             })
 
             return medias;
@@ -342,8 +343,8 @@ export default class MainToDo extends React.Component {
                 <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                     <Image source={{uri: getAddressForUrl(obj.url)}}
                         style={{height:65,
-                            width:65,
-                            borderRadius:10}} />
+                        width:65,
+                        borderRadius:10}} />
                     <View style={[styles.statusIcon, Shadow.smallCardShadow]}>
                         <View style={[{backgroundColor: this.getColorForMediaStatus(obj)}, styles.innerStatusIcon]}></View>
                     </View>

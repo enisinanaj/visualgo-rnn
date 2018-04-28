@@ -81,9 +81,7 @@ export default class CollabView extends Component {
 
         var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
         var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
-        var idMedia = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.idMedia : false;
-        
-        console.log("viewdata: " + JSON.stringify(viewData));
+        var idMedia = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.data.idMedia : false;
 
         this.state = {
             isReady: false,
@@ -357,27 +355,23 @@ export default class CollabView extends Component {
     }
 
     approveMedia() {
-        console.log("addlike to media");
         this.voteMedia(1);
     }
 
     disapproveMedia() {
-        console.log("adddisliketo media");
         this.voteMedia(-1);
     }
 
     voteMedia(vote) {     
         var voteMedia = JSON.stringify({
             like: {
-                idmedia: this.state.idMedia ? this.state.idMedia : 420,
+                idmedia: this.state.idMedia,
                 iduser: appconfig.getInstance().me.id,
                 like: vote
             }
         });
 
-        console.log("addlike to media: " + voteMedia);
-
-        fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/posts/likepostmedia', {
+        fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/addlikepostmedia', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -393,6 +387,28 @@ export default class CollabView extends Component {
         .catch(e => {
             console.error("error: " + e);
         })
+    }
+
+    getThumbForVote() {
+        const {viewData} = this.state;
+
+        if (viewData.data.ilike == undefined || viewData.data.ilike == null || viewData.data.ilike == 0) {
+            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
+                <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+            </View>
+        }
+
+        if (viewData.data.ilike == -1) {
+            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: 'red'}]}>
+                <Image source={require('../assets/images/icons/thumb-down.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+            </View>
+        }
+
+        if (viewData.data.ilike == 1) {
+            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: 'green'}]}>
+                <Image source={require('../assets/images/icons/thumb-up.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+            </View>
+        }
     }
 
     render() {
@@ -420,9 +436,7 @@ export default class CollabView extends Component {
                                 <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
                                     <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
                                 </View>
-                                : <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
-                                    <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
-                                </View>}
+                                : this.getThumbForVote()}
                                 {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.pinMenu, Shadow.filterShadow]} onSelect={(it) => this.disapproveMedia()}>
                                     <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />

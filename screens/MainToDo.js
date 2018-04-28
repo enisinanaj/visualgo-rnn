@@ -179,7 +179,13 @@ export default class MainToDo extends React.Component {
         return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            return JSON.parse(responseJson);
+            console.log("medias for task: " + responseJson);
+            var medias = JSON.parse(responseJson);
+            medias.map((o,i) => {
+                o.ilike = o.commentLikes[o.commentLikes.length - 1].ilike
+            })
+
+            return medias;
         })
         .catch((error) => {
             console.error(error);

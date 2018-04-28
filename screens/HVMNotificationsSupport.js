@@ -50,7 +50,7 @@ export async function loadNotificationsForHVM(c) {
                 var found = false;
                 notificationsAggregate.map((o, i) => {
                     if (o.id == (it.idPost + "-" + it.idauthor)) {
-                        o.media.push({url: it.mediaUrl, ilike: it.ilike});
+                        o.media.push({url: it.mediaUrl, ilike: it.ilike, idMedia: it.idmedia});
                         found = true;
                     }
                 });
@@ -60,7 +60,7 @@ export async function loadNotificationsForHVM(c) {
                     temp.id = it.idPost + "-" + it.idauthor;
                     temp.original = it;
                     temp.media = [];
-                    temp.media.push({url: it.mediaUrl, ilike: it.ilike});
+                    temp.media.push({url: it.mediaUrl, ilike: it.ilike, idMedia: it.idmedia});
                     notificationsAggregate.push(temp);
                 }          
             });

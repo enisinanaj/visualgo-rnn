@@ -400,13 +400,13 @@ export default class CollabView extends Component {
 
         if (viewData.data.ilike == -1) {
             return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: 'red'}]}>
-                <Image source={require('../assets/images/icons/thumb-down.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+                <Feather name={"thumbs-down"} size={22} color={Colors.white} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
             </View>
         }
 
         if (viewData.data.ilike == 1) {
             return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: 'green'}]}>
-                <Image source={require('../assets/images/icons/thumb-up.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
+                <Feather name={"thumbs-up"} size={22} color={Colors.white} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
             </View>
         }
     }

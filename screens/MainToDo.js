@@ -293,7 +293,7 @@ export default class MainToDo extends React.Component {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri:  getAddressForUrl(obj.task.album.theme.mediaUrl)}} />
+                    <Image style={TaskAvatar.taskThumbnail} source={{uri:  getAddressForUrl(obj.task.album.theme.mediaUrl), cache: 'force-cache'}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('./img/dp2.jpg')}/>
@@ -341,7 +341,7 @@ export default class MainToDo extends React.Component {
         return medias.map((obj, i) => {
             return  (
                 <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                    <Image source={{uri: getAddressForUrl(obj.url)}}
+                    <Image source={{uri: getAddressForUrl(obj.url), cache: 'force-cache'}}
                         style={{height:65,
                         width:65,
                         borderRadius:10}} />

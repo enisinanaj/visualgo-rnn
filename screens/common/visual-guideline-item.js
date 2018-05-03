@@ -67,7 +67,7 @@ export default class VisualGuidelineItem extends Component {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri: getAddressForUrl(data.theme.mediaUrl)}} />
+                    <Image style={TaskAvatar.taskThumbnail} source={{uri: getAddressForUrl(data.theme.mediaUrl), cache: 'force-cache'}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('../img/dp2.jpg')}/>

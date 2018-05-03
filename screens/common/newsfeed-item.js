@@ -83,7 +83,7 @@ export default class NewsFeedItem extends Component {
         let profile = data.author;
         
         return (<View style={styles.avatarContainer}>
-                <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl)}}/>
+                <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl), cache: 'force-cache'}}/>
                 <TouchableOpacity style={styles.nameContainer} onPress={() => this.openPostSummary(data)}>
                     <Text style={styles.name}>{profile.name} {profile.surname}</Text>
                     <Text style={styles.time}>{time}</Text>

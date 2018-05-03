@@ -3,6 +3,8 @@ import{
     Platform
 } from 'react-native';
 import { AWS_OPTIONS } from './appconfig';
+import RNFetchBlob from "react-native-fetch-blob";
+var SHA1 = require('crypto-js/sha1');
 
 // import {ImagePicker} from 'expo';
 
@@ -23,8 +25,6 @@ const profile = [
         online: false,
     }
 ];
-
-export const uuid = Math.random()*1000;
 
 const images = {
     '1': require('../img/shopping1.jpg'),
@@ -81,7 +81,7 @@ export function getAddressForUrl(url, setUrl) {
             return "";
         }
         
-        if (url.indexOf('.pdf')) {
+        if (url.indexOf('.pdf') >= 0) {
             return AWS_OPTIONS.baseBucketAddress + url
         }
     } catch(e) {

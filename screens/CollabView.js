@@ -421,7 +421,7 @@ export default class CollabView extends Component {
                 <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
                         {(getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
-                            <Image source={{uri: getAddressForUrl(viewData.data.url)}} style={{height: null, width: width}} resizeMode={'cover'}/>}
+                            <Image source={{uri: getAddressForUrl(viewData.data.url), cache: 'force-cache'}} style={{height: null, width: width}} resizeMode={'cover'}/>}
                     </ScrollView>
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />

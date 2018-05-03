@@ -31,6 +31,7 @@ import locale from 'moment/locale/it'
 import Router from '../navigation/Router';
 import AppSettings from './helpers/index';
 import ApplicationConfig from './helpers/appconfig';
+import PubNubReact from 'pubnub-react';
 
 const {width, height} = Dimensions.get('window');
 const messages = [{from: {name: 'John', image: require('./img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
@@ -49,11 +50,25 @@ export default class Chat extends Component {
     };
 
     this._onDrawerOpen = this._onDrawerOpen.bind(this);
+    
+    this.pubnub = new PubNubReact({
+      publishKey: 'pub-c-b8fd1056-99b5-4f8b-8986-ce1ab877240b',
+      subscribeKey: 'sub-c-f10175d6-fa3c-11e7-8a22-26ec4b06f838',
+      uuid: ApplicationConfig.getInstance().me
+    });
+
+    this.pubnub.init(this);
+  }
+
+  componentWillMount() {
+    this.pubnub.subscribe({ channels: ['channel1'], triggerEvents: true, withPresence: true});
+    console.log("pn state - presence: " + JSON.stringify(this.state.pn_presence) + ", messages: " + JSON.stringify(this.state.pn_messages) + ", status: " + JSON.stringify(this.state.pn_status));
   }
 
   closeControlPanel = () => {
     this._drawer.close()
   };
+
   openControlPanel = () => {
     this._drawer.open()
   };
@@ -93,10 +108,7 @@ export default class Chat extends Component {
   }
 
   _goToConvo = (messageId) => {
-    //AppSettings.appIndex.removeSearchBar();
     ApplicationConfig.getInstance().index.hideSearchBar();
-    //ApplicationConfig.getInstance().index.removeSearchBar();
-    //this.props.navigator.push(Router.getRoute('conversation', {convTitle: 'Andy'}));
     ApplicationConfig.getInstance().index.props.navigation.navigate('Conversation', {convTitle: 'Andy'});
   }
   
@@ -193,10 +205,5 @@ const styles = StyleSheet.create({
     },
     messageDate: {
         paddingTop: 17
-    }/*,
-    listView: {
-      backgroundColor: Colors.white,
-      flexDirection: 'column',
-      bottom: 0
-    }*/
+    }
   });

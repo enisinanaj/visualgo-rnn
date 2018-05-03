@@ -118,10 +118,10 @@ class TaskFeedItem extends Component {
         return (
             <View style={[styles.avatarContainer]}>
                 <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(album.themeUrl)}} />
+                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(album.themeUrl), cache: 'force-cache'}} />
                 </View>
                 <View style={[styles.avatarPhotoContainer, Shadow.filterShadow]}>
-                    <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl)}}/>
+                    <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl), cache: 'force-cache'}}/>
                 </View>
                 <TouchableOpacity onPress={() => {this.openTaksDetail()}} style={styles.nameContainer}> 
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
@@ -168,7 +168,7 @@ class TaskFeedItem extends Component {
         const {album} = this.state;
         if(album != undefined && album.post.medias != undefined && album.post.medias.length > 0) {
             return (
-                <Image source={{ uri: getAddressForUrl(album.themeUrl)}} style={{height: 180, width: null, resizeMode: 'cover'}} />
+                <Image source={{ uri: getAddressForUrl(album.themeUrl), cache: 'force-cache'}} style={{height: 180, width: null, resizeMode: 'cover'}} />
             )
         }
     }

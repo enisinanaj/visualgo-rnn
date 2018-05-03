@@ -51,7 +51,7 @@ export default class ImageVisualGuideline extends Component {
 
         return images.map((i, index) => {
             return (<View key={index} style={[styles.imageContainer, Shadow.filterShadow]}> 
-                    <Image source={{uri: getAddressForUrl(i.url)}} style={styles.img} resizeMode={"cover"}/>
+                    <Image source={{uri: getAddressForUrl(i.url), cache: 'force-cache'}} style={styles.img} resizeMode={"cover"}/>
                 </View>);
         });
     }

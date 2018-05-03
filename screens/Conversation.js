@@ -36,18 +36,7 @@ import AppSettings from './helpers/index';
 import ApplicationConfig from './helpers/appconfig';
 import Shadow from '../constants/Shadow';
 
-// import {Font, AppLoading} from 'expo';
 import PubNubReact from 'pubnub-react';
-import ChatEngine from 'chat-engine';
-import { uuid } from './helpers/index';
-
-/*
-var messages = [{from: {name: 'John', image: require('./img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-                  {from: {name: 'me', image: require('./img/bob.png')}, message: 'Lorem Ipsum Dolo', read: true, date: new Date()},
-                  {from: {name: 'John', image: require('./img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()}];
-*/
-
-
                   
 var themes = [
                 {name: "San Valentino", image: require('./img/elmo.jpg')},
@@ -66,7 +55,6 @@ export default class Conversation extends Component {
         super(props);
 
         this.state = {
-            //convoMessages: ds.cloneWithRows(messages),
             themesData: ds.cloneWithRows(themes),
             visibleHeight: height,
             newMessage: '',
@@ -75,11 +63,17 @@ export default class Conversation extends Component {
             isReady: false
         }
 
+        this.pubnub = new PubNubReact({
+            publishKey: 'pub-c-b8fd1056-99b5-4f8b-8986-ce1ab877240b',
+            subscribeKey: 'sub-c-f10175d6-fa3c-11e7-8a22-26ec4b06f838',
+            uuid: ApplicationConfig.getInstance().me
+        });
+
+        this.pubnub.init(this);
     }
 
     _goBack() {
         ApplicationConfig.getInstance().index.showSearchBar();
-        //AppSettings.appIndex.showSearchBar();
         this.props.navigation.goBack();
     }
 
@@ -102,20 +96,13 @@ export default class Conversation extends Component {
         }else{
             this.setState({showThemes: false})
         }
-
     } 
 
         
     componentWillMount() {
-        this.pubnub = new PubNubReact({
-            publishKey: 'pub-c-b8fd1056-99b5-4f8b-8986-ce1ab877240b',
-            subscribeKey: 'sub-c-f10175d6-fa3c-11e7-8a22-26ec4b06f838',
-            uuid: uuid
-        });
-
-        this.pubnub.init(this);
-
         this.pubnub.subscribe({ channels: ['channel1'], triggerEvents: true, withPresence: true});
+
+        console.log("pn state - presence: " + this.state.pn_presence + ", messages: " + JSON.stringify(this.state.pn_messages) + ", status: " + this.state.pn_status);
     }
       
     componentWillUnmount() {

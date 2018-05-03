@@ -369,7 +369,7 @@ export default class AlbumDetail extends React.Component {
                     </TouchableOpacity>
                     :
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
-                        <Image source={{uri: getAddressForUrl(i.url)}} style={horizontalImages.img} resizeMode={"cover"}/>
+                        <Image source={{uri: getAddressForUrl(i.url), cache: 'force-cache'}} style={horizontalImages.img} resizeMode={"cover"}/>
                     </TouchableOpacity>
                 )
             });
@@ -403,7 +403,7 @@ export default class AlbumDetail extends React.Component {
                         <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                                 <Image style={styles.menuThumbNail} 
-                                    source={{uri: getAddressForUrl(i.url)}}/>
+                                    source={{uri: getAddressForUrl(i.url), cache: 'force-cache'}}/>
                                 <View style={{flexDirection: 'column', justifyContent: 'center'}}>
                                     <Text style={[styles.rowTextStyle, {color: Colors.black, textAlignVertical: 'center', height: 'auto'}]}>
                                         Image
@@ -437,7 +437,7 @@ export default class AlbumDetail extends React.Component {
             <View style={{flex:1}}>
                 <Image style={{flex: 1, height: 48, width: width, 
                                 position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                source={{uri: getAddressForUrl(theme.mediaUrl)}} />
+                                source={{uri: getAddressForUrl(theme.mediaUrl), cache: 'force-cache'}} />
                 <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between', width: width}}>
                     <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                         <TouchableOpacity onPress={() => this.goBack()}>

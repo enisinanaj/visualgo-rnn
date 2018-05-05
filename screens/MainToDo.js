@@ -13,6 +13,8 @@ import locale from 'moment/locale/it'
 import {MenuIcons, getAddressForUrl} from './helpers/index';
 import { RNCamera } from 'react-native-camera';
 import {RNS3} from 'react-native-aws3';
+import RNFetchBlob from 'react-native-fetch-blob';
+import md5 from  'react-native-md5'
 import * as Progress from 'react-native-progress';
 
 import FilterBar from './common/filter-bar';
@@ -225,7 +227,7 @@ export default class MainToDo extends React.Component {
                 body: addMediaTaskBody
             })
             .then((response) => {
-                this.setState({notifications: []});
+                this.setState({notifications: [], filesUploaded: false});
                 this.loadNotifications();
             })
             .catch(e => {
@@ -340,7 +342,7 @@ export default class MainToDo extends React.Component {
     renderMedias(medias) {
         return medias.map((obj, i) => {
             return  (
-                <TouchableOpacity onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                <TouchableOpacity key={i} onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                     <Image source={{uri: getAddressForUrl(obj.url), cache: 'force-cache'}}
                         style={{height:65,
                         width:65,
@@ -363,8 +365,8 @@ export default class MainToDo extends React.Component {
             
             for(let k = 0; k < maxPhotos; k++){
                 fotoRender.push(
-                    <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
-                        <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                    <TouchableOpacity key={k} onPress={() => this.openAddMediaMenu(obj.task.id)}>
+                        <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
                         </View>
                     </TouchableOpacity>
@@ -373,8 +375,8 @@ export default class MainToDo extends React.Component {
 
             for(let k = 0; k < obj.task.video; k++){
                 videoRender.push(
-                    <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
-                        <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                    <TouchableOpacity key={k} onPress={() => this.openAddMediaMenu(obj.task.id)}>
+                        <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"video-camera"} size={30} style={styles.TaskMediaIcon}/>                                      
                         </View>
                     </TouchableOpacity>
@@ -383,8 +385,8 @@ export default class MainToDo extends React.Component {
 
             for(let k = 0; k < obj.task.foto360; k++){
                 foto360Render.push(
-                    <TouchableOpacity onPress={() => this.openAddMediaMenu(obj.task.id)}>
-                        <View key = {k} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                    <TouchableOpacity key={k} onPress={() => this.openAddMediaMenu(obj.task.id)}>
+                        <View style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                             <Entypo name={"image-inverted"} size={30} style={styles.TaskMediaIcon}/>                                        
                         </View>
                     </TouchableOpacity>
@@ -400,10 +402,12 @@ export default class MainToDo extends React.Component {
                         horizontal={true}>
                         {(obj.task.medias != undefined && obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
                         { fotoRender }
-                        { videoRender }
-                        { foto360Render }
+                        { //videoRender 
+                        }
+                        { //foto360Render 
+                        }
                         {this.state.fileprogress[i] < 1 ?
-                            <View style={{position: 'absolute', bottom: 0, }}>
+                            <View key={i} style={{position: 'absolute', bottom: 0, }}>
                                 <Progress.Bar width={width} animated={true} progress={this.state.fileprogress[i]} color={Colors.main} borderRadius={0} borderWidth={0} height={2} />
                             </View>
                         :null }
@@ -483,9 +487,12 @@ export default class MainToDo extends React.Component {
         if (this.camera) {
             const options = { quality: 0.5, base64: true };
             const data = await this.camera.takePictureAsync(options)
+            let image = {};
+            let hex_md5 = md5.hex_md5( data.base64 ) + "-" + md5.hex_md5(new Date().getTime());
+            image = {md5: hex_md5, uri: data.uri};
             this.setState({
                 cameraModal: false,
-                photos: [data],
+                photos: [image],
             });
 
             //TODO: fare l'upload della foto

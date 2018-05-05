@@ -81,7 +81,7 @@ export function getAddressForUrl(url, setUrl) {
             return "";
         }
         
-        if (url.indexOf('.pdf') >= 0) {
+        if (url.indexOf('.pdf') >= 0 || url.indexOf('.heic') >= 0 || url.indexOf('.HEIC') >= 0) {
             return AWS_OPTIONS.baseBucketAddress + url
         }
     } catch(e) {

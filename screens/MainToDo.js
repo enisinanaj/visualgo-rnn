@@ -155,9 +155,9 @@ export default class MainToDo extends React.Component {
             }
             return JSON.parse(responseJson);
         })
-        .then(task => {
+        /*.then(task => {
             return this.loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
-        })
+        })*/
         .then(task => {
             return this.loadMediasForTask(task.id).then(medias => {task.medias = medias; return task})
         })
@@ -166,7 +166,7 @@ export default class MainToDo extends React.Component {
         });
     }
 
-    async loadAlbumForTask(idalbum) {
+    /*async loadAlbumForTask(idalbum) {
         return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
         .then((response) => {return response.json()})
         .then((responseJson) => {
@@ -175,7 +175,7 @@ export default class MainToDo extends React.Component {
         .catch((error) => {
             console.error(error);
         });
-    }
+    }*/
 
     async loadMediasForTask(idtask) {
         return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
@@ -298,16 +298,16 @@ export default class MainToDo extends React.Component {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri:  getAddressForUrl(obj.task.album.theme.mediaUrl), cache: 'force-cache'}} />
+                    <Image style={TaskAvatar.taskThumbnail} source={{uri:  getAddressForUrl(obj.task.themeUrl), cache: 'force-cache'}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('./img/dp2.jpg')}/>
                 </View>
                 <TouchableOpacity style={TaskAvatar.nameContainer} onPress={() => this.navigateToTaskSummary(obj.task.id)}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
-                        <Text style={TaskAvatar.name}>{obj.task.post.message} {obj.task.album.theme.tagName}</Text>
-                        <Text style={[TaskAvatar.environment, {color: obj.task.album.environment.mediaUrl}]}>
-                            {obj.task.album.environment.tagName}
+                        <Text style={TaskAvatar.name}>{obj.task.post.message} {obj.task.themeTagName}</Text>
+                        <Text style={[TaskAvatar.environment, {color: obj.task.envUrl}]}>
+                            {obj.task.envTagName}
                         </Text>
                     </View>
                     <Text style={TaskAvatar.time}>{moment(new Date(obj.task.created)).format("D MMMM [alle ore] HH:mm")}</Text>

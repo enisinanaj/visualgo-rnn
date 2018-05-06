@@ -108,15 +108,15 @@ export async function loadTask(id) {
         }
         return JSON.parse(responseJson);
     })
-    .then(task => {
+    /*.then(task => {
         return loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
-    })
+    })*/
     .catch((error) => {
         console.error(error);
     });
 }
 
-export async function loadAlbumForTask(idalbum) {
+/*export async function loadAlbumForTask(idalbum) {
     return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=0&idtheme=0&idalbum=" + idalbum)
     .then((response) => {return response.json()})
     .then((responseJson) => {
@@ -125,7 +125,7 @@ export async function loadAlbumForTask(idalbum) {
     .catch((error) => {
         console.error(error);
     });
-}
+}*/
 
 export function cercaPostInNotifications(idpost, n) {
     result = n.filter(f => f.id == idpost);

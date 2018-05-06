@@ -106,7 +106,6 @@ class TaskFeedItem extends Component {
     }
 
     async loadFonts() {
-        this.loadAlbum();
         this.setState({ isReady: true });
     }
 
@@ -118,16 +117,16 @@ class TaskFeedItem extends Component {
         return (
             <View style={[styles.avatarContainer]}>
                 <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(album.themeUrl), cache: 'force-cache'}} />
+                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} />
                 </View>
                 <View style={[styles.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl), cache: 'force-cache'}}/>
                 </View>
                 <TouchableOpacity onPress={() => {this.openTaksDetail()}} style={styles.nameContainer}> 
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
-                        <Text style={styles.name}>{data.name} {this.state.theme.tagName}</Text>
-                        <Text style={[styles.environment, {color: this.state.environment.mediaUrl}]}>
-                            {this.state.environment.tagName}
+                        <Text style={styles.name}>{data.name} {data.themeTagName}</Text>
+                        <Text style={[styles.environment, {color: data.envUrl}]}>
+                            {data.envTagName}
                         </Text>
                     </View>
                     <Text style={styles.time}>50% - {time}</Text>
@@ -165,19 +164,15 @@ class TaskFeedItem extends Component {
 
     renderContent() {
         const {data} = this.props;
-        const {album} = this.state;
-        if(album != undefined && album.post.medias != undefined && album.post.medias.length > 0) {
+        if(data != undefined && data.themeUrl != undefined) {
             return (
-                <Image source={{ uri: getAddressForUrl(album.themeUrl), cache: 'force-cache'}} style={{height: 180, width: null, resizeMode: 'cover'}} />
+                <Image source={{ uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} style={{height: 180, width: null, resizeMode: 'cover'}} />
             )
         }
     }
 
     openTaksDetail() {
         var {data} = this.props;
-        data.theme = this.state.theme;
-        data.environment = this.state.environment;
-        data.album = this.state.album;
         ApplicationConfig.getInstance().index.props.navigation.navigate("TaskSummary", {idtask: data.id});
     }
 
@@ -195,9 +190,8 @@ class TaskFeedItem extends Component {
 
     render() {
         const {data} = this.props;
-        const {album} = this.state;
 
-        if(album != undefined && album.post.medias != undefined && album.post.medias.length > 0) {
+        if(data != undefined && data.themeUrl != undefined) {
             return (
                 <View style={[styles.container, Shadow.cardShadow]}>
                     <View>

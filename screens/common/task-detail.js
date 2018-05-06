@@ -151,8 +151,8 @@ export default class TaskDetail extends Component {
         .then(parsedResponse => {
             this.setState({profile: parsedResponse.post.author});
             this.task = parsedResponse;
-            this.setState({taskout: parsedResponse, countPhoto: parsedResponse.foto, countVideo: parsedResponse.video, count360: parsedResponse.foto360});
-            this.loadAlbum(parsedResponse.idalbum);
+            this.setState({taskout: parsedResponse, countPhoto: parsedResponse.foto, countVideo: parsedResponse.video, count360: parsedResponse.foto360, showActivityIndicator: false});
+            //this.loadAlbum(parsedResponse.idalbum);
         })
         .catch((error) => {
             console.error(error);
@@ -199,16 +199,16 @@ export default class TaskDetail extends Component {
                 <View style={{flex:1}}>
                     <Image style={{flex: 1, height: 48, width: width, 
                                     position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                    source={{uri: getAddressForUrl(this.state.album.themeUrl), cache: 'force-cache'}} />
+                                    source={{uri: getAddressForUrl(this.state.taskout.themeUrl), cache: 'force-cache'}} />
                     <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between'}}>
                         <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                             <TouchableOpacity onPress={() => this.goBack()}>
                                 <EvilIcons name={"close"} size={22} color={Colors.main}/>
                             </TouchableOpacity>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
-                                <Text style={styles.name}>Task {this.state.theme.tagName}</Text>
-                                <Text style={[styles.environment, {color: this.state.environment.mediaUrl}]}>
-                                    {this.state.environment.tagName}
+                                <Text style={styles.name}>Task {this.state.taskout.themeTagName}</Text>
+                                <Text style={[styles.environment, {color: this.state.taskout.envUrl}]}>
+                                    {this.state.taskout.envTagName}
                                 </Text>
                             </View>
                         </View>
@@ -889,11 +889,11 @@ export default class TaskDetail extends Component {
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16, marginTop: 10}}>
                         <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                            <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(this.state.album.themeUrl), cache: 'force-cache'}} />
+                            <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(this.state.taskout.themeUrl), cache: 'force-cache'}} />
                         </View>
-                        <Text style={styles.name}>{this.state.theme.tagName}</Text>
-                        <Text style={[styles.environment, {color: this.state.environment.mediaUrl}]}>
-                            {this.state.environment.tagName}
+                        <Text style={styles.name}>{this.state.taskout.themeTagName}</Text>
+                        <Text style={[styles.environment, {color: this.state.taskout.envUrl}]}>
+                            {this.state.taskout.envTagName}
                         </Text>
                     </View>
                     <View style={{flexDirection:'row', justifyContent:'flex-end'}}>

@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 
 import {getImage} from '../helpers';
+import CachedImage from './CachedImage';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Colors from '../../constants/Colors';
 import Shadow from '../../constants/Shadow';
@@ -25,8 +26,7 @@ const {width, height} = Dimensions.get('window');
 export default class SingleImage extends Component {
     state = {
         pan: new Animated.ValueXY(),
-        open: false,
-
+        open: false
     };
 
     render() {
@@ -40,7 +40,7 @@ export default class SingleImage extends Component {
                         <EvilIcons name={"close"} size={22} color={Colors.main} style={{backgroundColor: 'transparent'}}/>
                     </TouchableOpacity>
                 : null}
-                <Image style={{flex: 1, height: null, width: null}} source={image} />
+                <CachedImage style={{flex: 1, height: null, width: null}} cachedSource={image} />
             </View>
         )
     }

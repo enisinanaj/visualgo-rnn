@@ -24,7 +24,6 @@ export default class RootNavigation extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.navigation.getNavigationContext().jumpToTab);
     ApplicationConfig.getInstance().tabNavigation = this.navigation;
     { isIphoneX() ? this.setState({tabNavHeight: 88, iconMarginTop: -44}) 
     : this.setState({tabNavHeight: 54, iconMarginTop: -10}) }

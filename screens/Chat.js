@@ -62,7 +62,6 @@ export default class Chat extends Component {
 
   componentWillMount() {
     this.pubnub.subscribe({ channels: ['channel1'], triggerEvents: true, withPresence: true});
-    console.log("pn state - presence: " + JSON.stringify(this.state.pn_presence) + ", messages: " + JSON.stringify(this.state.pn_messages) + ", status: " + JSON.stringify(this.state.pn_status));
   }
 
   closeControlPanel = () => {

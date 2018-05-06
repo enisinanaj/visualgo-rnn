@@ -35,6 +35,7 @@ import CalendarView from './calendar';
 import NewAlbum from './create-album';
 import NewGuideline from './create-visual-guideline';
 import NoOpModal from './NoOpModal';
+import CachedImage from './CachedImage';
 import PostPrivacy from './privacy';
 import TagListTask from './tag-list-task';
 import TaskDescription from './task-description';
@@ -363,9 +364,9 @@ export default class CreateTask extends Component {
                     <TouchableOpacity onPress={() => this.setState({themeModal: true})} 
                         style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                         <View style={{flex:1}}>
-                            <Image style={{flex: 1, height: 70, width: width, 
+                            <CachedImage style={{flex: 1, height: 70, width: width, 
                                            position:'absolute', resizeMode: 'center', top: -19, left: 0}} 
-                                source={img} />
+                                cachedSource={img} />
                             <View style={{flexDirection: 'row', justifyContent: 'center', backgroundColor: 'transparent'}}>
                                 <Text style={{color: Colors.white, fontSize: 22, fontFamily: 'Roboto-Bold',
                                             textShadowColor: 'rgba(0, 0, 0, 0.75)',

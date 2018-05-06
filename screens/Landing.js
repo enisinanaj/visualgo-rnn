@@ -186,7 +186,6 @@ class Landing extends Component {
           
           this.cancelablePostPromise
             .promise
-            .then(() => console.log('resolved'))
             .catch((reason) => console.log('isCanceled', reason.isCanceled));
     }
 

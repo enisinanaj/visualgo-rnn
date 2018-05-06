@@ -154,3 +154,19 @@ export async function openCamera(callback) {
     // let image = await ImagePicker.launchCameraAsync(options);
     // callback(image);
 };
+
+export class ImageCache {
+  static get(uri, callback) {
+    const path = RNFetchBlob.fs.dirs.CacheDir + "_immutable_images/" + SHA1(uri) + ".jpg";
+    return RNFetchBlob.fs.exists(path).then(exists => {
+      if(exists) {
+        return callback(path);
+      } else {
+        return RNFetchBlob.config({ path })
+                .fetch("GET", uri, {})
+                .then(() => console.log("file downloaded"))
+                .then(() => callback(path));
+      }
+    });
+  }
+}

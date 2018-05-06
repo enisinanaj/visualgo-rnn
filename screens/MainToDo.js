@@ -19,6 +19,7 @@ import * as Progress from 'react-native-progress';
 
 import FilterBar from './common/filter-bar';
 import NoOpModal from './common/NoOpModal';
+import CachedImage from './common/CachedImage';
 import ContextualActionsMenu from './common/ContextualActionsMenu';
 
 import Router from '../navigation/Router';
@@ -181,12 +182,10 @@ export default class MainToDo extends React.Component {
         return await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getusermedias?idtask=" + idtask + "&iduser=" + ApplicationConfig.getInstance().me.id)
         .then((response) => {return response.json()})
         .then((responseJson) => {
-            console.log("medias for task: " + responseJson);
             var medias = JSON.parse(responseJson); 
             medias.map((o,i) => {
                 o.ilike = o.commentLikes[o.commentLikes.length - 1].ilike
                 o.idMedia = o.id;
-                console.log("image name: " + getAddressForUrl(o.url));
             })
 
             return medias;
@@ -210,8 +209,6 @@ export default class MainToDo extends React.Component {
                 
                 filesToPost.push(tmp);
             });
-
-            console.log("images for task? ::  ===> " + JSON.stringify(this.state.photos));
 
             var addMediaTaskBody = JSON.stringify({
                 addmedia2task: {
@@ -298,7 +295,7 @@ export default class MainToDo extends React.Component {
         return (
             <View style={[TaskAvatar.avatarContainer]}>
                 <View style={[TaskAvatar.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={TaskAvatar.taskThumbnail} source={{uri:  getAddressForUrl(obj.task.themeUrl), cache: 'force-cache'}} />
+                    <CachedImage style={TaskAvatar.taskThumbnail} cachedSource={{uri:  getAddressForUrl(obj.task.themeUrl), cache: 'force-cache'}} />
                 </View>
                 <View style={[TaskAvatar.avatarPhotoContainer, Shadow.filterShadow]}>
                     <Image style={TaskAvatar.profile} source={require('./img/dp2.jpg')}/>
@@ -346,7 +343,7 @@ export default class MainToDo extends React.Component {
         return medias.map((obj, i) => {
             return  (
                 <TouchableOpacity key={i} onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
-                    <Image source={{uri: getAddressForUrl(obj.url), cache: 'force-cache'}}
+                    <CachedImage cachedSource={{uri: getAddressForUrl(obj.url), cache: 'force-cache'}}
                         style={{height:65,
                         width:65,
                         borderRadius:10}} />

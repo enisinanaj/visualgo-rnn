@@ -101,8 +101,6 @@ export default class Conversation extends Component {
         
     componentWillMount() {
         this.pubnub.subscribe({ channels: ['channel1'], triggerEvents: true, withPresence: true});
-
-        console.log("pn state - presence: " + this.state.pn_presence + ", messages: " + JSON.stringify(this.state.pn_messages) + ", status: " + this.state.pn_status);
     }
       
     componentWillUnmount() {

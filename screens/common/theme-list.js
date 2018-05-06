@@ -15,7 +15,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
-  ScrollView } from 'react-native';
+  ScrollView, ActivityIndicator } from 'react-native';
 
 import DefaultRow from '../common/default-row';
 import FilterBar from '../common/filter-bar';
@@ -54,7 +54,8 @@ export default class ThemeList extends Component {
       photos: [],
       themeDescription: '',
       visibleHeight: height,
-      backgroundUploaded: false
+      backgroundUploaded: false,
+      saving: false
     };
 
     this._onScroll = this._onScroll.bind(this);
@@ -222,11 +223,13 @@ export default class ThemeList extends Component {
         this.pushTheme();
     })
     .catch((error) => {
-        console.log("PHO03 - error uploading photo: " + error);
+        //console.log("PHO03 - error uploading photo: " + error);
     });
   }
 
   pushTheme() {
+    this.setState({saving: true});
+
     if (!this.state.backgroundUploaded) {
       this.uploadBackground();
     } else if (this.state.backgroundUploaded) {
@@ -248,7 +251,7 @@ export default class ThemeList extends Component {
         body: themeBody
       })
       .then((response) => response.json())
-      .then((response) => {this.props.closeModal({themeName: this.state.themeDescription, photo: this.state.photos[0], id: response})})
+      .then((response) => {this.props.closeModal({themeName: this.state.themeDescription, photo: this.state.photos[0], id: response, backgroundUploaded: false})})
       .catch(e => {
           console.error("error: " + e);
       })
@@ -258,9 +261,11 @@ export default class ThemeList extends Component {
   renderSaveBar() {
     return (
       <View style={[styles.bottomBar]}>
+          {!this.state.saving ?
           <TouchableOpacity onPress={() => {this.pushTheme()}}>
               <Text style={styles.saveButton}>Save and Select</Text>
           </TouchableOpacity>
+          : <ActivityIndicator size="small" color={Colors.gray} />}
       </View>
     )
   }
@@ -276,10 +281,6 @@ export default class ThemeList extends Component {
   }
 
   render() {
-    // if (!this.state.isReady) {
-    //   return <AppLoading />
-    // }
-
     return (
       <KeyboardAvoidingView style={{height: this.state.visibleHeight, flex: 1, flexDirection: 'column'}} behavior={"padding"}>
         <StatusBar barStyle={'light-content'} animated={true}/>

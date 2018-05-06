@@ -34,6 +34,7 @@ import CommentBar from '../constants/commentBar';
 import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
+import CachedImage from './common/CachedImage';
 import ToastNotification from './common/ToastNotification';
 import AppSettings, { getFileExtension, getAddressForUrl } from './helpers/index';
 import appconfig, {AWS_OPTIONS } from './helpers/appconfig';
@@ -169,7 +170,6 @@ export default class CollabView extends Component {
             body: voteMedia
         })
         .then((response) => {
-            console.log("comment added: " + JSON.stringify(response));
             this.setState({newMessage: ''}, () => this.reloadComments());
         })
         .catch(e => {
@@ -208,7 +208,7 @@ export default class CollabView extends Component {
         return (
             <View style={CommentBar.rowContainer}>
                 <TouchableOpacity style={CommentBar.rowContainer}>
-                    <Image source={data.user.image} style={CommentBar.selectableDisplayPicture} />
+                    <CachedImage cachedSource={data.user.image} style={CommentBar.selectableDisplayPicture} />
                     <View style={CommentBar.textInRow}>
                         <Text style={[CommentBar.rowTitle, !data.read ? CommentBar.unreadMessage : {}]}>{data.user.name} {data.user.surname}
                             <Text style={CommentBar.rowSubTitle}> {data.comment}</Text>
@@ -326,9 +326,9 @@ export default class CollabView extends Component {
             <View style={{flexDirection: 'row', height: 48, alignItems: 'center', paddingLeft: 0,
                     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.gray}}>
                 <View style={{flex:1}}>
-                    <Image style={{flex: 1, height: 48, width: width, 
+                    <CachedImage style={{flex: 1, height: 48, width: width, 
                                     position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                    source={{uri:'https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/fc/3067979-poster-p-1-clothes-shopping-sucks-reformations-new-store-totally-reimagines-the.jpg'}} />
+                                    cachedSource={{uri:'https://images.fastcompany.net/image/upload/w_1280,f_auto,q_auto,fl_lossy/fc/3067979-poster-p-1-clothes-shopping-sucks-reformations-new-store-totally-reimagines-the.jpg'}} />
                     <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between'}}>
                         <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                             <TouchableOpacity onPress={() => this.goBack()}>
@@ -424,7 +424,7 @@ export default class CollabView extends Component {
                 <View style={[{flex: 1, paddingBottom: this.state.paddingBottomScrollV}, Shadow.filterShadow]}>
                     <ScrollView pagingEnabled={true} indicatorStyle={'default'} horizontal={true} showsHorizontalScrollIndicator={false}>
                         {(getFileExtension({uri: viewData.data.url}) == 'pdf') ? this.renderPdf(AWS_OPTIONS.baseBucketAddress + viewData.data.url) :
-                            <Image source={{uri: getAddressForUrl(viewData.data.url), cache: 'force-cache'}} style={{height: null, width: width}} resizeMode={'cover'}/>}
+                            <CachedImage cachedSource={{uri: getAddressForUrl(viewData.data.url), cache: 'force-cache'}} style={{height: null, width: width}} resizeMode={'cover'}/>}
                     </ScrollView>
                     <View style={[{backgroundColor: Colors.white, height: 34, width: 34, borderRadius: 17, position: 'absolute', bottom: this.state.bottomDots, left: 20, justifyContent: 'center'}, Shadow.filterShadow]}>
                         <Entypo name={"dots-three-vertical"} color={Colors.main} size={20} style={{backgroundColor: 'transparent', marginLeft: 7}} />

@@ -462,8 +462,6 @@ export default class CreateVisualGuideline extends Component {
     renderTheme() {
         var {selectedTheme} = this.state;
 
-        // console.log("selected themes: " + JSON.stringify(selectedTheme));
-
         if (selectedTheme.themeName != undefined) {
             var img = selectedTheme.photo;
         }

@@ -22,6 +22,7 @@ const {width, height} = Dimensions.get('window');
 import _ from 'lodash';
 import SingleImage from './single-image';
 import ImageScreen from '../imageScreen';
+import CachedImage from './CachedImage';
 import Router from '../../navigation/Router';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Colors from '../../constants/Colors';
@@ -51,7 +52,7 @@ export default class ImageVisualGuideline extends Component {
 
         return images.map((i, index) => {
             return (<View key={index} style={[styles.imageContainer, Shadow.filterShadow]}> 
-                    <Image source={{uri: getAddressForUrl(i.url), cache: 'force-cache'}} style={styles.img} resizeMode={"cover"}/>
+                    <CachedImage cachedSource={{uri: getAddressForUrl(i.url), cache: 'force-cache'}} style={styles.img} resizeMode={"cover"}/>
                 </View>);
         });
     }

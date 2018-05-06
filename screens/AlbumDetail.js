@@ -34,6 +34,7 @@ import Colors from '../constants/Colors';
 import DefaultRow from './common/default-row';
 import { isIphoneX, getFileExtension, getFileName, getAddressForUrl } from './helpers';
 import ImageVisualGuideline from './common/image-visual-guideline';
+import CachedImage from './common/CachedImage';
 import { AWS_OPTIONS } from './helpers/appconfig';
 import Shadow from '../constants/Shadow';
 import BottomMenu from './common/BottomMenu';
@@ -369,7 +370,7 @@ export default class AlbumDetail extends React.Component {
                     </TouchableOpacity>
                     :
                     <TouchableOpacity key={index} style={[horizontalImages.imageContainer, Shadow.filterShadow]} onPress={() => this.navigateToCollabView(i)}>
-                        <Image source={{uri: getAddressForUrl(i.url), cache: 'force-cache'}} style={horizontalImages.img} resizeMode={"cover"}/>
+                        <CachedImage cachedSource={{uri: getAddressForUrl(i.url), cache: 'force-cache'}} style={horizontalImages.img} resizeMode={"cover"}/>
                     </TouchableOpacity>
                 )
             });
@@ -402,8 +403,8 @@ export default class AlbumDetail extends React.Component {
                     return (<DefaultRow>
                         <TouchableOpacity style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                             <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
-                                <Image style={styles.menuThumbNail} 
-                                    source={{uri: getAddressForUrl(i.url), cache: 'force-cache'}}/>
+                                <CachedImage style={styles.menuThumbNail} 
+                                    cachedSource={{uri: getAddressForUrl(i.url), cache: 'force-cache'}}/>
                                 <View style={{flexDirection: 'column', justifyContent: 'center'}}>
                                     <Text style={[styles.rowTextStyle, {color: Colors.black, textAlignVertical: 'center', height: 'auto'}]}>
                                         Image
@@ -435,9 +436,9 @@ export default class AlbumDetail extends React.Component {
         return (<View style={{flexDirection: 'row', height: 48, alignItems: 'center', paddingLeft: 0,
                 borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.gray}}>
             <View style={{flex:1}}>
-                <Image style={{flex: 1, height: 48, width: width, 
+                <CachedImage style={{flex: 1, height: 48, width: width, 
                                 position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                source={{uri: getAddressForUrl(theme.mediaUrl), cache: 'force-cache'}} />
+                                cachedSource={{uri: getAddressForUrl(theme.mediaUrl), cache: 'force-cache'}} />
                 <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between', width: width}}>
                     <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                         <TouchableOpacity onPress={() => this.goBack()}>

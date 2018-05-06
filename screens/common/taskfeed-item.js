@@ -20,6 +20,7 @@ import {MenuIcons, getAddressForUrl} from '../helpers';
 import Colors from '../../constants/Colors';
 import Shadow from '../../constants/Shadow';
 import DisabledStyle from '../../constants/DisabledStyle';
+import CachedImage from '../common/CachedImage';
 
 import ImagePost from './image-post';
 import TaskDetail from './task-detail';
@@ -117,10 +118,12 @@ class TaskFeedItem extends Component {
         return (
             <View style={[styles.avatarContainer]}>
                 <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                    <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} />
+                    {/* <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} /> */}
+                    <CachedImage cachedSource={{uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} style={styles.taskThumbnail} resizeMode={'cover'}/>
                 </View>
                 <View style={[styles.avatarPhotoContainer, Shadow.filterShadow]}>
-                    <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl), cache: 'force-cache'}}/>
+                    {/* <Image style={styles.profile} source={{uri: getAddressForUrl(profile.mediaurl), cache: 'force-cache'}}/> */}
+                    <CachedImage style={styles.profile} cachedSource={{uri: getAddressForUrl(profile.mediaurl), cache: 'force-cache'}} resizeMode={'cover'}/>
                 </View>
                 <TouchableOpacity onPress={() => {this.openTaksDetail()}} style={styles.nameContainer}> 
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16}}>
@@ -166,7 +169,8 @@ class TaskFeedItem extends Component {
         const {data} = this.props;
         if(data != undefined && data.themeUrl != undefined) {
             return (
-                <Image source={{ uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} style={{height: 180, width: null, resizeMode: 'cover'}} />
+                <CachedImage style={{height: 180, width: null, resizeMode: 'cover'}} cachedSource={{uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} resizeMode={'cover'}/>
+                // <Image source={{ uri: getAddressForUrl(data.themeUrl), cache: 'force-cache'}} style={{height: 180, width: null, resizeMode: 'cover'}} />
             )
         }
     }

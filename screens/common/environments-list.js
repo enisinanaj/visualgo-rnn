@@ -15,6 +15,7 @@ import {
   TextInput,
   Platform,
   Dimensions,
+  ActivityIndicator,
   ScrollView } from 'react-native';
 
 // import {Font, AppLoading} from 'expo';
@@ -49,7 +50,8 @@ export default class EnvironmentList extends Component {
       environment: '',
       isReady: false,
       insertion: false,
-      visibleHeight: height
+      visibleHeight: height,
+      saving: false
     };
 
     this._onScroll = this._onScroll.bind(this);
@@ -192,6 +194,8 @@ export default class EnvironmentList extends Component {
   }
 
   async pushEnvironment() {
+    this.setState({saving: true});
+
     await fetch('https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/environments/createenvironment', {
           method: 'POST',
           headers: {
@@ -216,9 +220,11 @@ export default class EnvironmentList extends Component {
   renderSaveBar() {
     return (
       <View style={[styles.bottomBar]}>
-        <TouchableOpacity onPress={() => {this.pushEnvironment()}}>
-            <Text style={styles.saveButton}>Save and Select</Text>
-        </TouchableOpacity>
+        {!this.state.saving ?
+          <TouchableOpacity onPress={() => {this.pushEnvironment()}}>
+              <Text style={styles.saveButton}>Save and Select</Text>
+          </TouchableOpacity>
+          : <ActivityIndicator size="small" color={Colors.gray} />}
       </View>
     )
   }
@@ -234,10 +240,6 @@ export default class EnvironmentList extends Component {
   }
 
   render() {
-    // if (!this.state.isReady) {
-    //   return <AppLoading />;
-    // }
-
     var {visibleHeight} = this.state;
 
     return (

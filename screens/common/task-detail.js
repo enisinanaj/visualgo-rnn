@@ -42,6 +42,7 @@ import CalendarView from './calendar';
 import PostPrivacy from './privacy';
 import TagListTask from './tag-list-task';
 import TaskDescription from './task-description';
+import CachedImage from './CachedImage';
 import moment from 'moment';
 import locale from 'moment/locale/it';
 import FilterBar from './filter-bar';
@@ -110,7 +111,10 @@ export default class TaskDetail extends Component {
         Keyboard.addListener('keyboardWillHide', this.keyboardWillHide.bind(this));
         this.loadTask(this.props.navigation.state.params.idtask);
         this.loadComments(this.props.navigation.state.params.idtask);
-        this.loadSMMedia();
+
+        if (appconfig.getInstance().isSM()) {
+            this.loadSMMedia();
+        }
     }
 
     componentWillUnmount() {
@@ -197,9 +201,9 @@ export default class TaskDetail extends Component {
             <View style={{flexDirection: 'row', height: 48, alignItems: 'center', paddingLeft: 0,
                     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: Colors.gray}}>
                 <View style={{flex:1}}>
-                    <Image style={{flex: 1, height: 48, width: width, 
+                    <CachedImage style={{flex: 1, height: 48, width: width, 
                                     position:'absolute', resizeMode: 'center', top: -12, left: 0, opacity: 0.1}} 
-                                    source={{uri: getAddressForUrl(this.state.taskout.themeUrl), cache: 'force-cache'}} />
+                                    cachedSource={{uri: getAddressForUrl(this.state.taskout.themeUrl), cache: 'force-cache'}} resizeMode={"cover"}/>
                     <View style={{flexDirection: 'row', backgroundColor: 'transparent', justifyContent: 'space-between'}}>
                         <View style={{flexDirection: 'row', paddingLeft: 10, paddingRight: 4, paddingTop: 5}}>
                             <TouchableOpacity onPress={() => this.goBack()}>
@@ -747,7 +751,7 @@ export default class TaskDetail extends Component {
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <Image source={data.author.mediaurl} style={styles.selectableDisplayPicture} />
+                    <CachedImage cachedSource={data.author.mediaurl} style={styles.selectableDisplayPicture} resizeMode={"cover"}/>
                     <View style={styles.textInRow}>
                         <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.author.name} {data.author.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>
@@ -889,7 +893,7 @@ export default class TaskDetail extends Component {
                     style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between'}}>
                     <View style={{flexDirection: 'row', justifyContent: 'flex-start', height: 16, marginTop: 10}}>
                         <View style={[styles.taskThumbnailContainer, Shadow.filterShadow]}>
-                            <Image style={styles.taskThumbnail} source={{uri: getAddressForUrl(this.state.taskout.themeUrl), cache: 'force-cache'}} />
+                            <CachedImage style={styles.taskThumbnail} cachedSource={{uri: getAddressForUrl(this.state.taskout.themeUrl), cache: 'force-cache'}} resizeMode={"cover"}/>
                         </View>
                         <Text style={styles.name}>{this.state.taskout.themeTagName}</Text>
                         <Text style={[styles.environment, {color: this.state.taskout.envUrl}]}>
@@ -974,16 +978,15 @@ export default class TaskDetail extends Component {
                     o.ilike = o.commentLikes[o.commentLikes.length - 1].ilike;
                     return o;
                 })
-                
+
                 this.setState({smMedia: media})
             })
             .catch((error) => {
-                console.error(error);
+                console.warn(error);
             });
     }
 
     render() {
-
         if (this.state.showActivityIndicator) {
             return <ActivityIndicator size="large" style={{marginTop: 130}}/>;
         }

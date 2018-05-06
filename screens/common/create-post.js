@@ -40,6 +40,7 @@ import TagList from './tag-list';
 import PostPrivacy from './privacy';
 import ImageBrowser from '../ImageBrowser';
 import ImagePost from './image-post';
+import CachedImaged from './CachedImage';
 import ImageScreen from '../imageScreen';
 import NoOpModal from './NoOpModal';
 import DefaultRow from './default-row';
@@ -190,7 +191,6 @@ export default class CreatePost extends Component{
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getpostcomments?pagesize=1000&pageindex=0&idpost=" + this.state.id)
             .then((response) => {return response.json()})
             .then((responseJson) => {
-                console.log("postcomments: " + responseJson);
                 var result = JSON.parse(responseJson);
                 result = result.filter(it => it.idcommentPost != null);
                 var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
@@ -375,7 +375,7 @@ export default class CreatePost extends Component{
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <Image source={data.author.image} style={styles.selectableDisplayPicture} />
+                    <CachedImage cachedSource={data.author.image} style={styles.selectableDisplayPicture} />
                     <View style={styles.textInRow}>
                         <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.author.name} {data.author.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>

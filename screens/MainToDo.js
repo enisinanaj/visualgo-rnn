@@ -182,10 +182,11 @@ export default class MainToDo extends React.Component {
         .then((response) => {return response.json()})
         .then((responseJson) => {
             console.log("medias for task: " + responseJson);
-            var medias = JSON.parse(responseJson);
+            var medias = JSON.parse(responseJson); 
             medias.map((o,i) => {
                 o.ilike = o.commentLikes[o.commentLikes.length - 1].ilike
                 o.idMedia = o.id;
+                console.log("image name: " + getAddressForUrl(o.url));
             })
 
             return medias;
@@ -209,6 +210,8 @@ export default class MainToDo extends React.Component {
                 
                 filesToPost.push(tmp);
             });
+
+            console.log("images for task? ::  ===> " + JSON.stringify(this.state.photos));
 
             var addMediaTaskBody = JSON.stringify({
                 addmedia2task: {

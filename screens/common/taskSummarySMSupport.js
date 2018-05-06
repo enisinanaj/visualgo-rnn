@@ -124,7 +124,7 @@ export default class SMTaskSummarySupport extends Component {
     async uploadFiles() {
         await this.state.photos.map((file, i) => {
             if (!file.isnew) {
-                return;
+                return file;
             }
 
             const fileObj = {
@@ -145,14 +145,14 @@ export default class SMTaskSummarySupport extends Component {
                 }
                 
                 if (i == this.state.photos.length - 1) {
-                    //siamo arrivati a fine upload files
-                    this.setState({filesUploaded: true});
                     this.attachPicturesToTask();
                 }             
             })
             .catch(function(error) {
                 console.log(error);
             });
+
+            return file;
         });
     }
 
@@ -189,8 +189,6 @@ export default class SMTaskSummarySupport extends Component {
             
             filesToPost.push(tmp);
         });
-
-        console.log("attaching media to task: " + JSON.stringify(filesToPost));
 
         var addmedia2task = JSON.stringify({
             addmedia2task: {

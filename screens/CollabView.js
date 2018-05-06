@@ -21,13 +21,11 @@ import {
 } from 'react-native';
 
 import Drawer from 'react-native-drawer'
-//import {Font, AppLoading} from 'expo';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-//import { withNavigation } from '@expo/ex-navigation';
 import RadialMenu from 'react-native-radial-menu';
 import Pdf from 'react-native-pdf';
 
@@ -36,6 +34,7 @@ import CommentBar from '../constants/commentBar';
 import Shadow from '../constants/Shadow';
 import Router from '../navigation/Router';
 import DefaultRow from './common/default-row';
+import ToastNotification from './common/ToastNotification';
 import AppSettings, { getFileExtension, getAddressForUrl } from './helpers/index';
 import appconfig, {AWS_OPTIONS } from './helpers/appconfig';
 
@@ -83,6 +82,8 @@ export default class CollabView extends Component {
         var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
         var idMedia = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.data.idMedia : false;
 
+        liked = viewData != undefined && viewData != null && viewData.data.ilike != undefined ? viewData.data.ilike : 0;
+
         this.state = {
             isReady: false,
             showTaskComment: false,
@@ -93,10 +94,9 @@ export default class CollabView extends Component {
             bottomDots: 100,
             renderAll: renderAll,
             newMessage: '',
-            idMedia: idMedia
+            idMedia: idMedia,
+            liked: liked
         };
-
-        console.log("---------> idMedia: " + this.state.idMedia);
     }
 
     componentDidMount() {
@@ -107,7 +107,6 @@ export default class CollabView extends Component {
         {!this.state.renderAll ? this.setState({paddingBottomScrollV: 0, bottomDots: 50}) : null}
 
         if (this.state.renderAll) {
-            console.log("reloading comments.");
             this.reloadComments()
         }
     }
@@ -136,7 +135,6 @@ export default class CollabView extends Component {
         await fetch("https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getmediacomments?idmedia=" + this.state.idMedia)
             .then((response) => {return response.json()})
             .then((responseJson) => {
-                console.log("postcomments: " + responseJson);
                 var result = JSON.parse(responseJson);
                 var sorted = result.sort( (a,b) => (a.created > b.created) ? -1 : ((a.created < b.created) ? 1 : 0) )    
 
@@ -144,7 +142,6 @@ export default class CollabView extends Component {
             })
             .then((posts) => {
                 messages = messages.concat(posts)
-                console.log("postcomments: " + JSON.stringify(posts));
                 this.setState({messages: ds.cloneWithRows(messages)})
                 this.setState({loading: false});
             })
@@ -202,7 +199,6 @@ export default class CollabView extends Component {
     }
 
     _renderRow(data) {
-        console.log("comment: " + data);
         return <DefaultRow style={{padding: 0}} arguments={data} noborder={true}>
             {this.renderMessageRow(data)}
         </DefaultRow>
@@ -352,11 +348,15 @@ export default class CollabView extends Component {
     }
 
     approveMedia() {
+        this.setState({liked: 1});
         this.voteMedia(1);
+        this.toaster.open("Picture approved!", "#0FBF00")
     }
 
     disapproveMedia() {
+        this.setState({liked: -1});
         this.voteMedia(-1);
+        this.toaster.open("Picture rejected!", "#E64E17")
     }
 
     voteMedia(vote) {     
@@ -377,7 +377,6 @@ export default class CollabView extends Component {
             body: voteMedia
         })
         .then((response) => {
-            console.log("addlike to media response: " + JSON.stringify(response));
             //change UI
             //show toast notification for action
         })
@@ -387,22 +386,26 @@ export default class CollabView extends Component {
     }
 
     getThumbForVote() {
-        const {viewData} = this.state;
+        const {viewData, liked} = this.state;
 
-        if (viewData.data.ilike == undefined || viewData.data.ilike == null || viewData.data.ilike == 0) {
+        if (liked == undefined || liked == null || liked == 0) {
             return <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
                 <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
             </View>
         }
 
-        if (viewData.data.ilike == -1) {
-            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: 'red'}]}>
+        if (liked == -1 && appconfig.getInstance().isHVM()) {
+            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: '#E64E17'}]}>
                 <Feather name={"thumbs-down"} size={22} color={Colors.white} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
+            </View>
+        } else if (liked == -1 && appconfig.getInstance().isSM()) {
+            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: '#E64E17'}]}>
+                <Image source={require('../assets/images/icons/replace.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
             </View>
         }
 
-        if (viewData.data.ilike == 1) {
-            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: 'green'}]}>
+        if (liked == 1) {
+            return <View style={[styles.mainPinMenuButton, Shadow.filterShadow, {backgroundColor: '#0FBF00'}]}>
                 <Feather name={"thumbs-up"} size={22} color={Colors.white} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
             </View>
         }
@@ -428,12 +431,8 @@ export default class CollabView extends Component {
                     </View>
                     {!this.state.renderAll ? null :
                         <View style={{position: 'absolute', right: 30, bottom: 60}}>
-                            <RadialMenu spreadAngle={180} startAngle={270} menuRadius={70}>
-                                {appconfig.getInstance().isHVM() ? 
-                                <View style={[styles.mainPinMenuButton, Shadow.filterShadow]}>
-                                    <Image source={require('../assets/images/icons/thumb-left.png')}  style={{width: 22, height: 22, marginTop: 15}}/>
-                                </View>
-                                : this.getThumbForVote()}
+                            <RadialMenu spreadAngle={180} startAngle={270} menuRadius={this.state.liked ? 70 : 70}>
+                                {this.getThumbForVote()}
                                 {appconfig.getInstance().isHVM() ? 
                                 <View style={[styles.pinMenu, Shadow.filterShadow]} onSelect={(it) => this.disapproveMedia()}>
                                     <Feather name={"thumbs-down"} size={22} color={Colors.main} style={{width: 22, height: 22, backgroundColor: 'transparent', marginTop: 15}} />
@@ -451,10 +450,10 @@ export default class CollabView extends Component {
                         </View> }
                 </View>
                 {this.renderCommentBar()}
+                <ToastNotification referer={(r) => this.toaster = r} duration={3000} />
             </View>
         );
     }
-
 }
 
 const styles = StyleSheet.create({

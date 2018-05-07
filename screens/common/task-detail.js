@@ -751,7 +751,7 @@ export default class TaskDetail extends Component {
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <CachedImage cachedSource={data.author.mediaurl} style={styles.selectableDisplayPicture} resizeMode={"cover"}/>
+                    <Image source={data.author.mediaurl} style={styles.selectableDisplayPicture} resizeMode={"cover"}/>
                     <View style={styles.textInRow}>
                         <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.author.name} {data.author.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>

@@ -375,7 +375,7 @@ export default class CreatePost extends Component{
         return (
             <View style={styles.rowContainer}>
                 <TouchableOpacity style={styles.rowContainer}>
-                    <CachedImage cachedSource={data.author.image} style={styles.selectableDisplayPicture} />
+                    <Image source={data.author.image} style={styles.selectableDisplayPicture} />
                     <View style={styles.textInRow}>
                         <Text style={[styles.rowTitle, !data.read ? styles.unreadMessage : {}]}>{data.author.name} {data.author.surname}
                             <Text style={styles.rowSubTitle}> {data.message}</Text>

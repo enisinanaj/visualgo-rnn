@@ -172,7 +172,7 @@ class Landing extends Component {
                 })
                 .then(response => {
                     data = data.concat(response);
-                    this.setState({dataSource: ds.cloneWithRows(data)})
+                    this.setState({dataSource: ds.cloneWithRows(data), refreshing: false})
                     return response.length
                 })
                 .finally(result => {
@@ -236,8 +236,7 @@ class Landing extends Component {
                     });
 
                     dataTasks = dataTasks.concat(responseJson);
-
-                    this.setState({dataSourceTasks: ds.cloneWithRows(dataTasks)})
+                    this.setState({dataSourceTasks: ds.cloneWithRows(dataTasks), refreshing: false})
                     return responseJson;
                 })
                 .catch((error) => {
@@ -254,9 +253,7 @@ class Landing extends Component {
 
     _onRefresh() {
         this.setState({refreshing: true});
-        setTimeout(() => {
-            this.setState({refreshing: false});
-        }, 1500)
+        this.resetDatasource();
     }
 
     _renderRow(data, sectionID, rowID, highlightRow) {
@@ -294,7 +291,10 @@ class Landing extends Component {
 
     resetDatasource(obj) {
         this._clearPosts();
-        this._clearTasks();
+
+        if (this.state.selectType == 'tasks') {
+            this._clearTasks();
+        }
 
         this.setState({modalPost: false, modalTask: false});
     }

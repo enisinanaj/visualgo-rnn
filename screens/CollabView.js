@@ -85,6 +85,8 @@ export default class CollabView extends Component {
 
         liked = viewData != undefined && viewData != null && viewData.data.ilike != undefined ? viewData.data.ilike : 0;
 
+        console.log("viewdata: " + JSON.stringify(viewdata));
+
         this.state = {
             isReady: false,
             showTaskComment: false,
@@ -157,7 +159,8 @@ export default class CollabView extends Component {
             like: {
                 idmedia: this.state.idMedia,
                 iduser: appconfig.getInstance().me.id,
-                comment: this.state.newMessage
+                comment: this.state.newMessage,
+                idtask: 0
             }
         });
 

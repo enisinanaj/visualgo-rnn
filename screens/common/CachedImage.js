@@ -41,13 +41,20 @@ export default class CachedImage extends Component {
     }
 
     componentDidMount() {
-        if (this.props.cachedSource.uri.indexOf("amazonaws.com") >= 0) {
-            ImageCache.get(this.props.cachedSource.uri, (uri) => {
+        var obj = this.props.cachedSource;
+        if (obj.uri == undefined && obj.url != undefined) {
+            obj.uri = obj.url;
+        }
+
+        console.log("test: " + JSON.stringify(obj));
+
+        if (obj.uri.indexOf("amazonaws.com") >= 0) {
+            ImageCache.get(obj.uri, (uri) => {
                 this.setState({cachedSource: {uri: uri}, loaded: true})
             });
             return;
         } else {
-            this.setState({cachedSource: {uri: this.props.cachedSource.uri}, loaded: true})
+            this.setState({cachedSource: {uri: obj.uri}, loaded: true})
             return;
         }
     }

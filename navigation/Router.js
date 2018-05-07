@@ -30,6 +30,7 @@ import AppContainer from '../screens/AppContainer';
 
 import {MenuIcons} from '../screens/helpers';
 import Colors from '../constants/Colors';
+import Report from '../screens/Report';
 
 function _renderIcon(name, isSelected) {
   let image;
@@ -142,7 +143,8 @@ export const MainAppNavigation = StackNavigator({
   CollabView: {screen: CollabView},
   CreateVisualGuideline: {screen: CreateAlbum},
   CameraScreen: {screen: CameraScreen},
-  Conversation: {screen: ConversationView}
+  Conversation: {screen: ConversationView},
+  Report: {screen: Report}
 },
 {
   initialRouteName: 'StartScreen',

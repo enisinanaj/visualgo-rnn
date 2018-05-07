@@ -108,9 +108,6 @@ export async function loadTask(id) {
         }
         return JSON.parse(responseJson);
     })
-    /*.then(task => {
-        return loadAlbumForTask(task.idalbum).then(album => {task.album = album; return task})
-    })*/
     .catch((error) => {
         console.error(error);
     });

@@ -401,7 +401,7 @@ export default class MainToDo extends React.Component {
                     <ScrollView style={styles.TaskMediaContainer} showsHorizontalScrollIndicator={false}
                         horizontal={true}>
                         {(obj.task.medias != undefined && obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
-                        { fotoRender }
+                        { ApplicationConfig.getInstance().isSM() ? fotoRender : null }
                         { //videoRender 
                         }
                         { //foto360Render 

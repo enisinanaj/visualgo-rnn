@@ -40,9 +40,8 @@ const DRAWER_ANIMATION_DURATION = 750;
 
 export default class AppContainer extends React.Component {
   state = {
-    appIsReady: false,
+    appIsReady: true,
     menuIsOpen: false,
-    width: new Animated.Value(width),
     mainViewHeight: new Animated.Value(height),
     innerViewHeight: new Animated.Value(height - 69),
     marginTop: new Animated.Value(0),
@@ -51,7 +50,6 @@ export default class AppContainer extends React.Component {
   }
 
   componentWillMount() {
-    this._loadAssetsAsync();
   }
 
   componentDidMount() {
@@ -59,44 +57,10 @@ export default class AppContainer extends React.Component {
     AppSettings.appIndex = this;
   }
 
-  async _loadAssetsAsync() {
-    try {
-      await cacheAssetsAsync({
-        images: [
-          require('./img/dp2.jpg'),
-          require('./img/elmo.jpg'),
-          require('./img/dp3.jpg'),
-          require('./img/shopping1.jpg'),
-          require('./img/shopping2.jpg'),
-          require('./img/shopping3.jpg'),
-          require('./img/shopping4.jpg'),
-        ],
-        fonts: [
-            Ionicons.font,
-        ]
-      });
-    } catch(e) {
-      console.warn(
-        'There was an error caching assets (see: main.js), perhaps due to a ' +
-        'network timeout, so we skipped caching. Reload the app to try again.'
-      );
-      console.log(e.message);
-    } finally {
-      this.setState({appIsReady: true});
-    }
-  }
-
   toggleMenu = () => {
     if(this._drawer.props.open){
       this._drawer.close()
       this.setState({menuIsOpen: false});
-      Animated.timing(
-        this.state.width,
-        {
-          toValue: width,
-          duration: 10,
-        }
-      ).start()
     }else{
       this._drawer.open()
       this.setState({menuIsOpen: true});
@@ -149,13 +113,6 @@ export default class AppContainer extends React.Component {
         {
           toValue: height - 69,
           duration: DRAWER_ANIMATION_DURATION,
-        }
-      ),
-      Animated.timing(
-        this.state.width,
-        {
-          toValue: Dimensions.get('window').width,
-          duration: 10,
         }
       )
     ]).start();
@@ -222,13 +179,11 @@ export default class AppContainer extends React.Component {
             side="right">
             <View style={[styles.container, {width: width}]}>
               <Animated.View style={[{height: this.state.mainViewHeight, marginTop: this.state.marginTop}, {backgroundColor: Colors.white}]}>
-                <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden', 
-                    width: this.state.width}}
+                <Animated.View style={{height: this.state.searchBarHeight, zIndex: 999, backgroundColor: Colors.main, overflow: 'hidden'}}
                     removeClippedSubviews={true}>
                   <SearchBar ref='searchBar' openMenu={() => this.toggleMenu()}/>
                 </Animated.View>
                 <Animated.View style={{marginTop: 0,
-                    width: this.state.width,
                     bottom: 0,
                     height: this.state.innerViewHeight,
                     shadowColor: 'transparent',
@@ -265,6 +220,7 @@ const drawerStylesX = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: width,
     backgroundColor: Colors.main,
   },
   statusBarUnderlay: {

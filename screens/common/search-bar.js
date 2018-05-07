@@ -37,19 +37,10 @@ export default class SearchBar extends Component {
             open: false,
             hiddenBar: false,
             imageBrowserOpen: false,
-            isReady: false
+            isReady: true
         };
 
         //this.measureView = this.measureView.bind(this);
-    }
-
-    componentDidMount() {
-        this.loadFonts();
-        //setTimeout(() => {this.measureView()}, 0);
-    }
-
-    async loadFonts() {
-        this.setState({isReady: true});
     }
 
     imageBrowserCallback = (callback) => {

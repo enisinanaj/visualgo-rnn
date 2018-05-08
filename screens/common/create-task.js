@@ -448,11 +448,12 @@ export default class CreateTask extends Component {
                     var parsedResponse = JSON.parse(responseJson);
                     this.setState({album: {album: parsedResponse.taskout.id}, fullAlbum: parsedResponse, lookupForAlbumActive: false});
                 } catch (e) {
-                
+                    this.setState({lookupForAlbumActive: false});
                 }
             })
             .catch((error) => {
                 console.error(error);
+                this.setState({lookupForAlbumActive: false});
             });
         }
     }

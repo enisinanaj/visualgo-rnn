@@ -95,6 +95,7 @@ export default class CreateTask extends Component {
             guidelineModal: false,
             photos: [],
             guideline: undefined,
+            lookupForAlbumActive: false
         }
     }
 
@@ -389,7 +390,7 @@ export default class CreateTask extends Component {
     }
 
     onThemeSelected(themes) {
-        this.setState({selectedTheme: themes, themeModal: false}, this.lookupForAlbum);
+        this.setState({selectedTheme: themes, themeModal: false, lookupForAlbumActive: true}, () => this.lookupForAlbum);
         //this.lookupForAlbum();
     }
 
@@ -442,7 +443,7 @@ export default class CreateTask extends Component {
                     return;
                 }
                 var parsedResponse = JSON.parse(responseJson);
-                this.setState({album: {album: parsedResponse.taskout.id}, fullAlbum: parsedResponse});
+                this.setState({album: {album: parsedResponse.taskout.id}, fullAlbum: parsedResponse, lookupForAlbumActive: false});
             })
             .catch((error) => {
                 console.error(error);
@@ -451,7 +452,7 @@ export default class CreateTask extends Component {
     }
 
     finishEnvironments(environment) {
-        this.setState({environment: environment, environmentModal: false}, this.lookupForAlbum);
+        this.setState({environment: environment, environmentModal: false, lookupForAlbumActive: true}, () => this.lookupForAlbum());
         //this.lookupForAlbum();
     }
 
@@ -505,7 +506,8 @@ export default class CreateTask extends Component {
 
     renderVisualGuideline() {
         var {environment, selectedTheme, album} = this.state;
-        var isDisabled = environment.environmentName == undefined || selectedTheme.themeName == undefined;
+        var isDisabled = (environment.environmentName == undefined || selectedTheme.themeName == undefined) && this.state.lookupForAlbumActive;
+        // isDisabled = selectedTheme.id > 0 && environment.id > 0 ??
         
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,

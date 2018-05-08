@@ -438,12 +438,10 @@ export default class CreateTask extends Component {
             .then((response) => {return response.json()})
             .then((responseJson) => {
                 if (responseJson == "") {
-                    this.setState({albumRequired: true});
-                    this.setState({album: undefined});
+                    this.setState({albumRequired: true, lookupForAlbumActive: false, album: undefined});
                     return;
                 }
-                console.log("errore? : ps://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=" + environment.id + "&idtheme=" + selectedTheme.id + "&idalbum=0");
-                console.log("errore? : " + JSON.stringify(responseJson));
+                
                 try {
                     var parsedResponse = JSON.parse(responseJson);
                     this.setState({album: {album: parsedResponse.taskout.id}, fullAlbum: parsedResponse, lookupForAlbumActive: false});
@@ -513,8 +511,10 @@ export default class CreateTask extends Component {
 
     renderVisualGuideline() {
         var {environment, selectedTheme, album} = this.state;
-        var isDisabled = (environment.environmentName == undefined || selectedTheme.themeName == undefined) && this.state.lookupForAlbumActive;
-        // isDisabled = selectedTheme.id > 0 && environment.id > 0 ??
+        var isDisabled = !(selectedTheme.id != undefined && selectedTheme.id > 0 && environment.id != undefined && environment.id > 0 && !this.state.lookupForAlbumActive);
+        
+        console.log("selectedTheme.id: " + selectedTheme.id + " - environment.id: " + environment.id + " - lookupForAlbumActive: " + !this.state.lookupForAlbumActive);
+        console.log("isdisabled: " + !(selectedTheme.id != undefined && selectedTheme.id > 0 && environment.id != undefined && environment.id > 0 && !this.state.lookupForAlbumActive));
         
         return (
             <View style={{flexDirection: 'row', height: 44, alignItems: 'center', paddingLeft: 16,

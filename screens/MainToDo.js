@@ -103,7 +103,7 @@ export default class MainToDo extends React.Component {
         this.setState({notifications: [], showActivityIndicator: true});
 
         if (ApplicationConfig.getInstance().isHVM()) {
-            loadNotificationsForHVM((n) => this.setState({notifications: n}));
+            loadNotificationsForHVM((n) => this.setState({notifications: n, showActivityIndicator: false}));
             return;
         }
 
@@ -139,11 +139,12 @@ export default class MainToDo extends React.Component {
                         notifications = notifications.concat(el);
                         this.setState({notifications: notifications, showActivityIndicator: false});
                     })
-                    .catch(() => {});
+                    .catch(() => {this.setState({showActivityIndicator: false});});
             }
         })
         .catch((error) => {
             console.error(error);
+            this.setState({showActivityIndicator: false});
         });
     }
 

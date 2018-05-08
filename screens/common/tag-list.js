@@ -132,28 +132,30 @@ export default class TagList extends Component {
   }
 
   filterForClusters() {
-    this.setState({tagSource: ds.cloneWithRows(this.state.clusters)});
-    currentCategory = 'clusters';
-    tagsToShow = this.state.clusters;
+    this.setState({tagSource: ds.cloneWithRows(this.state.clusters)}, () => {
+      currentCategory = 'clusters';
+      tagsToShow = this.state.clusters;
+    });
   }
 
   filterForManagers() {
-    this.setState({tagSource: ds.cloneWithRows(this.state.managers)});
-    currentCategory = 'managers';
-    tagsToShow = this.state.managers;
+    this.setState({tagSource: ds.cloneWithRows(this.state.managers)}, () => {
+      currentCategory = 'managers';
+      tagsToShow = this.state.managers;
+    });
   }
 
   filterForStores() {
-    this.setState({tagSource: ds.cloneWithRows(this.state.stores)});
-    currentCategory = 'stores';
-    tagsToShow = this.state.stores;
+    this.setState({tagSource: ds.cloneWithRows(this.state.stores)}, () => {
+      currentCategory = 'stores';
+      tagsToShow = this.state.stores;
+    });
   }
 
   toggleRow(rowData) {
     rowData.selected = !rowData.selected;
 
     if (rowData.selected) {
-      rowData.category = currentCategory;
       this.state.selectedTags.push(rowData);
     } else {
       this.setState({selectedTags: this.state.selectedTags.filter(value => value != rowData)});
@@ -197,9 +199,9 @@ export default class TagList extends Component {
   _renderSelectedTagElement(data) {
     if (data.category != 'managers') {
       return (
-      <TouchableOpacity onPress={() => this.toggleRow(data)}>
-        <Text style={{color: Colors.white, marginRight: 13, marginTop: 12, fontSize: 12}}>{data.title}</Text>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => this.toggleRow(data)}>
+          <Text style={{color: Colors.white, marginRight: 13, marginTop: 12, fontSize: 12}}>{data.title}</Text>
+        </TouchableOpacity>
       )
     } else {
       return (
@@ -239,7 +241,7 @@ export default class TagList extends Component {
           this.setState({userResponse: JSON.parse(responseJson)});
           var managersList = [];
           this.state.userResponse.map((el, i) => {
-            let obj = {title: el.name + ' ' + el.surname, subtitle: el.username, img: require('../img/me.png'), selected: false, id: el.id};  
+            let obj = {title: el.name + ' ' + el.surname, subtitle: el.username, img: require('../img/me.png'), selected: false, id: el.id, category: 'managers'};  
             managersList.push(obj);
           })
           this.setState({managers: managersList});
@@ -272,7 +274,7 @@ export default class TagList extends Component {
           this.setState({clusterResponse: JSON.parse(responseJson)});
           var clustersList = [];
           this.state.clusterResponse.map((el, i) => {
-            let obj = {title: el.name, subtitle: el.description, selected: false, id: el.id};  
+            let obj = {title: el.name, subtitle: el.description, selected: false, id: el.id, category: 'clusters'};  
             clustersList.push(obj);
           })
           this.setState({clusters: clustersList});
@@ -307,7 +309,7 @@ export default class TagList extends Component {
           this.setState({storeResponse: JSON.parse(responseJson)});
           var storesList = [];
           this.state.storeResponse.map((el, i) => {
-            let obj = {title: el.name, subtitle: el.description, selected: false, id: el.id};  
+            let obj = {title: el.name, subtitle: el.description, selected: false, id: el.id, category: 'stores'};  
             storesList.push(obj);
           })
           this.setState({stores: storesList});

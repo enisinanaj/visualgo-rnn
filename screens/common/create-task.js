@@ -442,8 +442,14 @@ export default class CreateTask extends Component {
                     this.setState({album: undefined});
                     return;
                 }
-                var parsedResponse = JSON.parse(responseJson);
-                this.setState({album: {album: parsedResponse.taskout.id}, fullAlbum: parsedResponse, lookupForAlbumActive: false});
+                console.log("errore? : ps://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/getalbum?idenvironment=" + environment.id + "&idtheme=" + selectedTheme.id + "&idalbum=0");
+                console.log("errore? : " + JSON.stringify(responseJson));
+                try {
+                    var parsedResponse = JSON.parse(responseJson);
+                    this.setState({album: {album: parsedResponse.taskout.id}, fullAlbum: parsedResponse, lookupForAlbumActive: false});
+                } catch (e) {
+                
+                }
             })
             .catch((error) => {
                 console.error(error);

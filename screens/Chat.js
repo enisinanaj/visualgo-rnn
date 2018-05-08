@@ -34,9 +34,19 @@ import ApplicationConfig from './helpers/appconfig';
 import PubNubReact from 'pubnub-react';
 
 const {width, height} = Dimensions.get('window');
-const messages = [{from: {name: 'John', image: require('./img/elmo.jpg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()},
-                  {from: {name: 'Andy', image: require('./img/bob.png')}, message: 'Lorem Ipsum Dolo', read: true, date: new Date()},
-                  {from: {name: 'Ivan', image: require('./img/cookiemonster.jpeg')}, message: 'Lorem Ipsum Dolo', read: false, date: new Date()}];
+const messages = [{from: {name: 'Ivano Boscolo Bragadin', image: require('./img/me.png')}, message: 'Come va?', read: false, date: new Date()},
+                  {from: {name: 'Riccardo Mariotti', image: require('./img/me.png')}, message: 'Ciao...', read: true, date: new Date()},
+                  {from: {name: 'Algert Gjoka', image: require('./img/me.png')}, message: 'Ora faccio il task', read: false, date: new Date()},
+                  {from: {name: 'Davide', image: require('./img/me.png')}, message: 'In preparazione', read: false, date: new Date()},
+                  {from: {name: 'Eni', image: require('./img/me.png')}, message: 'Ho già approvato la photo', read: false, date: new Date()},
+                  {from: {name: 'Elisa Perazzoli', image: require('./img/me.png')}, message: 'Ho caricato una nuova foto per il task di ieri', read: false, date: new Date()},
+                  {from: {name: 'Fabrizio Sorarù', image: require('./img/me.png')}, message: 'Ti ho anche commentato sul task', read: false, date: new Date()},
+                  {from: {name: 'Yukie Matsuno', image: require('./img/me.png')}, message: 'Ma potresti creare un ambiente per il mio caso?', read: false, date: new Date()},
+                  {from: {name: 'Veronica Radice', image: require('./img/me.png')}, message: 'Va bene no pbm', read: false, date: new Date()},
+                  {from: {name: 'Donato Mennella', image: require('./img/me.png')}, message: 'Facciamo in settimana, mi attivo da subito', read: false, date: new Date()},
+                  {from: {name: 'Federica Schiumarini', image: require('./img/me.png')}, message: 'Ho fatto', read: false, date: new Date()},
+                  {from: {name: 'Maria Paola Boiardi', image: require('./img/me.png')}, message: 'Sì sì', read: false, date: new Date()},
+                  {from: {name: 'ric ric', image: require('./img/me.png')}, message: 'completato da parte mia', read: false, date: new Date()}];
 
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
 

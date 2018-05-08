@@ -60,7 +60,8 @@ export default class Conversation extends Component {
             newMessage: '',
             contentLayout: {},
             showThemes: false,
-            isReady: false
+            isReady: false,
+            uuid: ApplicationConfig.getInstance().me
         }
 
         this.pubnub = new PubNubReact({
@@ -163,7 +164,7 @@ export default class Conversation extends Component {
     }
 
     _renderPubNubRow(data){
-        if (data.publisher != uuid) {
+        if (data.publisher != this.state.uuid) {
             return (
                 <View style={styles.fromBubble}>
                     <View style={styles.messageBubble}>

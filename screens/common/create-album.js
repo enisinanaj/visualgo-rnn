@@ -258,7 +258,7 @@ export default class NewAlbum extends Component {
         return (
             <View style={{flexDirection: 'row', justifyContent: 'flex-start'}}>
                 <View style={[styles.themePhotoContainer, Shadow.smallCardShadow]}>
-                    <CachedImage cachedSource={{uri: theme.photo.url}} style={{width: 26, height: 26, borderRadius: 4}} />
+                    <CachedImage cachedSource={theme.photo} style={{width: 26, height: 26, borderRadius: 4}} />
                 </View>
                 <Text style={styles.themeName}>{theme.themeName}</Text>
             </View>

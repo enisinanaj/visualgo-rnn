@@ -10,8 +10,10 @@ import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Pie from './pie';
 import Colors from '../constants/Colors';
 import FilterBar from './common/filter-bar';
+import CachedImage from './common/CachedImage';
 import appconfig from './helpers/appconfig';
 import Shadow from '../constants/Shadow';
+import { getAddressForUrl } from './helpers';
 
 const {width, height} = Dimensions.get('window');
 
@@ -69,7 +71,7 @@ export default class Report extends React.Component {
     renderTaskStats() {
         return this.state.stats.map((o, i) => {
             return <View style={styles.chartContainer} key={i}>
-        
+                {/* <CachedImage cachedSource={{uri: getAddressForUrl(o.task.themeUrl)}} style={{opacity: 0.4, height: null, width: null}} resizeMode={"cover"} /> */}
                 <View style={[styles.pieContainer, {flex:1}, Shadow.filterShadow]}>
 
                     <View style={styles.taskThemeTag}>
@@ -95,18 +97,18 @@ export default class Report extends React.Component {
                     </View>
                 </View>
 
-                <ScrollView horizontal={true} style={[styles.pieContainerScrollView] }>
-                    <View style={styles.singleChart}>
-                        <Pie style={styles.pieStyle}
+                <View style={styles.singleChart}>
+                    <Pie style={styles.pieStyle}
                         radius={100}
                         innerRadius={60}
-                        series={[o.totalMediaApproved * o.totalMediaToUpload/100, o.totalMediaApproved * o.totalMediaToUpload / 100, o.totalMediaToApprove * o.totalMediaToUpload / 100]}
-                        colors={['#FAFAFA', Colors.main, Colors.yellow]}/>
-                            <View style={styles.chartMiddle}>
-                                <Text style={styles.chartMiddleText}>{o.totalMediaToApprove * o.totalMediaToUpload / 100}%</Text>
-                            </View>
-                    </View>        
-                </ScrollView>
+                        series={[(100 * o.totalMediaApproved) / o.totalMediaToUpload, 
+                            (100 * o.totalMediaApproved) / o.totalMediaToUpload, 
+                            (100 * o.totalMediaToApprove) / o.totalMediaToUpload]}
+                        colors={['#f0f0f0', Colors.main, Colors.yellow]}/>
+                        <View style={styles.chartMiddle}>
+                            <Text style={styles.chartMiddleText}>{(100 * o.totalMediaToApprove) / o.totalMediaToUpload}%</Text>
+                        </View>
+                </View>
             </View>
         })
     }
@@ -131,7 +133,7 @@ export default class Report extends React.Component {
                         <Text style={styles.textStyle}>Task report</Text>
                     </View>
                 </View>
-                <ScrollView
+                <ScrollView style={{height: height - 60, bottom: 0, paddingBottom: 20}}
                     refreshControl={
                         <RefreshControl
                             refreshing={this.state.refreshing}
@@ -190,7 +192,11 @@ filterBarContainer: {
 
 singleChart: {
     margin: 27,
-    width: 190,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 80,
+    width: width - 45
 },
 chartMiddleText:{
     fontSize:30,

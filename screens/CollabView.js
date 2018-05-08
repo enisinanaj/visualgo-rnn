@@ -82,10 +82,9 @@ export default class CollabView extends Component {
         var viewData = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? this.props.navigation.state.params : undefined;
         var renderAll = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.renderAll : false;
         var idMedia = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.data.idMedia : false;
+        var taskId = ((this.props.navigation != undefined) && (this.props.navigation.state.params != undefined)) ? viewData.taskId : false;
 
         liked = viewData != undefined && viewData != null && viewData.data.ilike != undefined ? viewData.data.ilike : 0;
-
-        console.log("viewdata: " + JSON.stringify(viewdata));
 
         this.state = {
             isReady: false,
@@ -98,7 +97,8 @@ export default class CollabView extends Component {
             renderAll: renderAll,
             newMessage: '',
             idMedia: idMedia,
-            liked: liked
+            liked: liked,
+            taskId: taskId
         };
     }
 
@@ -159,8 +159,7 @@ export default class CollabView extends Component {
             like: {
                 idmedia: this.state.idMedia,
                 iduser: appconfig.getInstance().me.id,
-                comment: this.state.newMessage,
-                idtask: 0
+                comment: this.state.newMessage
             }
         });
 
@@ -211,7 +210,7 @@ export default class CollabView extends Component {
         return (
             <View style={CommentBar.rowContainer}>
                 <TouchableOpacity style={CommentBar.rowContainer}>
-                    <CachedImage cachedSource={data.user.image} style={CommentBar.selectableDisplayPicture} />
+                    <Image source={data.user.image} style={CommentBar.selectableDisplayPicture} />
                     <View style={CommentBar.textInRow}>
                         <Text style={[CommentBar.rowTitle, !data.read ? CommentBar.unreadMessage : {}]}>{data.user.name} {data.user.surname}
                             <Text style={CommentBar.rowSubTitle}> {data.comment}</Text>
@@ -367,7 +366,8 @@ export default class CollabView extends Component {
             like: {
                 idmedia: this.state.idMedia,
                 iduser: appconfig.getInstance().me.id,
-                like: vote
+                like: vote,
+                idtask: this.state.taskId
             }
         });
 

@@ -160,13 +160,31 @@ export class ImageCache {
     const path = RNFetchBlob.fs.dirs.CacheDir + "_immutable_images/" + SHA1(uri) + ".jpg";
     return RNFetchBlob.fs.exists(path).then(exists => {
       if(exists) {
+        // console.log("file exists in filesystem");
         return callback(path);
       } else {
         return RNFetchBlob.config({ path })
                 .fetch("GET", uri, {})
-                .then(() => console.log("file downloaded"))
-                .then(() => callback(path));
+                .then((res) => {
+                    // console.log("status: " +  res.respInfo.status);
+                    if (res.respInfo.status != 200) {
+                        // console.log("error received from file downloading.... " + uri);
+                        RNFetchBlob.fs.unlink(path).then(() => {});
+                        callback(uri.replace("/thumbnails", ""));
+                        return null;
+                    } else {
+                        callback(path);
+                    }
+                })
+                .catch((res, statusCode) => {
+                    // console.log("error downloading file");
+                    callback(uri);
+                });
       }
+    })
+    .catch(e => {
+        // console.log("error retrieving file");
+        callback(uri);
     });
   }
 }

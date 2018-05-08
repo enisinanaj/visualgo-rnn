@@ -46,8 +46,6 @@ export default class CachedImage extends Component {
             obj.uri = obj.url;
         }
 
-        console.log("test: " + JSON.stringify(obj));
-
         if (obj.uri.indexOf("amazonaws.com") >= 0) {
             ImageCache.get(obj.uri, (uri) => {
                 this.setState({cachedSource: {uri: uri}, loaded: true})

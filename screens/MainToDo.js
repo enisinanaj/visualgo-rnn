@@ -283,8 +283,8 @@ export default class MainToDo extends React.Component {
         this.addMediaMenu.toggleState();
     }
 
-    navigateToCollabView(media) {
-        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media, renderAll: true, onGoBack: () => this.loadNotifications()});
+    navigateToCollabView(media, taskId) {
+        ApplicationConfig.getInstance().index.props.navigation.navigate("CollabView", {data: media, taskId: taskId, renderAll: true, onGoBack: () => this.loadNotifications()});
     }
 
     navigateToTaskSummary(id) {
@@ -339,10 +339,10 @@ export default class MainToDo extends React.Component {
         }
     }
 
-    renderMedias(medias) {
-        return medias.map((obj, i) => {
+    renderMedias(task) {
+        return task.medias.map((obj, i) => {
             return  (
-                <TouchableOpacity key={i} onPress={() => this.navigateToCollabView(obj)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
+                <TouchableOpacity key={i} onPress={() => this.navigateToCollabView(obj, task.id)} style={[styles.TaskMedia, Shadow.smallCardShadow]}>
                     <CachedImage cachedSource={{uri: getAddressForUrl(obj.url), cache: 'force-cache'}}
                         style={{height:65,
                         width:65,
@@ -400,7 +400,7 @@ export default class MainToDo extends React.Component {
                 <View>
                     <ScrollView style={styles.TaskMediaContainer} showsHorizontalScrollIndicator={false}
                         horizontal={true}>
-                        {(obj.task.medias != undefined && obj.task.medias.length > 0) ? this.renderMedias(obj.task.medias) : null}
+                        {(obj.task.medias != undefined && obj.task.medias.length > 0) ? this.renderMedias(obj.task) : null}
                         { ApplicationConfig.getInstance().isSM() ? fotoRender : null }
                         { //videoRender 
                         }

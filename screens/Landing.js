@@ -291,10 +291,7 @@ class Landing extends Component {
 
     resetDatasource(obj) {
         this._clearPosts();
-
-        if (this.state.selectType == 'tasks') {
-            this._clearTasks();
-        }
+        this._clearTasks();
 
         this.setState({modalPost: false, modalTask: false});
     }

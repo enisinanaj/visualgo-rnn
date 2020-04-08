@@ -139,40 +139,33 @@ export default class Login extends Component {
   async LogIn(){
     var endpoint = 'https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/login?username=' + this.state.email + '&password=' + this.state.pass;
     //endpoint = 'https://o1voetkqb3.execute-api.eu-central-1.amazonaws.com/dev/login?username=eni&password=eni';
+    endpoint = "https://5e8d0d81e61fbd00164af2ad.mockapi.io/api/v1/login?username=" + this.state.email + '&password=' + this.state.pass
     let loginSuccessful = false;
-    try {
-      let response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-        }
-      });
 
-      let responseJson = await response.json();
+    fetch(endpoint, {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }
+    }).then(response => response.json())
+    .then(responseJson => {
       if (responseJson != "Error::null") {
         try {
-          AppConfiguration.getInstance().me = JSON.parse(responseJson);
-          loginSuccessful = true;  
+          AppConfiguration.getInstance().me = responseJson;
+          const resetAction = NavigationActions.reset({
+            index: 0,
+            actions: [
+                NavigationActions.push({routeName: 'Index'})
+            ]
+          });
+          this.props.navigation.dispatch(resetAction);
         } catch (e) {
+          console.error(e)
           loginSuccessful = false;
         }
       }
-    } catch (error) {
-      console.error(error);
-    }
-
-    if (loginSuccessful) {
-      const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [
-            NavigationActions.push({routeName: 'Index'})
-        ]
-      });
-      this.props.navigation.dispatch(resetAction);
-    } else {
-      //TODO: show error
-    }
+    });
   }
 
   showPassword(){

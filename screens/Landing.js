@@ -87,6 +87,7 @@ class Landing extends Component {
     }
 
     componentDidMount() {
+        console.warn("111 landing!")
         setTimeout(() => {this.measureView()}, 0);
 
         for (i in filters) {
